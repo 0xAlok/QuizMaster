@@ -16,7 +16,7 @@ def init_db():
             # Create an admin user
             admin = Admin(username='admin@quizmaster.com')
             admin.set_password('admin')
-            db.session.add(adminpassword)
+            db.session.add(admin) # Corrected variable name
             db.session.commit()
             print('Admin user created successfully')
         else:
