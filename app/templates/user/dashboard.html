@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}User Dashboard - Quiz Master{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4">User Dashboard</h2>
+        <div class="alert alert-info">
+            Welcome, {{ current_user.full_name }}! From here you can browse subjects, take quizzes, and view your scores.
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5>Available Subjects</h5>
+            </div>
+            <div class="card-body">
+                {% if subjects %}
+                <div class="list-group">
+                    {% for subject in subjects %}
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <h5 class="mb-1">{{ subject.name }}</h5>
+                        <p class="mb-1">{{ subject.description }}</p>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted">No subjects available yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5>Your Quiz Scores</h5>
+            </div>
+            <div class="card-body">
+                {% if scores %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Quiz</th>
+                                <th>Score</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for score in scores %}
+                            <tr>
+                                <td>{{ score.quiz.chapter.name }}</td>
+                                <td>{{ score.total_scored }}</td>
+                                <td>{{ score.time_stamp_of_attempt.strftime('%Y-%m-%d') }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">You haven't attempted any quizzes yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- User actions -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h5>Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex gap-2 flex-wrap">
+                    <a href="#" class="btn btn-primary">Browse All Subjects</a>
+                    <a href="#" class="btn btn-success">Browse All Quizzes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

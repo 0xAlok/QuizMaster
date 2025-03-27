@@ -1,0 +1,76 @@
+/* Custom styles for Quiz Master application */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+}
+
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.card-header {
+    border-radius: 8px 8px 0 0;
+}
+
+.btn {
+    border-radius: 5px;
+    padding: 8px 15px;
+    font-weight: 500;
+}
+
+/* Auth pages */
+.auth-container {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* Dashboard styling */
+.dashboard-stat-card {
+    transition: transform 0.3s;
+}
+
+.dashboard-stat-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Quiz styling - will be expanded in later milestones */
+.question-card {
+    border-left: 4px solid #007bff;
+}
+
+.option-label {
+    display: block;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.option-label:hover {
+    background-color: #f1f8ff;
+    border-color: #007bff;
+}
+
+/* User profile */
+.profile-header {
+    background-color: #343a40;
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+/* Custom form styling */
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}

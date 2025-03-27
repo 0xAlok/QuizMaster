@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard - Quiz Master{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4">Admin Dashboard</h2>
+        <div class="alert alert-info">
+            Welcome, Admin! From here you can manage subjects, chapters, quizzes, and users.
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-header bg-primary text-white">
+                <h5>Users</h5>
+            </div>
+            <div class="card-body">
+                <h3>{{ user_count }}</h3>
+                <p>Registered Users</p>
+                <a href="{{ url_for('admin.users') }}" class="btn btn-outline-primary">Manage Users</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- We'll add more cards for subjects, chapters, quizzes once we implement those features -->
+</div>
+
+<!-- Admin actions -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h5>Admin Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex gap-2 flex-wrap">
+                    <a href="#" class="btn btn-primary">Add Subject</a>
+                    <a href="#" class="btn btn-success">Add Chapter</a>
+                    <a href="#" class="btn btn-info">Create Quiz</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
