@@ -7,7 +7,7 @@ class Quiz(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     chapter_id = db.Column(db.Integer, db.ForeignKey('chapters.id'), nullable=False)
     date_of_quiz = db.Column(db.Date, nullable=False)
-    time_duration = db.Column(db.String(5), nullable=False)  # HH:MM format
+    time_duration = db.Column(db.Integer, nullable=False)  # Store duration in minutes
     remarks = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
