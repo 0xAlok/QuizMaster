@@ -190,31 +190,38 @@ def add_quiz(chapter_id):
 def edit_quiz(id):
     quiz = Quiz.query.get_or_404(id)
     
-    # Format the time duration as HH:MM for the form
-    hours, minutes = divmod(quiz.time_duration, 60)
-    formatted_duration = f"{hours:02d}:{minutes:02d}"
-    
-    form = QuizForm(obj=quiz)
-    # Pre-populate the time_duration field with formatted string
-    form.time_duration.data = formatted_duration
+    # Initialize the form without obj to avoid overwriting custom fields
+    form = QuizForm()
     
     if form.validate_on_submit():
         # Parse time_duration string (HH:MM) into minutes for storage
-        time_parts = form.time_duration.data.split(':')
-        duration_minutes = int(time_parts[0]) * 60 + int(time_parts[1])
+        try:
+            time_parts = form.time_duration.data.split(':')
+            duration_minutes = int(time_parts[0]) * 60 + int(time_parts[1])
+            
+            quiz.date_of_quiz = form.date_of_quiz.data
+            quiz.time_duration = duration_minutes
+            quiz.remarks = form.remarks.data
+            
+            db.session.commit()
+            flash('Quiz updated successfully', 'success')
+            return redirect(url_for('admin.quizzes', chapter_id=quiz.chapter_id))
+        except (ValueError, IndexError) as e:
+            flash(f'Invalid time format. Please use HH:MM format.', 'danger')
+    
+    # For GET requests or form validation failure, populate the form
+    if not form.is_submitted():
+        form.date_of_quiz.data = quiz.date_of_quiz
+        form.remarks.data = quiz.remarks
         
-        quiz.date_of_quiz = form.date_of_quiz.data
-        quiz.time_duration = duration_minutes
-        quiz.remarks = form.remarks.data
-        
-        db.session.commit()
-        flash('Quiz updated successfully', 'success')
-        return redirect(url_for('admin.quizzes', chapter_id=quiz.chapter_id))
+        # Format the time duration as HH:MM for the form
+        hours, minutes = divmod(quiz.time_duration, 60)
+        form.time_duration.data = f"{hours:02d}:{minutes:02d}"
     
     return render_template('admin/quiz_form.html',
-                           form=form,
-                           chapter=quiz.chapter,
-                           title='Edit Quiz')
+                          form=form,
+                          chapter=quiz.chapter,
+                          title='Edit Quiz')
 
 @admin_bp.route('/quiz/delete/<int:id>', methods=['POST'])
 @admin_required

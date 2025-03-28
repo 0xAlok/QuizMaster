@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+
+{% block title %}Quiz Results - Quiz Master{% endblock %}
+
+{% block head %}
+{{ super() }}
+<style>
+    .correct-answer {
+        background-color: #d1e7dd;
+        border-color: #a3cfbb;
+    }
+    .incorrect-answer {
+        background-color: #f8d7da;
+        border-color: #f1aeb5;
+    }
+    .user-selected {
+        font-weight: bold;
+    }
+    .unanswered {
+        background-color: #f8f9fa;
+        border-color: #dee2e6;
+    }
+    .stats-card {
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        transition: transform 0.3s;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .stats-card:hover {
+        transform: translateY(-5px);
+    }
+    .score-circle {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: white;
+    }
+    .high-score {
+        background-color: #198754;
+    }
+    .medium-score {
+        background-color: #ffc107;
+    }
+    .low-score {
+        background-color: #dc3545;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('user.dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Quiz Results</li>
+                </ol>
+            </nav>
+
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Quiz Results</h4>
+                </div>
+                <div class="card-body">
+                    <h3>{{ quiz.chapter.subject.name }} - {{ quiz.chapter.name }}</h3>
+                    
+                    <!-- Score summary section -->
+                    <div class="row mt-4">
+                        <div class="col-md-6 mb-4">
+                            <div class="card stats-card h-100">
+                                <div class="card-body text-center">
+                                    <h4 class="card-title">Your Score</h4>
+                                    <div class="score-circle {% if score >= 70 %}high-score{% elif score >= 40 %}medium-score{% else %}low-score{% endif %}">
+                                        {{ score|round(1) }}%
+                                    </div>
+                                    <h5>{{ correct_answers }} correct out of {{ total_questions }} questions</h5>
+                                    <p class="text-muted">
+                                        {% if score >= 70 %}
+                                            Excellent work! You've mastered this material.
+                                        {% elif score >= 40 %}
+                                            Good job! Keep practicing to improve.
+                                        {% else %}
+                                            You might need more practice with this material.
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-4">
+                            <div class="card stats-card h-100">
+                                <div class="card-body">
+                                    <h4 class="card-title">Quiz Statistics</h4>
+                                    <table class="table">
+                                        <tr>
+                                            <td><i class="bi bi-check-circle-fill text-success"></i> Correct Answers:</td>
+                                            <td>{{ correct_answers }} ({{ (correct_answers / total_questions * 100)|round(1) }}%)</td>
+                                        </tr>
+                                        <tr>
+                                            <td><i class="bi bi-x-circle-fill text-danger"></i> Incorrect Answers:</td>
+                                            <td>{{ total_questions - correct_answers }} ({{ ((total_questions - correct_answers) / total_questions * 100)|round(1) }}%)</td>
+                                        </tr>
+                                        <tr>
+                                            <td><i class="bi bi-stopwatch"></i> Quiz Date:</td>
+                                            <td>{{ quiz.date_of_quiz.strftime('%B %d, %Y') }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><i class="bi bi-clock-history"></i> Completion Time:</td>
+                                            <td>Now</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h4 class="mt-4 mb-3">Question Review</h4>
+                    
+                    {% for question in questions %}
+                        {% set question_id = question.id|string %}
+                        {% set question_result = results.get(question_id, {}) %}
+                        {% set was_answered = question_id in results %}
+                        
+                        <div class="card mb-4">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Question {{ loop.index }}</h5>
+                                {% if not was_answered %}
+                                    <span class="badge bg-secondary">Not Answered</span>
+                                {% elif question_result.is_correct %}
+                                    <span class="badge bg-success">Correct</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Incorrect</span>
+                                {% endif %}
+                            </div>
+                            <div class="card-body">
+                                <p>{{ question.question_text }}</p>
+                                
+                                <div class="list-group mt-3">
+                                    <div class="list-group-item {% if question.correct_answer == 1 %}correct-answer{% endif %} {% if was_answered and question_result.selected == 1 and question_result.selected != question_result.correct %}incorrect-answer{% endif %} {% if not was_answered %}unanswered{% endif %}">
+                                        {% if was_answered and question_result.selected == 1 %}<span class="user-selected">✓ </span>{% endif %}
+                                        {% if question.correct_answer == 1 %}<span class="float-end">✅ Correct Answer</span>{% endif %}
+                                        <span class="option-prefix">A)</span> {{ question.option1 }}
+                                    </div>
+                                    <div class="list-group-item {% if question.correct_answer == 2 %}correct-answer{% endif %} {% if was_answered and question_result.selected == 2 and question_result.selected != question_result.correct %}incorrect-answer{% endif %} {% if not was_answered %}unanswered{% endif %}">
+                                        {% if was_answered and question_result.selected == 2 %}<span class="user-selected">✓ </span>{% endif %}
+                                        {% if question.correct_answer == 2 %}<span class="float-end">✅ Correct Answer</span>{% endif %}
+                                        <span class="option-prefix">B)</span> {{ question.option2 }}
+                                    </div>
+                                    <div class="list-group-item {% if question.correct_answer == 3 %}correct-answer{% endif %} {% if was_answered and question_result.selected == 3 and question_result.selected != question_result.correct %}incorrect-answer{% endif %} {% if not was_answered %}unanswered{% endif %}">
+                                        {% if was_answered and question_result.selected == 3 %}<span class="user-selected">✓ </span>{% endif %}
+                                        {% if question.correct_answer == 3 %}<span class="float-end">✅ Correct Answer</span>{% endif %}
+                                        <span class="option-prefix">C)</span> {{ question.option3 }}
+                                    </div>
+                                    <div class="list-group-item {% if question.correct_answer == 4 %}correct-answer{% endif %} {% if was_answered and question_result.selected == 4 and question_result.selected != question_result.correct %}incorrect-answer{% endif %} {% if not was_answered %}unanswered{% endif %}">
+                                        {% if was_answered and question_result.selected == 4 %}<span class="user-selected">✓ </span>{% endif %}
+                                        {% if question.correct_answer == 4 %}<span class="float-end">✅ Correct Answer</span>{% endif %}
+                                        <span class="option-prefix">D)</span> {{ question.option4 }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{{ url_for('user.dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+                        <a href="{{ url_for('user.quizzes', chapter_id=quiz.chapter_id) }}" class="btn btn-primary">Try Another Quiz</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

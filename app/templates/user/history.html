@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+
+{% block title %}Quiz History - Quiz Master{% endblock %}
+
+{% block head %}
+{{ super() }}
+<style>
+    .score-badge {
+        font-size: 1rem;
+        padding: 8px 12px;
+    }
+    .history-card {
+        transition: transform 0.2s;
+    }
+    .history-card:hover {
+        transform: translateY(-5px);
+    }
+    .summary-box {
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .summary-number {
+        font-size: 2rem;
+        font-weight: bold;
+        display: block;
+        margin-bottom: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('user.dashboard') }}">Dashboard</a></li>
+            <li class="breadcrumb-item active">Quiz History</li>
+        </ol>
+    </nav>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2>Your Quiz History</h2>
+            <p class="lead">Review all your past quiz attempts and scores.</p>
+        </div>
+    </div>
+
+    {% if scores %}
+    <!-- Summary Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="summary-box bg-primary text-white">
+                <i class="bi bi-journals"></i> Total Quizzes Attempted
+                <span class="summary-number">{{ scores|length }}</span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="summary-box bg-success text-white">
+                <i class="bi bi-graph-up"></i> Average Score
+                <span class="summary-number">
+                    {% set total_score = namespace(value=0) %}
+                    {% for score in scores %}
+                        {% set total_score.value = total_score.value + score.total_scored %}
+                    {% endfor %}
+                    {{ (total_score.value / scores|length)|round(1) }}%
+                </span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="summary-box bg-info text-white">
+                <i class="bi bi-trophy"></i> Latest Achievement
+                <span class="summary-number">
+                    {% if scores[0].total_scored >= 70 %}
+                        Excellent!
+                    {% elif scores[0].total_scored >= 40 %}
+                        Good
+                    {% else %}
+                        Needs Work
+                    {% endif %}
+                </span>
+                <small>{{ scores[0].quiz.chapter.name }}</small>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Quiz Attempts</h4>
+                </div>
+                <div class="card-body">
+                    {% if scores %}
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Subject</th>
+                                        <th>Chapter</th>
+                                        <th>Score</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for score in scores %}
+                                    <tr class="history-card">
+                                        <td>
+                                            <i class="bi bi-calendar-event me-1"></i>
+                                            {{ score.time_stamp_of_attempt.strftime('%Y-%m-%d') }}
+                                            <br>
+                                            <small class="text-muted">{{ score.time_stamp_of_attempt.strftime('%H:%M') }}</small>
+                                        </td>
+                                        <td>{{ score.quiz.chapter.subject.name }}</td>
+                                        <td>{{ score.quiz.chapter.name }}</td>
+                                        <td>
+                                            <div class="progress" style="height: 20px;" title="{{ score.total_scored }}%">
+                                                <div class="progress-bar 
+                                                    {% if score.total_scored >= 70 %}
+                                                        bg-success
+                                                    {% elif score.total_scored >= 40 %}
+                                                        bg-warning
+                                                    {% else %}
+                                                        bg-danger
+                                                    {% endif %}"
+                                                    role="progressbar" 
+                                                    style="width: {{ score.total_scored }}%"
+                                                    aria-valuenow="{{ score.total_scored }}" 
+                                                    aria-valuemin="0" 
+                                                    aria-valuemax="100">{{ score.total_scored }}%</div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            {% if score.total_scored >= 70 %}
+                                                <span class="badge bg-success score-badge">Excellent</span>
+                                            {% elif score.total_scored >= 40 %}
+                                                <span class="badge bg-warning text-dark score-badge">Good</span>
+                                            {% else %}
+                                                <span class="badge bg-danger score-badge">Needs Improvement</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            <p><i class="bi bi-info-circle-fill me-2"></i> You haven't attempted any quizzes yet. Go to the dashboard to find available quizzes.</p>
+                        </div>
+                        <div class="text-center mt-4">
+                            <a href="{{ url_for('user.subjects') }}" class="btn btn-primary btn-lg">
+                                <i class="bi bi-journal-text me-2"></i>Browse Subjects
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if scores %}
+    <div class="mt-4">
+        <a href="{{ url_for('user.dashboard') }}" class="btn btn-secondary">
+            <i class="bi bi-speedometer2 me-1"></i>Back to Dashboard
+        </a>
+        <a href="{{ url_for('user.subjects') }}" class="btn btn-primary">
+            <i class="bi bi-journal-text me-1"></i>Browse Subjects
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

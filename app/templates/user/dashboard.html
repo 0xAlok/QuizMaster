@@ -12,33 +12,36 @@
     </div>
 </div>
 
+<!-- Stats cards -->
 <div class="row mb-4">
     <div class="col-md-6">
-        <div class="card">
+        <div class="card mb-4">
             <div class="card-header bg-primary text-white">
-                <h5>Available Subjects</h5>
+                <h5>Your Stats</h5>
             </div>
             <div class="card-body">
-                {% if subjects %}
-                <div class="list-group">
-                    {% for subject in subjects %}
-                    <a href="#" class="list-group-item list-group-item-action">
-                        <h5 class="mb-1">{{ subject.name }}</h5>
-                        <p class="mb-1">{{ subject.description }}</p>
-                    </a>
-                    {% endfor %}
+                <div class="row text-center">
+                    <div class="col-md-6 mb-3">
+                        <div class="border rounded p-3">
+                            <h3>{{ total_attempts }}</h3>
+                            <p class="text-muted mb-0">Total Quizzes Attempted</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="border rounded p-3">
+                            <h3>{{ average_score|round(1) }}%</h3>
+                            <p class="text-muted mb-0">Average Score</p>
+                        </div>
+                    </div>
                 </div>
-                {% else %}
-                <p class="text-muted">No subjects available yet.</p>
-                {% endif %}
             </div>
         </div>
     </div>
     
     <div class="col-md-6">
-        <div class="card">
+        <div class="card mb-4">
             <div class="card-header bg-success text-white">
-                <h5>Your Quiz Scores</h5>
+                <h5>Recent Quiz Attempts</h5>
             </div>
             <div class="card-body">
                 {% if scores %}
@@ -52,18 +55,52 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for score in scores %}
+                            {% for score in scores[:5] %}
                             <tr>
-                                <td>{{ score.quiz.chapter.name }}</td>
-                                <td>{{ score.total_scored }}</td>
+                                <td>{{ score.quiz.chapter.subject.name }} - {{ score.quiz.chapter.name }}</td>
+                                <td>{{ score.total_scored }}%</td>
                                 <td>{{ score.time_stamp_of_attempt.strftime('%Y-%m-%d') }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
+                {% if scores|length > 5 %}
+                    <div class="text-end">
+                        <a href="{{ url_for('user.history') }}" class="btn btn-sm btn-outline-primary">See all attempts</a>
+                    </div>
+                {% endif %}
                 {% else %}
                 <p class="text-muted">You haven't attempted any quizzes yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5>Available Subjects</h5>
+            </div>
+            <div class="card-body">
+                {% if subjects %}
+                <div class="row">
+                    {% for subject in subjects %}
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ subject.name }}</h5>
+                                <p class="card-text">{{ subject.description }}</p>
+                                <a href="{{ url_for('user.chapters', subject_id=subject.id) }}" class="btn btn-primary">Browse Chapters</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted">No subjects available yet.</p>
                 {% endif %}
             </div>
         </div>
@@ -75,12 +112,12 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header bg-dark text-white">
-                <h5>Actions</h5>
+                <h5>Quick Links</h5>
             </div>
             <div class="card-body">
                 <div class="d-flex gap-2 flex-wrap">
-                    <a href="#" class="btn btn-primary">Browse All Subjects</a>
-                    <a href="#" class="btn btn-success">Browse All Quizzes</a>
+                    <a href="{{ url_for('user.subjects') }}" class="btn btn-primary">All Subjects</a>
+                    <a href="{{ url_for('user.history') }}" class="btn btn-success">Quiz History</a>
                 </div>
             </div>
         </div>
