@@ -108,3 +108,14 @@ body {
 .low-score {
   background-color: #dc3545; /* Red */
 }
+
+/* Custom radio button styles removed - using Bootstrap defaults */
+
+/* Override Bootstrap's disabled opacity for quiz result review */
+.list-group-item .form-check-input:disabled {
+    opacity: 1; /* Restore full opacity for the radio button */
+}
+
+.list-group-item .form-check-input:disabled ~ .form-check-label {
+    opacity: 1; /* Restore full opacity for the label */
+}

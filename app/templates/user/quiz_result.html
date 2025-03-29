@@ -170,38 +170,23 @@
                 set is_user_incorrect_choice = (is_user_choice and not
                 question_result.is_correct) %}
 
-                <div
-                  class="list-group-item {% if not was_answered %}unanswered{% endif %}"
-                >
-                  <div class="d-flex align-items-center">
-                    <input
-                      type="radio"
-                      name="review_{{ question.id }}"
-                      id="review_{{ question.id }}_opt{{ i }}"
-                      value="{{ i }}"
-                      disabled
-                      {%
-                      if
-                      is_user_choice
-                      %}checked{%
-                      endif
-                      %}
-                      style="margin-right: 10px;" {# Removed inline accent-color again #}
-                    />
-                    <label
-                      for="review_{{ question.id }}_opt{{ i }}"
-                      class="flex-grow-1 mb-0"
-                    >
-                      {# Apply text-correct (green/bold) or text-incorrect (red)
-                      based only on correctness #}
-                      <span
-                        class="{% if is_correct %}text-correct{% else %}text-incorrect{% endif %}"
-                        style="{% if is_correct %}color: #198754; font-weight: bold;{% else %}color: #dc3545;{% endif %}"
-                      >
-                        {{ option_text }}
-                      </span>
-                    </label>
-                  </div>
+                {# Use Bootstrap form-check structure #}
+                <div class="list-group-item form-check {% if not was_answered %}unanswered{% endif %}">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="review_{{ question.id }}"
+                    id="review_{{ question.id }}_opt{{ i }}"
+                    value="{{ i }}"
+                    disabled
+                    {% if is_user_choice %}checked{% endif %}
+                  />
+                  <label class="form-check-label" for="review_{{ question.id }}_opt{{ i }}">
+                    {# Apply text color styling directly to label text #}
+                    <span style="{% if is_correct %}color: #198754; font-weight: bold;{% else %}color: #dc3545;{% endif %}">
+                      {{ option_text }}
+                    </span>
+                  </label>
                 </div>
                 {% endfor %}
               </div>
