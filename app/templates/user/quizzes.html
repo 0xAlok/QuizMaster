@@ -20,6 +20,14 @@
         </div>
     </div>
 
+    <!-- Search Form -->
+    <form method="GET" action="{{ url_for('user.quizzes', chapter_id=chapter.id) }}" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="search" class="form-control" placeholder="Search Quizzes by Remarks..." value="{{ request.args.get('search', '') }}">
+            <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-search"></i> Search</button>
+        </div>
+    </form>
+
     <div class="row">
         {% if quizzes %}
             {% for quiz in quizzes %}

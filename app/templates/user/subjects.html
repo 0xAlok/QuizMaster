@@ -18,6 +18,14 @@
         </div>
     </div>
 
+    <!-- Search Form -->
+    <form method="GET" action="{{ url_for('user.subjects') }}" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="search" class="form-control" placeholder="Search Subjects by Name or Description..." value="{{ request.args.get('search', '') }}">
+            <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-search"></i> Search</button>
+        </div>
+    </form>
+
     <div class="row">
         {% if subjects %}
             {% for subject in subjects %}

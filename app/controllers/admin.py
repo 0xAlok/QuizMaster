@@ -46,16 +46,41 @@ def dashboard():
 @admin_bp.route("/users")
 @admin_required
 def users():
-    users_list = User.query.all()
-    return render_template("admin/users.html", users=users_list)
+    search_term = request.args.get('search', '')
+    query = User.query
+    
+    if search_term:
+        search_pattern = f"%{search_term}%"
+        # Assuming User model has 'username' and 'full_name' fields
+        query = query.filter(
+            db.or_(
+                User.username.ilike(search_pattern),
+                User.full_name.ilike(search_pattern)
+            )
+        )
+        
+    users_list = query.all()
+    return render_template("admin/users.html", users=users_list, search_term=search_term)
 
 
 # Subject Management Routes
 @admin_bp.route("/subjects")
 @admin_required
 def subjects():
-    subjects_list = Subject.query.all()
-    return render_template("admin/subjects.html", subjects=subjects_list)
+    search_term = request.args.get('search', '')
+    query = Subject.query
+    
+    if search_term:
+        search_pattern = f"%{search_term}%"
+        query = query.filter(
+            db.or_(
+                Subject.name.ilike(search_pattern),
+                Subject.description.ilike(search_pattern)
+            )
+        )
+        
+    subjects_list = query.all()
+    return render_template("admin/subjects.html", subjects=subjects_list, search_term=search_term)
 
 
 @admin_bp.route("/subject/add", methods=["GET", "POST"])
@@ -169,8 +194,18 @@ def delete_chapter(id):
 @admin_required
 def quizzes(chapter_id):
     chapter = Chapter.query.get_or_404(chapter_id)
-    quizzes_list = Quiz.query.filter_by(chapter_id=chapter_id).all()
-    return render_template("admin/quizzes.html", quizzes=quizzes_list, chapter=chapter)
+    search_term = request.args.get('search', '')
+    query = Quiz.query.filter_by(chapter_id=chapter_id)
+    
+    if search_term:
+        search_pattern = f"%{search_term}%"
+        query = query.filter(Quiz.remarks.ilike(search_pattern))
+        
+    quizzes_list = query.all()
+    return render_template("admin/quizzes.html", 
+                           quizzes=quizzes_list, 
+                           chapter=chapter, 
+                           search_term=search_term)
 
 
 @admin_bp.route("/quiz/add/<int:chapter_id>", methods=["GET", "POST"])
@@ -254,8 +289,18 @@ def delete_quiz(id):
 @admin_required
 def questions(quiz_id):
     quiz = Quiz.query.get_or_404(quiz_id)
-    questions_list = Question.query.filter_by(quiz_id=quiz_id).all()
-    return render_template("admin/questions.html", questions=questions_list, quiz=quiz)
+    search_term = request.args.get('search', '')
+    query = Question.query.filter_by(quiz_id=quiz_id)
+    
+    if search_term:
+        search_pattern = f"%{search_term}%"
+        query = query.filter(Question.question_text.ilike(search_pattern))
+        
+    questions_list = query.all()
+    return render_template("admin/questions.html", 
+                           questions=questions_list, 
+                           quiz=quiz, 
+                           search_term=search_term)
 
 
 @admin_bp.route("/question/add/<int:quiz_id>", methods=["GET", "POST"])
