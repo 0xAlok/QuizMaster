@@ -1,155 +1,241 @@
-{% extends 'base.html' %}
-
-{% block title %}Quiz History - Quiz Master{% endblock %}
-
-{% block head %}
-{{ super() }}
+{% extends 'base.html' %} {% block title %}Quiz History - Quiz Master{% endblock
+%} {% block head %} {{ super() }}
 <style>
-    .score-badge {
-        font-size: 1rem;
-        padding: 8px 12px;
-    }
-    .history-card {
-        transition: transform 0.2s;
-    }
-    .history-card:hover {
-        transform: translateY(-5px);
-    }
-    /* .summary-box class removed - using Bootstrap utilities instead */
-    .summary-number {
-        font-size: 2rem; /* Keep this for the number size */
-        font-weight: bold;
-        display: block;
-        margin-bottom: 5px;
-    }
-    /* Add this class to ensure icon has proper padding */
-    .summary-icon {
-        padding-left: 15px;
-    }
+  .score-badge {
+    font-size: 1rem;
+    padding: 8px 12px;
+  }
+  .history-card {
+    transition: transform 0.2s;
+  }
+  .history-card:hover {
+    transform: translateY(-5px);
+  }
+  /* .summary-box class removed - using Bootstrap utilities instead */
+  .summary-number {
+    font-size: 2rem; /* Keep this for the number size */
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+  }
+  /* Add this class to ensure icon has proper padding */
+  .summary-icon {
+    padding-left: 15px;
+  }
 </style>
-{% endblock %}
-
-{% block content %}
+{% endblock %} {% block content %}
 <div class="container">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ url_for('user.dashboard') }}">Dashboard</a></li>
-            <li class="breadcrumb-item active">Quiz History</li>
-        </ol>
-    </nav>
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="{{ url_for('user.dashboard') }}">Dashboard</a>
+      </li>
+      <li class="breadcrumb-item active">Quiz History</li>
+    </ol>
+  </nav>
 
-    <div class="row mb-4">
-        <div class="col-12">
-            <h2>Your Quiz History</h2>
-            <p class="lead">Review all your past quiz attempts and scores.</p>
-        </div>
+  <div class="row mb-4">
+    <div class="col-12">
+      <h2>Your Quiz History</h2>
+      <p class="lead">Review all your past quiz attempts and scores.</p>
     </div>
+  </div>
 
-    {% if scores %}
-    <!-- Summary Statistics -->
-    <div class="row mb-4">
-        <div class="col-md-6 mb-3"> {# Changed from col-md-4 #}
-            {# Replace summary-box with Bootstrap utilities #}
-            <div class="bg-primary text-white d-flex align-items-center rounded p-3 shadow-sm"> 
-                <i class="bi bi-journals fs-2 me-3"></i> {# Keep icon margin #}
-                <div class="ps-2"> {# Keep padding start for text #}
-                    Total Quizzes Attempted
-                    <span class="summary-number">{{ scores|length }}</span>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6 mb-3"> {# Changed from col-md-4 #}
-             {# Replace summary-box with Bootstrap utilities #}
-            <div class="bg-success text-white d-flex align-items-center rounded p-3 shadow-sm">
-                <i class="bi bi-graph-up fs-2 me-3"></i> {# Keep icon margin #}
-                <div class="ps-2"> {# Keep padding start for text #}
-                    Average Score
-                <span class="summary-number">
-                    {% set total_score = namespace(value=0) %}
-                    {% for score in scores %}
-                        {% set total_score.value = total_score.value + score.total_scored %}
-                    {% endfor %}
-                    {{ (total_score.value / scores|length)|round(1) }}%
-                </span>
-                </div>
-            </div>
-        </div>
-        {# Remove Latest Achievement Box #}
+  <!-- Filter Form -->
+  <form
+    method="GET"
+    action="{{ url_for('user.history') }}"
+    class="mb-4 card card-body"
+  >
+    <div class="row g-3 align-items-end">
+      <div class="col-md-4">
+        <label for="search" class="form-label">Search Subject/Chapter</label>
+        <input
+          type="text"
+          name="search"
+          id="search"
+          class="form-control form-control-sm"
+          value="{{ search_term or '' }}"
+        />
+      </div>
+      <div class="col-md-2">
+        <label for="min_score" class="form-label">Min Score (%)</label>
+        <input
+          type="number"
+          name="min_score"
+          id="min_score"
+          class="form-control form-control-sm"
+          value="{{ min_score or '' }}"
+          min="0"
+          max="100"
+          step="0.1"
+        />
+      </div>
+      <div class="col-md-2">
+        <label for="max_score" class="form-label">Max Score (%)</label>
+        <input
+          type="number"
+          name="max_score"
+          id="max_score"
+          class="form-control form-control-sm"
+          value="{{ max_score or '' }}"
+          min="0"
+          max="100"
+          step="0.1"
+        />
+      </div>
+      <div class="col-md-2">
+        <label for="start_date" class="form-label">Start Date</label>
+        <input
+          type="date"
+          name="start_date"
+          id="start_date"
+          class="form-control form-control-sm"
+          value="{{ start_date or '' }}"
+        />
+      </div>
+      <div class="col-md-2">
+        <label for="end_date" class="form-label">End Date</label>
+        <input
+          type="date"
+          name="end_date"
+          id="end_date"
+          class="form-control form-control-sm"
+          value="{{ end_date or '' }}"
+        />
+      </div>
+      <div class="col-12 d-flex justify-content-end gap-2">
+        <a
+          href="{{ url_for('user.history') }}"
+          class="btn btn-sm btn-outline-secondary"
+          >Clear Filters</a
+        >
+        <button type="submit" class="btn btn-sm btn-primary">
+          <i class="bi bi-funnel"></i> Filter
+        </button>
+      </div>
+    </div>
+  </form>
 
-        {# Move Quiz Attempts card into the same row as summary boxes #}
-        <div class="col-12 mt-4"> {# Add margin-top for spacing #}
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">Quiz Attempts</h4>
-                </div>
-                <div class="card-body">
-                    {% if scores %}
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>Subject</th>
-                                        <th>Chapter</th>
-                                        <th>Score</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for score in scores %}
-                                    <tr class="history-card">
-                                        <td>
-                                            <i class="bi bi-calendar-event me-1"></i>
-                                            {{ score.time_stamp_of_attempt.strftime('%Y-%m-%d') }}
-                                            <br>
-                                            <small class="text-muted">{{ score.time_stamp_of_attempt.strftime('%H:%M') }}</small>
-                                        </td>
-                                        <td>{{ score.quiz.chapter.subject.name }}</td>
-                                        <td>{{ score.quiz.chapter.name }}</td>
-                                        {# Reverted to plain text score #}
-                                        <td>
-                                            {{ score.total_scored|round(1) }}%
-                                        </td>
-                                        <td>
-                                            {# Corrected Status Badge Logic #}
-                                            {% if score.total_scored >= 70 %}
-                                                <span class="badge bg-success score-badge">Excellent</span>
-                                            {% elif score.total_scored >= 40 %}
-                                                <span class="badge bg-warning text-dark score-badge">Good</span>
-                                            {% else %}
-                                                <span class="badge bg-danger score-badge">Needs Improvement</span>
-                                            {% endif %}
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
+  {% if scores %}
+  <!-- Summary Statistics -->
+  <div class="row mb-4">
+    <div class="col-md-6 mb-3">
+      {# Changed from col-md-4 #} {# Replace summary-box with Bootstrap
+      utilities #}
+      <div
+        class="bg-primary text-white d-flex align-items-center rounded p-3 shadow-sm"
+      >
+        <i class="bi bi-journals fs-2 me-3"></i> {# Keep icon margin #}
+        <div class="ps-2">
+          {# Keep padding start for text #} Total Quizzes Attempted :
+          <span class="summary-number">{{ scores|length }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 mb-3">
+      {# Changed from col-md-4 #} {# Replace summary-box with Bootstrap
+      utilities #}
+      <div
+        class="bg-success text-white d-flex align-items-center rounded p-3 shadow-sm"
+      >
+        <i class="bi bi-graph-up fs-2 me-3"></i> {# Keep icon margin #}
+        <div class="ps-2">
+          {# Keep padding start for text #} Average Score :
+          <span class="summary-number">
+            {% set total_score = namespace(value=0) %} {% for score in scores %}
+            {% set total_score.value = total_score.value + score.total_scored %}
+            {% endfor %} {{ (total_score.value / scores|length)|round(1) }}%
+          </span>
+        </div>
+      </div>
+    </div>
+    {# Remove Latest Achievement Box #} {# Move Quiz Attempts card into the same
+    row as summary boxes #}
+    <div class="col-12 mt-4">
+      {# Add margin-top for spacing #}
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0">Quiz Attempts</h4>
+        </div>
+        <div class="card-body">
+          {% if scores %}
+          <div class="table-responsive">
+            <table class="table table-striped table-hover">
+              <thead class="table-light">
+                <tr>
+                  <th>Date</th>
+                  <th>Subject</th>
+                  <th>Chapter</th>
+                  <th>Score</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for score in scores %}
+                <tr class="history-card">
+                  <td>
+                    <i class="bi bi-calendar-event me-1"></i>
+                    {{ score.time_stamp_of_attempt.strftime('%Y-%m-%d') }}
+                    <br />
+                    <small class="text-muted"
+                      >{{ score.time_stamp_of_attempt.strftime('%H:%M')
+                      }}</small
+                    >
+                  </td>
+                  <td>{{ score.quiz.chapter.subject.name }}</td>
+                  <td>{{ score.quiz.chapter.name }}</td>
+                  {# Reverted to plain text score #}
+                  <td>{{ score.total_scored|round(1) }}%</td>
+                  <td>
+                    {# Corrected Status Badge Logic #} {% if score.total_scored
+                    >= 70 %}
+                    <span class="badge bg-success score-badge">Excellent</span>
+                    {% elif score.total_scored >= 40 %}
+                    <span class="badge bg-warning text-dark score-badge"
+                      >Good</span
+                    >
                     {% else %}
-                        <div class="alert alert-info">
-                            <p><i class="bi bi-info-circle-fill me-2"></i> You haven't attempted any quizzes yet. Go to the dashboard to find available quizzes.</p>
-                        </div>
-                        <div class="text-center mt-4">
-                            <a href="{{ url_for('user.subjects') }}" class="btn btn-primary btn-lg">
-                                <i class="bi bi-journal-text me-2"></i>Browse Subjects
-                            </a>
-                        </div>
+                    <span class="badge bg-danger score-badge"
+                      >Needs Improvement</span
+                    >
                     {% endif %}
-                    {% endif %}
-                </div>
-            </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <div class="alert alert-info">
+            <p>
+              <i class="bi bi-info-circle-fill me-2"></i> You haven't attempted
+              any quizzes yet. Go to the dashboard to find available quizzes.
+            </p>
+          </div>
+          <div class="text-center mt-4">
+            <a
+              href="{{ url_for('user.subjects') }}"
+              class="btn btn-primary btn-lg"
+            >
+              <i class="bi bi-journal-text me-2"></i>Browse Subjects
+            </a>
+          </div>
+          {% endif %} {% endif %}
         </div>
+      </div>
     </div>
+  </div>
 
-    {% if scores %}
-    <div class="mt-4">
-        <a href="{{ url_for('user.dashboard') }}" class="btn btn-secondary">
-            <i class="bi bi-speedometer2 me-1"></i>Back to Dashboard
-        </a>
-        <a href="{{ url_for('user.subjects') }}" class="btn btn-primary">
-            <i class="bi bi-journal-text me-1"></i>Browse Subjects
-        </a>
-    </div>
-    {% endif %}
+  {% if scores %}
+  <div class="mt-4">
+    <a href="{{ url_for('user.dashboard') }}" class="btn btn-secondary">
+      <i class="bi bi-speedometer2 me-1"></i>Back to Dashboard
+    </a>
+    <a href="{{ url_for('user.subjects') }}" class="btn btn-primary">
+      <i class="bi bi-journal-text me-1"></i>Browse Subjects
+    </a>
+  </div>
+  {% endif %}
 </div>
 {% endblock %}

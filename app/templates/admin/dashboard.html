@@ -1,307 +1,441 @@
-{% extends 'base.html' %}
-
-{% block title %}Admin Dashboard - Quiz Master{% endblock %}
-
-{% block head %}
-{{ super() }}
-{# Chart.js scripts will be loaded at the end of the content block #}
-{% endblock %}
-
-{% block content %}
+{% extends 'base.html' %} {% block title %}Admin Dashboard - Quiz Master{%
+endblock %} {% block head %} {{ super() }} {# Chart.js scripts will be loaded at
+the end of the content block #} {% endblock %} {% block content %}
 <div class="row mb-4">
-    <div class="col-12 d-flex justify-content-between align-items-center">
-        <h2 class="mb-0">Admin Dashboard</h2>
-        <a href="{{ url_for('admin.add_subject') }}" class="btn btn-primary">
-            <i class="bi bi-plus-circle"></i> Add New Subject
-        </a>
-    </div>
+  <div class="col-12 d-flex justify-content-between align-items-center">
+    <h2 class="mb-0">Admin Dashboard</h2>
+    <a href="{{ url_for('admin.add_subject') }}" class="btn btn-primary">
+      <i class="bi bi-plus-circle"></i> Add New Subject
+    </a>
+  </div>
 </div>
 
 <div class="row">
-    {% if subjects %}
-        {% for subject in subjects %}
-            <div class="col-md-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">{{ subject.name }}</h5>
-                        {# Subject Actions #}
-                        <div>
-                            <a href="{{ url_for('admin.edit_subject', id=subject.id) }}" class="btn btn-sm btn-outline-warning me-1" title="Edit Subject">
-                                <i class="bi bi-pencil"></i>
-                            </a>
-                            <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteSubjectModal-{{ subject.id }}" title="Delete Subject">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <p>{{ subject.description }}</p>
-                        <h6>Chapters:</h6>
-                        {% if subject.chapters %}
-                            <ul class="list-group list-group-flush">
-                                {% for chapter in subject.chapters %}
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        <a href="{{ url_for('admin.quizzes', chapter_id=chapter.id) }}">{{ chapter.name }}</a>
-                                        {# Chapter Actions #}
-                                        <div class="btn-group btn-group-sm">
-                                             <a href="{{ url_for('admin.quizzes', chapter_id=chapter.id) }}" class="btn btn-sm btn-outline-info" title="View Quizzes">
-                                                <i class="bi bi-card-list"></i> Quizzes
-                                            </a>
-                                            <a href="{{ url_for('admin.edit_chapter', id=chapter.id) }}" class="btn btn-sm btn-outline-warning" title="Edit Chapter">
-                                                <i class="bi bi-pencil"></i>
-                                            </a>
-                                            <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteChapterModal-{{ chapter.id }}" title="Delete Chapter">
-                                                 <i class="bi bi-trash"></i>
-                                            </button>
-                                        </div>
-                                    </li>
-                                    
-                                    <!-- Delete Chapter Modal -->
-                                    <div class="modal fade" id="deleteChapterModal-{{ chapter.id }}" tabindex="-1" aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title">Confirm Delete Chapter</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    Are you sure you want to delete chapter "{{ chapter.name }}"? This will delete all associated quizzes and questions.
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                    <form action="{{ url_for('admin.delete_chapter', id=chapter.id) }}" method="POST" class="d-inline">
-                                                        <button type="submit" class="btn btn-danger">Delete Chapter</button>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                {% endfor %}
-                            </ul>
-                        {% else %}
-                            <p class="text-muted">No chapters added yet.</p>
-                        {% endif %}
-                    </div>
-                    <div class="card-footer text-end">
-                         <a href="{{ url_for('admin.add_chapter', subject_id=subject.id) }}" class="btn btn-sm btn-success">
-                            <i class="bi bi-plus-lg"></i> Add Chapter
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Delete Subject Modal -->
-            <div class="modal fade" id="deleteSubjectModal-{{ subject.id }}" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Confirm Delete Subject</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            Are you sure you want to delete subject "{{ subject.name }}"? This will delete all associated chapters, quizzes, and questions.
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <form action="{{ url_for('admin.delete_subject', id=subject.id) }}" method="POST" class="d-inline">
-                                <button type="submit" class="btn btn-danger">Delete Subject</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        {% endfor %}
-    {% else %}
-        <div class="col-12">
-            <div class="alert alert-info">No subjects created yet. Click "Add New Subject" to get started.</div>
+  {% if subjects %} {% for subject in subjects %}
+  <div class="col-md-6 mb-4">
+    <div class="card h-100">
+      <div
+        class="card-header d-flex justify-content-between align-items-center"
+      >
+        <h5 class="mb-0">{{ subject.name }}</h5>
+        {# Subject Actions #}
+        <div>
+          <a
+            href="{{ url_for('admin.edit_subject', id=subject.id) }}"
+            class="btn btn-sm btn-outline-warning me-1"
+            title="Edit Subject"
+          >
+            <i class="bi bi-pencil"></i>
+          </a>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-danger"
+            data-bs-toggle="modal"
+            data-bs-target="#deleteSubjectModal-{{ subject.id }}"
+            title="Delete Subject"
+          >
+            <i class="bi bi-trash"></i>
+          </button>
         </div>
-    {% endif %}
+      </div>
+      <div class="card-body">
+        <p>{{ subject.description }}</p>
+        <h6>Chapters:</h6>
+        {% if subject.chapters %}
+        <ul class="list-group list-group-flush">
+          {% for chapter in subject.chapters %} {# Calculate total questions for
+          the chapter #} {% set total_questions = namespace(count=0) %} {% for
+          quiz in chapter.quizzes %} {% set total_questions.count =
+          total_questions.count + (quiz.questions | length) %} {% endfor %}
+
+          <li
+            class="list-group-item d-flex justify-content-between align-items-center"
+          >
+            {# Chapter Name Link #}
+            <a href="{{ url_for('admin.quizzes', chapter_id=chapter.id) }}"
+              >{{ chapter.name }}</a
+            >
+
+            {# Chapter Actions and Counts Group #}
+            <div class="btn-group btn-group-sm">
+              {# Display Quiz Count as disabled button #}
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-secondary"
+                title="Number of Quizzes"
+              >
+                {{ chapter.quizzes | length }} Quizzes
+              </button>
+              {# Display Question Count as disabled button #}
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-secondary"
+                title="Total Questions"
+              >
+                {{ total_questions.count }} Qs
+              </button>
+              {# Edit Button #}
+              <a
+                href="{{ url_for('admin.edit_chapter', id=chapter.id) }}"
+                class="btn btn-sm btn-outline-warning"
+                title="Edit Chapter"
+              >
+                <i class="bi bi-pencil"></i>
+              </a>
+              {# Delete Button #}
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-danger"
+                data-bs-toggle="modal"
+                data-bs-target="#deleteChapterModal-{{ chapter.id }}"
+                title="Delete Chapter"
+              >
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </li>
+
+          <!-- Delete Chapter Modal -->
+          <div
+            class="modal fade"
+            id="deleteChapterModal-{{ chapter.id }}"
+            tabindex="-1"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Confirm Delete Chapter</h5>
+                  <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                  ></button>
+                </div>
+                <div class="modal-body">
+                  Are you sure you want to delete chapter "{{ chapter.name }}"?
+                  This will delete all associated quizzes and questions.
+                </div>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                  >
+                    Cancel
+                  </button>
+                  <form
+                    action="{{ url_for('admin.delete_chapter', id=chapter.id) }}"
+                    method="POST"
+                    class="d-inline"
+                  >
+                    <button type="submit" class="btn btn-danger">
+                      Delete Chapter
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-muted">No chapters added yet.</p>
+        {% endif %}
+      </div>
+      <div class="card-footer text-end">
+        <a
+          href="{{ url_for('admin.add_chapter', subject_id=subject.id) }}"
+          class="btn btn-sm btn-success"
+        >
+          <i class="bi bi-plus-lg"></i> Add Chapter
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Subject Modal -->
+  <div
+    class="modal fade"
+    id="deleteSubjectModal-{{ subject.id }}"
+    tabindex="-1"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirm Delete Subject</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to delete subject "{{ subject.name }}"? This
+          will delete all associated chapters, quizzes, and questions.
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Cancel
+          </button>
+          <form
+            action="{{ url_for('admin.delete_subject', id=subject.id) }}"
+            method="POST"
+            class="d-inline"
+          >
+            <button type="submit" class="btn btn-danger">Delete Subject</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %} {% else %}
+  <div class="col-12">
+    <div class="alert alert-info">
+      No subjects created yet. Click "Add New Subject" to get started.
+    </div>
+  </div>
+  {% endif %}
 </div>
 
-
 {# --- Keep Charts Section (Can be removed if not desired) --- #}
-<hr class="my-5">
+<hr class="my-5" />
 <h3 class="text-center mb-4">Summary Statistics</h3>
 
 <!-- Charts Row 1 -->
 <div class="row mb-4">
-    <!-- Quizzes per Subject Chart -->
-    <div class="col-md-6 mb-4"> 
-        <div class="card h-100">
-            <div class="card-header bg-secondary text-white">
-                <h5>Quizzes per Subject</h5>
-            </div>
-            <div class="card-body">
-                {% if subject_labels and quiz_counts_data %}
-                     <canvas id="quizzesPerSubjectChart"></canvas> 
-                {% else %}
-                    <p class="text-muted">No subject or quiz data available to display chart.</p>
-                {% endif %}
-            </div>
-        </div>
+  <!-- Quizzes per Subject Chart -->
+  <div class="col-md-6 mb-4">
+    <div class="card h-100">
+      <div class="card-header bg-secondary text-white">
+        <h5>Quizzes per Subject</h5>
+      </div>
+      <div class="card-body">
+        {% if subject_labels and quiz_counts_data %}
+        <canvas id="quizzesPerSubjectChart"></canvas>
+        {% else %}
+        <p class="text-muted">
+          No subject or quiz data available to display chart.
+        </p>
+        {% endif %}
+      </div>
     </div>
-     <!-- User Registration Trend Chart -->
-    <div class="col-md-6 mb-4"> 
-        <div class="card h-100">
-            <div class="card-header bg-primary text-white">
-                <h5>User Registrations Over Time</h5>
-            </div>
-            <div class="card-body">
-                {% if registration_labels and registration_data %}
-                     <canvas id="userRegistrationChart"></canvas> 
-                {% else %}
-                    <p class="text-muted">No user registration data available.</p>
-                {% endif %}
-            </div>
-        </div>
+  </div>
+  <!-- User Registration Trend Chart -->
+  <div class="col-md-6 mb-4">
+    <div class="card h-100">
+      <div class="card-header bg-primary text-white">
+        <h5>User Registrations Over Time</h5>
+      </div>
+      <div class="card-body">
+        {% if registration_labels and registration_data %}
+        <canvas id="userRegistrationChart"></canvas>
+        {% else %}
+        <p class="text-muted">No user registration data available.</p>
+        {% endif %}
+      </div>
     </div>
+  </div>
 </div>
 
 <!-- Charts Row 2 -->
 <div class="row mb-4">
-     <!-- Average Score per Quiz Chart -->
-     <div class="col-12"> 
-        <div class="card">
-            <div class="card-header bg-success text-white">
-                <h5>Average Score per Quiz</h5>
-            </div>
-            <div class="card-body">
-                 {% if avg_quiz_labels and avg_quiz_data %}
-                     <canvas id="avgScorePerQuizChart"></canvas> 
-                 {% else %}
-                    <p class="text-muted">No quiz score data available.</p>
-                 {% endif %}
-            </div>
-        </div>
+  <!-- Average Score per Quiz Chart -->
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header bg-success text-white">
+        <h5>Average Score per Quiz</h5>
+      </div>
+      <div class="card-body">
+        {% if avg_quiz_labels and avg_quiz_data %}
+        <canvas id="avgScorePerQuizChart"></canvas>
+        {% else %}
+        <p class="text-muted">No quiz score data available.</p>
+        {% endif %}
+      </div>
     </div>
+  </div>
 </div>
 
 {# Embed data in a JSON script tag #}
 <script id="adminChartData" type="application/json">
-    {{ {
-        "subjectLabels": subject_labels,
-        "quizCountsData": quiz_counts_data,
-        "registrationLabels": registration_labels,
-        "registrationData": registration_data,
-        "avgQuizLabels": avg_quiz_labels,
-        "avgQuizData": avg_quiz_data
-    }|tojson|safe }}
+  {{ {
+      "subjectLabels": subject_labels,
+      "quizCountsData": quiz_counts_data,
+      "registrationLabels": registration_labels,
+      "registrationData": registration_data,
+      "avgQuizLabels": avg_quiz_labels,
+      "avgQuizData": avg_quiz_data
+  }|tojson|safe }}
 </script>
 
 {# Chart Initialization Script #}
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener("DOMContentLoaded", function () {
     let adminChartData = {};
     try {
-        const chartDataElement = document.getElementById('adminChartData');
-        if (chartDataElement) {
-            adminChartData = JSON.parse(chartDataElement.textContent || '{}');
-        } else {
-             console.error("Admin chart data script tag not found.");
-        }
+      const chartDataElement = document.getElementById("adminChartData");
+      if (chartDataElement) {
+        adminChartData = JSON.parse(chartDataElement.textContent || "{}");
+      } else {
+        console.error("Admin chart data script tag not found.");
+      }
     } catch (e) {
-        console.error("Error parsing admin chart data JSON:", e);
+      console.error("Error parsing admin chart data JSON:", e);
     }
 
     // --- Quizzes per Subject Chart ---
-    const quizzesPerSubjectCanvas = document.getElementById('quizzesPerSubjectChart');
-    if (quizzesPerSubjectCanvas && adminChartData.subjectLabels && adminChartData.quizCountsData) {
-        try {
-            if (Array.isArray(adminChartData.subjectLabels) && adminChartData.subjectLabels.length > 0 && Array.isArray(adminChartData.quizCountsData) && adminChartData.quizCountsData.length > 0) {
-                const ctx = quizzesPerSubjectCanvas.getContext('2d');
-                new Chart(ctx, { 
-                    type: 'bar', 
-                    data: {
-                        labels: adminChartData.subjectLabels,
-                        datasets: [{
-                            label: '# of Quizzes',
-                            data: adminChartData.quizCountsData,
-                            backgroundColor: 'rgba(54, 162, 235, 0.6)', 
-                            borderColor: 'rgba(54, 162, 235, 1)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: { /* ... options ... */ }
-                });
-            } 
-        } catch (e) { console.error("Error creating quizzes per subject chart:", e); }
-    } 
+    const quizzesPerSubjectCanvas = document.getElementById(
+      "quizzesPerSubjectChart"
+    );
+    if (
+      quizzesPerSubjectCanvas &&
+      adminChartData.subjectLabels &&
+      adminChartData.quizCountsData
+    ) {
+      try {
+        if (
+          Array.isArray(adminChartData.subjectLabels) &&
+          adminChartData.subjectLabels.length > 0 &&
+          Array.isArray(adminChartData.quizCountsData) &&
+          adminChartData.quizCountsData.length > 0
+        ) {
+          const ctx = quizzesPerSubjectCanvas.getContext("2d");
+          new Chart(ctx, {
+            type: "bar",
+            data: {
+              labels: adminChartData.subjectLabels,
+              datasets: [
+                {
+                  label: "# of Quizzes",
+                  data: adminChartData.quizCountsData,
+                  backgroundColor: "rgba(54, 162, 235, 0.6)",
+                  borderColor: "rgba(54, 162, 235, 1)",
+                  borderWidth: 1,
+                },
+              ],
+            },
+            options: {
+              /* ... options ... */
+            },
+          });
+        }
+      } catch (e) {
+        console.error("Error creating quizzes per subject chart:", e);
+      }
+    }
 
     // --- User Registration Trend Chart ---
-    const userRegCanvas = document.getElementById('userRegistrationChart');
-    if (userRegCanvas && adminChartData.registrationLabels && adminChartData.registrationData) {
-        try {
-            if (Array.isArray(adminChartData.registrationLabels) && adminChartData.registrationLabels.length > 0 && Array.isArray(adminChartData.registrationData) && adminChartData.registrationData.length > 0) {
-                const ctx = userRegCanvas.getContext('2d');
-                new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: adminChartData.registrationLabels,
-                        datasets: [{
-                            label: 'Registrations',
-                            data: adminChartData.registrationData,
-                            borderColor: 'rgb(255, 99, 132)',
-                            tension: 0.1,
-                            fill: false
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            y: { beginAtZero: true, title: { display: true, text: 'No. of Users Registered' } },
-                            x: { 
-                                title: { display: true, text: 'Date' } 
-                            } 
-                        },
-                        plugins: { legend: { display: false } }
-                    }
-                });
-            }
-        } catch (e) { console.error("Error creating user registration chart:", e); }
+    const userRegCanvas = document.getElementById("userRegistrationChart");
+    if (
+      userRegCanvas &&
+      adminChartData.registrationLabels &&
+      adminChartData.registrationData
+    ) {
+      try {
+        if (
+          Array.isArray(adminChartData.registrationLabels) &&
+          adminChartData.registrationLabels.length > 0 &&
+          Array.isArray(adminChartData.registrationData) &&
+          adminChartData.registrationData.length > 0
+        ) {
+          const ctx = userRegCanvas.getContext("2d");
+          new Chart(ctx, {
+            type: "line",
+            data: {
+              labels: adminChartData.registrationLabels,
+              datasets: [
+                {
+                  label: "Registrations",
+                  data: adminChartData.registrationData,
+                  borderColor: "rgb(255, 99, 132)",
+                  tension: 0.1,
+                  fill: false,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  title: { display: true, text: "No. of Users Registered" },
+                },
+                x: {
+                  title: { display: true, text: "Date" },
+                },
+              },
+              plugins: { legend: { display: false } },
+            },
+          });
+        }
+      } catch (e) {
+        console.error("Error creating user registration chart:", e);
+      }
     }
 
     // --- Average Score per Quiz Chart ---
-    const avgScoreQuizCanvas = document.getElementById('avgScorePerQuizChart');
-    if (avgScoreQuizCanvas && adminChartData.avgQuizLabels && adminChartData.avgQuizData) {
-        try {
-             if (Array.isArray(adminChartData.avgQuizLabels) && adminChartData.avgQuizLabels.length > 0 && Array.isArray(adminChartData.avgQuizData) && adminChartData.avgQuizData.length > 0) {
-                const ctx = avgScoreQuizCanvas.getContext('2d');
-                new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: adminChartData.avgQuizLabels, 
-                        datasets: [{
-                            label: 'Average Score (%)',
-                            data: adminChartData.avgQuizData, 
-                            backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1
-                        }]
-                    },
-                     options: {
-                        responsive: true,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                max: 100,
-                                title: { display: true, text: 'Average Score (%)' }
-                            },
-                            x: {
-                                title: { display: true, text: 'Quiz ID' }
-                            }
-                        },
-                        plugins: { legend: { display: false } }
-                    }
-                });
-            }
-        } catch (e) { console.error("Error creating average score per quiz chart:", e); }
+    const avgScoreQuizCanvas = document.getElementById("avgScorePerQuizChart");
+    if (
+      avgScoreQuizCanvas &&
+      adminChartData.avgQuizLabels &&
+      adminChartData.avgQuizData
+    ) {
+      try {
+        if (
+          Array.isArray(adminChartData.avgQuizLabels) &&
+          adminChartData.avgQuizLabels.length > 0 &&
+          Array.isArray(adminChartData.avgQuizData) &&
+          adminChartData.avgQuizData.length > 0
+        ) {
+          const ctx = avgScoreQuizCanvas.getContext("2d");
+          new Chart(ctx, {
+            type: "bar",
+            data: {
+              labels: adminChartData.avgQuizLabels,
+              datasets: [
+                {
+                  label: "Average Score (%)",
+                  data: adminChartData.avgQuizData,
+                  backgroundColor: "rgba(75, 192, 192, 0.6)",
+                  borderColor: "rgba(75, 192, 192, 1)",
+                  borderWidth: 1,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  max: 100,
+                  title: { display: true, text: "Average Score (%)" },
+                },
+                x: {
+                  title: { display: true, text: "Quiz ID" },
+                },
+              },
+              plugins: { legend: { display: false } },
+            },
+          });
+        }
+      } catch (e) {
+        console.error("Error creating average score per quiz chart:", e);
+      }
     }
-
-});
+  });
 </script>
 
 <!-- Include Chart.js and Date Adapter *after* the chart initialization script -->
 {# Note: Date adapter might not be needed if no time scale is used here #}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-{# <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script> #}
-{% endblock %}
+{#
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+#} {% endblock %}

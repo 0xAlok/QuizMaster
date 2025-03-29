@@ -17,6 +17,56 @@
     </div>
 </div>
 
+<!-- Upcoming Quizzes Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5>Upcoming Quizzes</h5>
+            </div>
+            <div class="card-body">
+                {% if upcoming_quizzes %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Quiz</th>
+                                    <th>No. of Questions</th>
+                                    <th>Date</th>
+                                    <th>Duration</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for quiz in upcoming_quizzes %}
+                                <tr>
+                                    <td>{{ quiz.id }}</td>
+                                    <td>{{ quiz.chapter.subject.name }} - {{ quiz.chapter.name }}</td>
+                                    <td>{{ quiz.questions | length }}</td>
+                                    <td>{{ quiz.date_of_quiz.strftime('%Y-%m-%d') }}</td>
+                                    <td>{{ quiz.time_duration }} mins</td>
+                                    <td>
+                                        {# Link View to the chapter's quizzes page #}
+                                        <a href="{{ url_for('user.quizzes', chapter_id=quiz.chapter_id) }}" class="btn btn-sm btn-outline-secondary me-1" title="View Quizzes in Chapter">View</a>
+                                        {# Link Start to the start_quiz page #}
+                                        {# Add logic later to disable Start if already attempted or date is not today #}
+                                        <a href="{{ url_for('user.start_quiz', quiz_id=quiz.id) }}" class="btn btn-sm btn-success" title="Start Quiz">Start</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted">No upcoming quizzes scheduled.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <!-- Stats cards -->
 <div class="row mb-4">
     <div class="col-md-6">
@@ -136,52 +186,7 @@
     </div>
 </div>
 
-
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h5>Available Subjects</h5>
-            </div>
-            <div class="card-body">
-                {% if subjects %}
-                <div class="row">
-                    {% for subject in subjects %}
-                    <div class="col-md-6 mb-3">
-                        <div class="card h-100">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ subject.name }}</h5>
-                                <p class="card-text">{{ subject.description }}</p>
-                                <a href="{{ url_for('user.chapters', subject_id=subject.id) }}" class="btn btn-primary">Browse Chapters</a>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-                {% else %}
-                <p class="text-muted">No subjects available yet.</p>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- User actions -->
-<div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header bg-dark text-white">
-                <h5>Quick Links</h5>
-            </div>
-            <div class="card-body">
-                <div class="d-flex gap-2 flex-wrap">
-                    <a href="{{ url_for('user.subjects') }}" class="btn btn-primary">All Subjects</a>
-                    <a href="{{ url_for('user.history') }}" class="btn btn-success">Quiz History</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+{# Available Subjects and Quick Links sections are removed from here down #}
 
 {# Embed data in a JSON script tag #}
 <script id="userChartData" type="application/json">

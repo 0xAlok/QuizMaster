@@ -9,6 +9,11 @@ from .forms import LoginForm, RegisterForm
 
 auth_bp = Blueprint('auth', __name__)
 
+# Redirect root URL to login page
+@auth_bp.route('/')
+def index():
+    return redirect(url_for('auth.login'))
+
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
