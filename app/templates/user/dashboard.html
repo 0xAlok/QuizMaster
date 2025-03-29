@@ -4,8 +4,7 @@
 
 {% block head %}
 {{ super() }}
-<!-- Include Chart.js from CDN -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{# Chart.js scripts will be loaded at the end of the content block #}
 {% endblock %}
 
 {% block content %}
@@ -61,7 +60,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {# Temporarily remove sort filter for debugging #}
+                            {# Use the original scores list, slice first 5 #}
                             {% for score in scores[:5] %} 
                             <tr>
                                 <td>{{ score.quiz.chapter.subject.name }} - {{ score.quiz.chapter.name }}</td>
@@ -88,16 +87,14 @@
 <!-- Charts Row -->
 <div class="row mb-4">
     <!-- Score Trend Chart -->
-    <div class="col-lg-8 mb-4"> {# Make trend chart wider #}
+    <div class="col-lg-8 mb-4"> 
         <div class="card h-100">
             <div class="card-header bg-info text-white">
                 <h5>Your Score Trend</h5>
             </div>
             <div class="card-body">
                 {% if score_labels and score_data %}
-                    <canvas id="scoreTrendChart" 
-                            data-labels='{{ score_labels|tojson|safe }}' 
-                            data-scores='{{ score_data|tojson|safe }}'></canvas>
+                    <canvas id="scoreTrendChart"></canvas> 
                 {% else %}
                     <p class="text-muted">Attempt more quizzes to see your score trend.</p>
                 {% endif %}
@@ -105,16 +102,14 @@
         </div>
     </div>
      <!-- Attempts per Subject Chart -->
-    <div class="col-lg-4 mb-4"> {# Make pie chart narrower #}
+    <div class="col-lg-4 mb-4"> 
         <div class="card h-100">
             <div class="card-header bg-warning text-dark">
                 <h5>Attempts per Subject</h5>
             </div>
-            <div class="card-body d-flex align-items-center justify-content-center"> {# Center canvas #}
+            <div class="card-body d-flex align-items-center justify-content-center"> 
                 {% if attempt_subject_labels and attempt_subject_data %}
-                    <canvas id="attemptsPerSubjectChart"
-                            data-labels='{{ attempt_subject_labels|tojson|safe }}'
-                            data-counts='{{ attempt_subject_data|tojson|safe }}'></canvas>
+                    <canvas id="attemptsPerSubjectChart"></canvas> 
                 {% else %}
                     <p class="text-muted">No attempt data available.</p>
                 {% endif %}
@@ -132,9 +127,7 @@
             </div>
             <div class="card-body">
                  {% if avg_score_subject_labels and avg_score_subject_data %}
-                    <canvas id="avgScorePerSubjectChart"
-                            data-labels='{{ avg_score_subject_labels|tojson|safe }}'
-                            data-scores='{{ avg_score_subject_data|tojson|safe }}'></canvas>
+                    <canvas id="avgScorePerSubjectChart"></canvas> 
                 {% else %}
                     <p class="text-muted">No average score data available.</p>
                 {% endif %}
@@ -190,120 +183,123 @@
     </div>
 </div>
 
+{# Embed data in a JSON script tag #}
+<script id="userChartData" type="application/json">
+    {{ {
+        "scoreLabels": score_labels,
+        "scoreData": score_data,
+        "attemptLabels": attempt_subject_labels,
+        "attemptData": attempt_subject_data,
+        "avgScoreLabels": avg_score_subject_labels,
+        "avgScoreData": avg_score_subject_data
+    }|tojson|safe }}
+</script>
 
+{# Chart Initialization Script #}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    
+    let chartData = {};
+    try {
+        const chartDataElement = document.getElementById('userChartData');
+        if (chartDataElement) {
+            chartData = JSON.parse(chartDataElement.textContent || '{}');
+        } else {
+             console.error("User chart data script tag not found.");
+        }
+    } catch (e) {
+        console.error("Error parsing user chart data JSON:", e);
+    }
+
     // --- Score Trend Chart ---
     const scoreTrendCanvas = document.getElementById('scoreTrendChart');
-    if (scoreTrendCanvas && scoreTrendCanvas.dataset.labels && scoreTrendCanvas.dataset.scores) {
+    if (scoreTrendCanvas && chartData.scoreLabels && chartData.scoreData) {
         try {
-            const scoreLabels = JSON.parse(scoreTrendCanvas.dataset.labels);
-            const scoreData = JSON.parse(scoreTrendCanvas.dataset.scores);
-            if (Array.isArray(scoreLabels) && scoreLabels.length > 0 && Array.isArray(scoreData) && scoreData.length > 0) {
+            if (Array.isArray(chartData.scoreLabels) && chartData.scoreLabels.length > 0 && Array.isArray(chartData.scoreData) && chartData.scoreData.length > 0) {
                 const ctx = scoreTrendCanvas.getContext('2d');
-                new Chart(ctx, { /* ... Score Trend Chart Config ... */ 
+                new Chart(ctx, { 
                     type: 'line',
                     data: {
-                        labels: scoreLabels,
+                        labels: chartData.scoreLabels, 
                         datasets: [{
                             label: 'Quiz Score (%)',
-                            data: scoreData,
+                            data: chartData.scoreData, 
                             borderColor: 'rgb(75, 192, 192)',
                             tension: 0.1,
                             fill: false
                         }]
                     },
-                    options: { /* ... options ... */ }
+                    options: { 
+                        responsive: true,
+                        scales: {
+                            y: { beginAtZero: true, max: 100, title: { display: true, text: 'Score (%)' } },
+                            x: {
+                                type: 'time', 
+                                time: { tooltipFormat: 'yyyy-MM-dd HH:mm', unit: 'day', displayFormats: { minute: 'HH:mm', hour: 'HH:mm', day: 'MMM d', month: 'MMM yyyy' } },
+                                title: { display: true, text: 'Attempt Date & Time' },
+                                ticks: { autoSkip: true, maxRotation: 45, minRotation: 0 }
+                            }
+                        },
+                        plugins: { /* tooltip config */ }
+                    }
                 });
             }
-        } catch (e) { console.error("Error parsing score trend chart data:", e); }
+        } catch (e) { console.error("Error creating score trend chart:", e); }
     }
 
     // --- Attempts per Subject Chart ---
     const attemptsCanvas = document.getElementById('attemptsPerSubjectChart');
-    if (attemptsCanvas && attemptsCanvas.dataset.labels && attemptsCanvas.dataset.counts) {
+    if (attemptsCanvas && chartData.attemptLabels && chartData.attemptData) {
         try {
-            const attemptLabels = JSON.parse(attemptsCanvas.dataset.labels);
-            const attemptData = JSON.parse(attemptsCanvas.dataset.counts);
-            if (Array.isArray(attemptLabels) && attemptLabels.length > 0 && Array.isArray(attemptData) && attemptData.length > 0) {
+            if (Array.isArray(chartData.attemptLabels) && chartData.attemptLabels.length > 0 && Array.isArray(chartData.attemptData) && chartData.attemptData.length > 0) {
                 const ctx = attemptsCanvas.getContext('2d');
                 new Chart(ctx, {
-                    type: 'pie', // Or 'doughnut'
+                    type: 'pie', 
                     data: {
-                        labels: attemptLabels,
+                        labels: chartData.attemptLabels, 
                         datasets: [{
                             label: 'Attempts',
-                            data: attemptData,
-                            backgroundColor: [ // Add more colors if needed
-                                'rgba(255, 99, 132, 0.7)',
-                                'rgba(54, 162, 235, 0.7)',
-                                'rgba(255, 206, 86, 0.7)',
-                                'rgba(75, 192, 192, 0.7)',
-                                'rgba(153, 102, 255, 0.7)',
-                                'rgba(255, 159, 64, 0.7)'
+                            data: chartData.attemptData, 
+                            backgroundColor: [ /* colors */ 
+                                'rgba(255, 99, 132, 0.7)', 'rgba(54, 162, 235, 0.7)', 'rgba(255, 206, 86, 0.7)',
+                                'rgba(75, 192, 192, 0.7)', 'rgba(153, 102, 255, 0.7)', 'rgba(255, 159, 64, 0.7)'
                             ],
                             hoverOffset: 4
                         }]
                     },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: {
-                                position: 'top',
-                            },
-                            title: {
-                                display: false // Title is in card header
-                            }
-                        }
-                    }
+                    options: { /* options */ }
                 });
             }
-        } catch (e) { console.error("Error parsing attempts per subject chart data:", e); }
+        } catch (e) { console.error("Error creating attempts per subject chart:", e); }
     }
 
     // --- Average Score per Subject Chart ---
     const avgScoreCanvas = document.getElementById('avgScorePerSubjectChart');
-    if (avgScoreCanvas && avgScoreCanvas.dataset.labels && avgScoreCanvas.dataset.scores) {
+    if (avgScoreCanvas && chartData.avgScoreLabels && chartData.avgScoreData) {
         try {
-            const avgScoreLabels = JSON.parse(avgScoreCanvas.dataset.labels);
-            const avgScoreData = JSON.parse(avgScoreCanvas.dataset.scores);
-             if (Array.isArray(avgScoreLabels) && avgScoreLabels.length > 0 && Array.isArray(avgScoreData) && avgScoreData.length > 0) {
+             if (Array.isArray(chartData.avgScoreLabels) && chartData.avgScoreLabels.length > 0 && Array.isArray(chartData.avgScoreData) && chartData.avgScoreData.length > 0) {
                 const ctx = avgScoreCanvas.getContext('2d');
                 new Chart(ctx, {
                     type: 'bar',
                     data: {
-                        labels: avgScoreLabels,
+                        labels: chartData.avgScoreLabels, 
                         datasets: [{
                             label: 'Average Score (%)',
-                            data: avgScoreData,
+                            data: chartData.avgScoreData, 
                             backgroundColor: 'rgba(75, 192, 192, 0.6)',
                             borderColor: 'rgba(75, 192, 192, 1)',
                             borderWidth: 1
                         }]
                     },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                max: 100,
-                                title: { display: true, text: 'Average Score (%)' }
-                            },
-                            x: {
-                                title: { display: true, text: 'Subject' }
-                            }
-                        },
-                        plugins: { legend: { display: false } }
-                    }
+                    options: { /* options */ }
                 });
             }
-        } catch (e) { console.error("Error parsing average score per subject chart data:", e); }
+        } catch (e) { console.error("Error creating average score per subject chart:", e); }
     }
 
 });
 </script>
 
-<!-- Include Chart.js just before the closing block, ensuring it's loaded before the script above runs -->
+<!-- Include Chart.js and Date Adapter *after* the chart initialization script -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 {% endblock %}

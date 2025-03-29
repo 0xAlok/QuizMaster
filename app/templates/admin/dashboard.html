@@ -4,8 +4,7 @@
 
 {% block head %}
 {{ super() }}
-<!-- Include Chart.js from CDN -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{# Chart.js scripts will be loaded at the end of the content block #}
 {% endblock %}
 
 {% block content %}
@@ -100,9 +99,7 @@
             </div>
             <div class="card-body">
                 {% if subject_labels and quiz_counts_data %}
-                     <canvas id="quizzesPerSubjectChart"
-                             data-labels='{{ subject_labels|tojson|safe }}'
-                             data-counts='{{ quiz_counts_data|tojson|safe }}'></canvas>
+                     <canvas id="quizzesPerSubjectChart"></canvas> {# Remove data attributes #}
                 {% else %}
                     <p class="text-muted">No subject or quiz data available to display chart.</p>
                 {% endif %}
@@ -117,9 +114,7 @@
             </div>
             <div class="card-body">
                 {% if registration_labels and registration_data %}
-                     <canvas id="userRegistrationChart"
-                             data-labels='{{ registration_labels|tojson|safe }}'
-                             data-counts='{{ registration_data|tojson|safe }}'></canvas>
+                     <canvas id="userRegistrationChart"></canvas> {# Remove data attributes #}
                 {% else %}
                     <p class="text-muted">No user registration data available.</p>
                 {% endif %}
@@ -138,9 +133,7 @@
             </div>
             <div class="card-body">
                  {% if avg_quiz_labels and avg_quiz_data %}
-                     <canvas id="avgScorePerQuizChart"
-                             data-labels='{{ avg_quiz_labels|tojson|safe }}'
-                             data-scores='{{ avg_quiz_data|tojson|safe }}'></canvas>
+                     <canvas id="avgScorePerQuizChart"></canvas> {# Remove data attributes #}
                  {% else %}
                     <p class="text-muted">No quiz score data available.</p>
                  {% endif %}
@@ -149,25 +142,46 @@
     </div>
 </div>
 
+{# Embed data in a JSON script tag #}
+<script id="adminChartData" type="application/json">
+    {{ {
+        "subjectLabels": subject_labels,
+        "quizCountsData": quiz_counts_data,
+        "registrationLabels": registration_labels,
+        "registrationData": registration_data,
+        "avgQuizLabels": avg_quiz_labels,
+        "avgQuizData": avg_quiz_data
+    }|tojson|safe }}
+</script>
 
+{# Chart Initialization Script #}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    
+    let adminChartData = {};
+    try {
+        const chartDataElement = document.getElementById('adminChartData');
+        if (chartDataElement) {
+            adminChartData = JSON.parse(chartDataElement.textContent || '{}');
+        } else {
+             console.error("Admin chart data script tag not found.");
+        }
+    } catch (e) {
+        console.error("Error parsing admin chart data JSON:", e);
+    }
+
     // --- Quizzes per Subject Chart ---
     const quizzesPerSubjectCanvas = document.getElementById('quizzesPerSubjectChart');
-    if (quizzesPerSubjectCanvas && quizzesPerSubjectCanvas.dataset.labels && quizzesPerSubjectCanvas.dataset.counts) {
+    if (quizzesPerSubjectCanvas && adminChartData.subjectLabels && adminChartData.quizCountsData) {
         try {
-            const subjectLabels = JSON.parse(quizzesPerSubjectCanvas.dataset.labels);
-            const quizCountsData = JSON.parse(quizzesPerSubjectCanvas.dataset.counts);
-            if (Array.isArray(subjectLabels) && subjectLabels.length > 0 && Array.isArray(quizCountsData) && quizCountsData.length > 0) {
+            if (Array.isArray(adminChartData.subjectLabels) && adminChartData.subjectLabels.length > 0 && Array.isArray(adminChartData.quizCountsData) && adminChartData.quizCountsData.length > 0) {
                 const ctx = quizzesPerSubjectCanvas.getContext('2d');
-                new Chart(ctx, { /* ... Quizzes per Subject Chart Config ... */ 
+                new Chart(ctx, { 
                     type: 'bar', 
                     data: {
-                        labels: subjectLabels,
+                        labels: adminChartData.subjectLabels,
                         datasets: [{
                             label: '# of Quizzes',
-                            data: quizCountsData,
+                            data: adminChartData.quizCountsData,
                             backgroundColor: 'rgba(54, 162, 235, 0.6)', 
                             borderColor: 'rgba(54, 162, 235, 1)',
                             borderWidth: 1
@@ -176,24 +190,22 @@ document.addEventListener('DOMContentLoaded', function() {
                     options: { /* ... options ... */ }
                 });
             } 
-        } catch (e) { console.error("Error parsing quizzes per subject chart data:", e); }
+        } catch (e) { console.error("Error creating quizzes per subject chart:", e); }
     } 
 
     // --- User Registration Trend Chart ---
     const userRegCanvas = document.getElementById('userRegistrationChart');
-    if (userRegCanvas && userRegCanvas.dataset.labels && userRegCanvas.dataset.counts) {
+    if (userRegCanvas && adminChartData.registrationLabels && adminChartData.registrationData) {
         try {
-            const regLabels = JSON.parse(userRegCanvas.dataset.labels);
-            const regData = JSON.parse(userRegCanvas.dataset.counts);
-            if (Array.isArray(regLabels) && regLabels.length > 0 && Array.isArray(regData) && regData.length > 0) {
+            if (Array.isArray(adminChartData.registrationLabels) && adminChartData.registrationLabels.length > 0 && Array.isArray(adminChartData.registrationData) && adminChartData.registrationData.length > 0) {
                 const ctx = userRegCanvas.getContext('2d');
                 new Chart(ctx, {
                     type: 'line',
                     data: {
-                        labels: regLabels,
+                        labels: adminChartData.registrationLabels,
                         datasets: [{
                             label: 'Registrations',
-                            data: regData,
+                            data: adminChartData.registrationData,
                             borderColor: 'rgb(255, 99, 132)',
                             tension: 0.1,
                             fill: false
@@ -203,30 +215,32 @@ document.addEventListener('DOMContentLoaded', function() {
                         responsive: true,
                         scales: {
                             y: { beginAtZero: true, title: { display: true, text: 'No. of Users Registered' } },
-                            x: { title: { display: true, text: 'Date' } }
+                            x: { 
+                                // Assuming labels are date strings 'YYYY-MM-DD'
+                                // If they are timestamps, use type: 'time' as in user dashboard
+                                title: { display: true, text: 'Date' } 
+                            } 
                         },
                         plugins: { legend: { display: false } }
                     }
                 });
             }
-        } catch (e) { console.error("Error parsing user registration chart data:", e); }
+        } catch (e) { console.error("Error creating user registration chart:", e); }
     }
 
     // --- Average Score per Quiz Chart ---
     const avgScoreQuizCanvas = document.getElementById('avgScorePerQuizChart');
-    if (avgScoreQuizCanvas && avgScoreQuizCanvas.dataset.labels && avgScoreQuizCanvas.dataset.scores) {
+    if (avgScoreQuizCanvas && adminChartData.avgQuizLabels && adminChartData.avgQuizData) {
         try {
-            const avgQuizLabels = JSON.parse(avgScoreQuizCanvas.dataset.labels);
-            const avgQuizData = JSON.parse(avgScoreQuizCanvas.dataset.scores);
-             if (Array.isArray(avgQuizLabels) && avgQuizLabels.length > 0 && Array.isArray(avgQuizData) && avgQuizData.length > 0) {
+             if (Array.isArray(adminChartData.avgQuizLabels) && adminChartData.avgQuizLabels.length > 0 && Array.isArray(adminChartData.avgQuizData) && adminChartData.avgQuizData.length > 0) {
                 const ctx = avgScoreQuizCanvas.getContext('2d');
                 new Chart(ctx, {
                     type: 'bar',
                     data: {
-                        labels: avgQuizLabels,
+                        labels: adminChartData.avgQuizLabels, 
                         datasets: [{
                             label: 'Average Score (%)',
-                            data: avgQuizData,
+                            data: adminChartData.avgQuizData, 
                             backgroundColor: 'rgba(75, 192, 192, 0.6)',
                             borderColor: 'rgba(75, 192, 192, 1)',
                             borderWidth: 1
@@ -248,12 +262,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
             }
-        } catch (e) { console.error("Error parsing average score per quiz chart data:", e); }
+        } catch (e) { console.error("Error creating average score per quiz chart:", e); }
     }
 
 });
 </script>
 
-<!-- Include Chart.js just before the closing block, ensuring it's loaded before the script above runs -->
+<!-- Include Chart.js and Date Adapter *after* the chart initialization script -->
+{# Note: Date adapter might not be needed if no time scale is used here #}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{# <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script> #}
 {% endblock %}
