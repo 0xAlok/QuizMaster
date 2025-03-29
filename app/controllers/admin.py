@@ -27,15 +27,31 @@ def admin_required(f):
     return decorated_function
 
 
+from sqlalchemy.orm import joinedload # Import joinedload for eager loading
+
+admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
+
+
+# Decorator to check if user is an admin
+def admin_required(f):
+    @login_required
+    def decorated_function(*args, **kwargs):
+        if not isinstance(current_user, Admin):
+            flash("You must be an admin to access this page", "danger")
+            return redirect(url_for("auth.login"))
+        return f(*args, **kwargs)
+
+    decorated_function.__name__ = f.__name__
+    return decorated_function
+
+
 @admin_bp.route("/dashboard")
 @admin_required
 def dashboard():
-    # Count of entities for dashboard overview
-    user_count = User.query.count()
-    subject_count = Subject.query.count()
-    chapter_count = Chapter.query.count()
-    quiz_count = Quiz.query.count()
+    # Fetch subjects and eagerly load their chapters
+    subjects_with_chapters = Subject.query.options(joinedload(Subject.chapters)).order_by(Subject.name).all()
     
+    # Keep chart data queries for now, might be used later or removed from template
     # Data for quizzes per subject chart
     quizzes_per_subject = db.session.query(
             Subject.name, 
@@ -50,7 +66,7 @@ def dashboard():
     subject_labels = [item[0] for item in quizzes_per_subject]
     quiz_counts_data = [item[1] for item in quizzes_per_subject]
     
-    # --- Data for User Registration Trend ---
+    # Data for User Registration Trend
     # Group by date - adjust DB function if needed for specific DB (e.g., DATE() for SQLite)
     users_per_day = db.session.query(
             func.DATE(User.created_at), # Group by date part only
@@ -59,11 +75,10 @@ def dashboard():
         .group_by(func.DATE(User.created_at))\
         .order_by(func.DATE(User.created_at))\
         .all()
-    # Convert date string back to datetime object before formatting
     registration_labels = [datetime.strptime(item[0], '%Y-%m-%d').strftime('%Y-%m-%d') for item in users_per_day if item[0]] 
     registration_data = [item[1] for item in users_per_day]
 
-    # --- Data for Average Score per Quiz ---
+    # Data for Average Score per Quiz
     avg_score_per_quiz = db.session.query(
             Quiz.id, # Use Quiz ID or maybe Chapter/Subject name for label?
             func.avg(Score.total_scored)
@@ -72,17 +87,14 @@ def dashboard():
         .group_by(Quiz.id)\
         .order_by(Quiz.id)\
         .all()
-    # Creating labels like "Quiz #ID"
     avg_quiz_labels = [f"Quiz #{item[0]}" for item in avg_score_per_quiz] 
     avg_quiz_data = [round(item[1], 1) if item[1] is not None else 0 for item in avg_score_per_quiz]
 
 
     return render_template(
         "admin/dashboard.html",
-        user_count=user_count,
-        subject_count=subject_count,
-        chapter_count=chapter_count,
-        quiz_count=quiz_count,
+        subjects=subjects_with_chapters, # Pass subjects with chapters
+        # Pass chart data (can be removed later if charts are removed from template)
         subject_labels=subject_labels, 
         quiz_counts_data=quiz_counts_data,
         registration_labels=registration_labels, # User Reg Trend Labels

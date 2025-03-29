@@ -8,100 +8,132 @@
 {% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-12">
-        <h2 class="mb-4">Admin Dashboard</h2>
-        <div class="alert alert-info">
-            Welcome, Admin! From here you can manage subjects, chapters, quizzes, and users.
-        </div>
-    </div>
-</div>
-
 <div class="row mb-4">
-    <div class="col-md-3">
-        <div class="card text-center dashboard-stat-card">
-            <div class="card-header bg-primary text-white">
-                <h5>Users</h5>
-            </div>
-            <div class="card-body">
-                <h3>{{ user_count }}</h3>
-                <p>Registered Users</p>
-                <a href="{{ url_for('admin.users') }}" class="btn btn-outline-primary">Manage Users</a>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-3">
-        <div class="card text-center dashboard-stat-card">
-            <div class="card-header bg-success text-white">
-                <h5>Subjects</h5>
-            </div>
-            <div class="card-body">
-                <h3>{{ subject_count }}</h3>
-                <p>Total Subjects</p>
-                <a href="{{ url_for('admin.subjects') }}" class="btn btn-outline-success">Manage Subjects</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="card text-center dashboard-stat-card">
-            <div class="card-header bg-info text-white">
-                <h5>Chapters</h5>
-            </div>
-            <div class="card-body">
-                <h3>{{ chapter_count }}</h3>
-                <p>Total Chapters</p>
-                {# Standardize button text and link #}
-                <a href="{{ url_for('admin.subjects') }}" class="btn btn-outline-info">Manage Chapters</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="card text-center dashboard-stat-card">
-            <div class="card-header bg-warning text-white">
-                <h5>Quizzes</h5>
-            </div>
-            <div class="card-body">
-                <h3>{{ quiz_count }}</h3>
-                <p>Total Quizzes</p>
-                 {# Standardize button text and link #}
-                <a href="{{ url_for('admin.subjects') }}" class="btn btn-outline-warning">Manage Quizzes</a>
-            </div>
-        </div>
+    <div class="col-12 d-flex justify-content-between align-items-center">
+        <h2 class="mb-0">Admin Dashboard</h2>
+        <a href="{{ url_for('admin.add_subject') }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Add New Subject
+        </a>
     </div>
 </div>
 
-<!-- Admin actions -->
-<div class="row mb-4"> {# Add margin bottom #}
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header bg-dark text-white">
-                <h5>Admin Actions</h5>
-            </div>
-            <div class="card-body">
-                <div class="d-flex gap-2 flex-wrap">
-                    <a href="{{ url_for('admin.add_subject') }}" class="btn btn-primary">Add Subject</a>
-                    <a href="{{ url_for('admin.subjects') }}" class="btn btn-success">Manage Subjects</a>
-                    <a href="{{ url_for('admin.users') }}" class="btn btn-info">Manage Users</a>
+<div class="row">
+    {% if subjects %}
+        {% for subject in subjects %}
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">{{ subject.name }}</h5>
+                        {# Subject Actions #}
+                        <div>
+                            <a href="{{ url_for('admin.edit_subject', id=subject.id) }}" class="btn btn-sm btn-outline-warning me-1" title="Edit Subject">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteSubjectModal-{{ subject.id }}" title="Delete Subject">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p>{{ subject.description }}</p>
+                        <h6>Chapters:</h6>
+                        {% if subject.chapters %}
+                            <ul class="list-group list-group-flush">
+                                {% for chapter in subject.chapters %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <a href="{{ url_for('admin.quizzes', chapter_id=chapter.id) }}">{{ chapter.name }}</a>
+                                        {# Chapter Actions #}
+                                        <div class="btn-group btn-group-sm">
+                                             <a href="{{ url_for('admin.quizzes', chapter_id=chapter.id) }}" class="btn btn-sm btn-outline-info" title="View Quizzes">
+                                                <i class="bi bi-card-list"></i> Quizzes
+                                            </a>
+                                            <a href="{{ url_for('admin.edit_chapter', id=chapter.id) }}" class="btn btn-sm btn-outline-warning" title="Edit Chapter">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteChapterModal-{{ chapter.id }}" title="Delete Chapter">
+                                                 <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    </li>
+                                    
+                                    <!-- Delete Chapter Modal -->
+                                    <div class="modal fade" id="deleteChapterModal-{{ chapter.id }}" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Confirm Delete Chapter</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Are you sure you want to delete chapter "{{ chapter.name }}"? This will delete all associated quizzes and questions.
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <form action="{{ url_for('admin.delete_chapter', id=chapter.id) }}" method="POST" class="d-inline">
+                                                        <button type="submit" class="btn btn-danger">Delete Chapter</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text-muted">No chapters added yet.</p>
+                        {% endif %}
+                    </div>
+                    <div class="card-footer text-end">
+                         <a href="{{ url_for('admin.add_chapter', subject_id=subject.id) }}" class="btn btn-sm btn-success">
+                            <i class="bi bi-plus-lg"></i> Add Chapter
+                        </a>
+                    </div>
                 </div>
             </div>
+
+            <!-- Delete Subject Modal -->
+            <div class="modal fade" id="deleteSubjectModal-{{ subject.id }}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Confirm Delete Subject</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Are you sure you want to delete subject "{{ subject.name }}"? This will delete all associated chapters, quizzes, and questions.
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <form action="{{ url_for('admin.delete_subject', id=subject.id) }}" method="POST" class="d-inline">
+                                <button type="submit" class="btn btn-danger">Delete Subject</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-12">
+            <div class="alert alert-info">No subjects created yet. Click "Add New Subject" to get started.</div>
         </div>
-    </div>
+    {% endif %}
 </div>
+
+
+{# --- Keep Charts Section (Can be removed if not desired) --- #}
+<hr class="my-5">
+<h3 class="text-center mb-4">Summary Statistics</h3>
 
 <!-- Charts Row 1 -->
 <div class="row mb-4">
     <!-- Quizzes per Subject Chart -->
-    <div class="col-md-6 mb-4"> {# Adjust column size #}
+    <div class="col-md-6 mb-4"> 
         <div class="card h-100">
             <div class="card-header bg-secondary text-white">
                 <h5>Quizzes per Subject</h5>
             </div>
             <div class="card-body">
                 {% if subject_labels and quiz_counts_data %}
-                     <canvas id="quizzesPerSubjectChart"></canvas> {# Remove data attributes #}
+                     <canvas id="quizzesPerSubjectChart"></canvas> 
                 {% else %}
                     <p class="text-muted">No subject or quiz data available to display chart.</p>
                 {% endif %}
@@ -109,14 +141,14 @@
         </div>
     </div>
      <!-- User Registration Trend Chart -->
-    <div class="col-md-6 mb-4"> {# Adjust column size #}
+    <div class="col-md-6 mb-4"> 
         <div class="card h-100">
             <div class="card-header bg-primary text-white">
                 <h5>User Registrations Over Time</h5>
             </div>
             <div class="card-body">
                 {% if registration_labels and registration_data %}
-                     <canvas id="userRegistrationChart"></canvas> {# Remove data attributes #}
+                     <canvas id="userRegistrationChart"></canvas> 
                 {% else %}
                     <p class="text-muted">No user registration data available.</p>
                 {% endif %}
@@ -128,14 +160,14 @@
 <!-- Charts Row 2 -->
 <div class="row mb-4">
      <!-- Average Score per Quiz Chart -->
-     <div class="col-12"> {# Full width for potentially many quizzes #}
+     <div class="col-12"> 
         <div class="card">
             <div class="card-header bg-success text-white">
                 <h5>Average Score per Quiz</h5>
             </div>
             <div class="card-body">
                  {% if avg_quiz_labels and avg_quiz_data %}
-                     <canvas id="avgScorePerQuizChart"></canvas> {# Remove data attributes #}
+                     <canvas id="avgScorePerQuizChart"></canvas> 
                  {% else %}
                     <p class="text-muted">No quiz score data available.</p>
                  {% endif %}
@@ -218,8 +250,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         scales: {
                             y: { beginAtZero: true, title: { display: true, text: 'No. of Users Registered' } },
                             x: { 
-                                // Assuming labels are date strings 'YYYY-MM-DD'
-                                // If they are timestamps, use type: 'time' as in user dashboard
                                 title: { display: true, text: 'Date' } 
                             } 
                         },
