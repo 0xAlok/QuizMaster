@@ -24,10 +24,12 @@ def create_app():
     from app.controllers.auth import auth_bp
     from app.controllers.admin import admin_bp
     from app.controllers.user import user_bp
+    from app.controllers.api import api_bp # Import the new API blueprint
     
     app.register_blueprint(auth_bp)
     app.register_blueprint(admin_bp)
     app.register_blueprint(user_bp)
+    app.register_blueprint(api_bp) # Register the API blueprint
     
     # Import user model for login_manager
     from app.models.user import User, Admin
