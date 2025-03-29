@@ -6,8 +6,10 @@ from app.models.subject import Subject
 from app.models.chapter import Chapter
 from app.models.quiz import Quiz
 from app.models.question import Question
+from app.models.score import Score # Import Score model
 from app.controllers.forms import SubjectForm, ChapterForm, QuizForm, QuestionForm
-from datetime import datetime
+from datetime import datetime # Ensure datetime is imported
+from sqlalchemy import func # Import func for count
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 
@@ -33,6 +35,47 @@ def dashboard():
     subject_count = Subject.query.count()
     chapter_count = Chapter.query.count()
     quiz_count = Quiz.query.count()
+    
+    # Data for quizzes per subject chart
+    quizzes_per_subject = db.session.query(
+            Subject.name, 
+            func.count(Quiz.id)
+        ).select_from(Subject)\
+        .outerjoin(Chapter, Subject.id == Chapter.subject_id)\
+        .outerjoin(Quiz, Chapter.id == Quiz.chapter_id)\
+        .group_by(Subject.name)\
+        .order_by(Subject.name)\
+        .all()
+        
+    subject_labels = [item[0] for item in quizzes_per_subject]
+    quiz_counts_data = [item[1] for item in quizzes_per_subject]
+    
+    # --- Data for User Registration Trend ---
+    # Group by date - adjust DB function if needed for specific DB (e.g., DATE() for SQLite)
+    users_per_day = db.session.query(
+            func.DATE(User.created_at), # Group by date part only
+            func.count(User.id)
+        ).select_from(User)\
+        .group_by(func.DATE(User.created_at))\
+        .order_by(func.DATE(User.created_at))\
+        .all()
+    # Convert date string back to datetime object before formatting
+    registration_labels = [datetime.strptime(item[0], '%Y-%m-%d').strftime('%Y-%m-%d') for item in users_per_day if item[0]] 
+    registration_data = [item[1] for item in users_per_day]
+
+    # --- Data for Average Score per Quiz ---
+    avg_score_per_quiz = db.session.query(
+            Quiz.id, # Use Quiz ID or maybe Chapter/Subject name for label?
+            func.avg(Score.total_scored)
+        ).select_from(Score)\
+        .join(Quiz, Score.quiz_id == Quiz.id)\
+        .group_by(Quiz.id)\
+        .order_by(Quiz.id)\
+        .all()
+    # Creating labels like "Quiz #ID"
+    avg_quiz_labels = [f"Quiz #{item[0]}" for item in avg_score_per_quiz] 
+    avg_quiz_data = [round(item[1], 1) if item[1] is not None else 0 for item in avg_score_per_quiz]
+
 
     return render_template(
         "admin/dashboard.html",
@@ -40,8 +83,13 @@ def dashboard():
         subject_count=subject_count,
         chapter_count=chapter_count,
         quiz_count=quiz_count,
+        subject_labels=subject_labels, 
+        quiz_counts_data=quiz_counts_data,
+        registration_labels=registration_labels, # User Reg Trend Labels
+        registration_data=registration_data,     # User Reg Trend Data
+        avg_quiz_labels=avg_quiz_labels,         # Avg Score/Quiz Labels
+        avg_quiz_data=avg_quiz_data              # Avg Score/Quiz Data
     )
-
 
 @admin_bp.route("/users")
 @admin_required

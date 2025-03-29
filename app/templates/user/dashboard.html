@@ -2,6 +2,12 @@
 
 {% block title %}User Dashboard - Quiz Master{% endblock %}
 
+{% block head %}
+{{ super() }}
+<!-- Include Chart.js from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
 {% block content %}
 <div class="row">
     <div class="col-12">
@@ -55,7 +61,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for score in scores[:5] %}
+                            {# Temporarily remove sort filter for debugging #}
+                            {% for score in scores[:5] %} 
                             <tr>
                                 <td>{{ score.quiz.chapter.subject.name }} - {{ score.quiz.chapter.name }}</td>
                                 <td>{{ score.total_scored }}%</td>
@@ -77,6 +84,65 @@
         </div>
     </div>
 </div>
+
+<!-- Charts Row -->
+<div class="row mb-4">
+    <!-- Score Trend Chart -->
+    <div class="col-lg-8 mb-4"> {# Make trend chart wider #}
+        <div class="card h-100">
+            <div class="card-header bg-info text-white">
+                <h5>Your Score Trend</h5>
+            </div>
+            <div class="card-body">
+                {% if score_labels and score_data %}
+                    <canvas id="scoreTrendChart" 
+                            data-labels='{{ score_labels|tojson|safe }}' 
+                            data-scores='{{ score_data|tojson|safe }}'></canvas>
+                {% else %}
+                    <p class="text-muted">Attempt more quizzes to see your score trend.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+     <!-- Attempts per Subject Chart -->
+    <div class="col-lg-4 mb-4"> {# Make pie chart narrower #}
+        <div class="card h-100">
+            <div class="card-header bg-warning text-dark">
+                <h5>Attempts per Subject</h5>
+            </div>
+            <div class="card-body d-flex align-items-center justify-content-center"> {# Center canvas #}
+                {% if attempt_subject_labels and attempt_subject_data %}
+                    <canvas id="attemptsPerSubjectChart"
+                            data-labels='{{ attempt_subject_labels|tojson|safe }}'
+                            data-counts='{{ attempt_subject_data|tojson|safe }}'></canvas>
+                {% else %}
+                    <p class="text-muted">No attempt data available.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Average Score per Subject Chart -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-secondary text-white">
+                <h5>Average Score per Subject</h5>
+            </div>
+            <div class="card-body">
+                 {% if avg_score_subject_labels and avg_score_subject_data %}
+                    <canvas id="avgScorePerSubjectChart"
+                            data-labels='{{ avg_score_subject_labels|tojson|safe }}'
+                            data-scores='{{ avg_score_subject_data|tojson|safe }}'></canvas>
+                {% else %}
+                    <p class="text-muted">No average score data available.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <div class="row mb-4">
     <div class="col-12">
@@ -123,4 +189,121 @@
         </div>
     </div>
 </div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // --- Score Trend Chart ---
+    const scoreTrendCanvas = document.getElementById('scoreTrendChart');
+    if (scoreTrendCanvas && scoreTrendCanvas.dataset.labels && scoreTrendCanvas.dataset.scores) {
+        try {
+            const scoreLabels = JSON.parse(scoreTrendCanvas.dataset.labels);
+            const scoreData = JSON.parse(scoreTrendCanvas.dataset.scores);
+            if (Array.isArray(scoreLabels) && scoreLabels.length > 0 && Array.isArray(scoreData) && scoreData.length > 0) {
+                const ctx = scoreTrendCanvas.getContext('2d');
+                new Chart(ctx, { /* ... Score Trend Chart Config ... */ 
+                    type: 'line',
+                    data: {
+                        labels: scoreLabels,
+                        datasets: [{
+                            label: 'Quiz Score (%)',
+                            data: scoreData,
+                            borderColor: 'rgb(75, 192, 192)',
+                            tension: 0.1,
+                            fill: false
+                        }]
+                    },
+                    options: { /* ... options ... */ }
+                });
+            }
+        } catch (e) { console.error("Error parsing score trend chart data:", e); }
+    }
+
+    // --- Attempts per Subject Chart ---
+    const attemptsCanvas = document.getElementById('attemptsPerSubjectChart');
+    if (attemptsCanvas && attemptsCanvas.dataset.labels && attemptsCanvas.dataset.counts) {
+        try {
+            const attemptLabels = JSON.parse(attemptsCanvas.dataset.labels);
+            const attemptData = JSON.parse(attemptsCanvas.dataset.counts);
+            if (Array.isArray(attemptLabels) && attemptLabels.length > 0 && Array.isArray(attemptData) && attemptData.length > 0) {
+                const ctx = attemptsCanvas.getContext('2d');
+                new Chart(ctx, {
+                    type: 'pie', // Or 'doughnut'
+                    data: {
+                        labels: attemptLabels,
+                        datasets: [{
+                            label: 'Attempts',
+                            data: attemptData,
+                            backgroundColor: [ // Add more colors if needed
+                                'rgba(255, 99, 132, 0.7)',
+                                'rgba(54, 162, 235, 0.7)',
+                                'rgba(255, 206, 86, 0.7)',
+                                'rgba(75, 192, 192, 0.7)',
+                                'rgba(153, 102, 255, 0.7)',
+                                'rgba(255, 159, 64, 0.7)'
+                            ],
+                            hoverOffset: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            title: {
+                                display: false // Title is in card header
+                            }
+                        }
+                    }
+                });
+            }
+        } catch (e) { console.error("Error parsing attempts per subject chart data:", e); }
+    }
+
+    // --- Average Score per Subject Chart ---
+    const avgScoreCanvas = document.getElementById('avgScorePerSubjectChart');
+    if (avgScoreCanvas && avgScoreCanvas.dataset.labels && avgScoreCanvas.dataset.scores) {
+        try {
+            const avgScoreLabels = JSON.parse(avgScoreCanvas.dataset.labels);
+            const avgScoreData = JSON.parse(avgScoreCanvas.dataset.scores);
+             if (Array.isArray(avgScoreLabels) && avgScoreLabels.length > 0 && Array.isArray(avgScoreData) && avgScoreData.length > 0) {
+                const ctx = avgScoreCanvas.getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: avgScoreLabels,
+                        datasets: [{
+                            label: 'Average Score (%)',
+                            data: avgScoreData,
+                            backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                title: { display: true, text: 'Average Score (%)' }
+                            },
+                            x: {
+                                title: { display: true, text: 'Subject' }
+                            }
+                        },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+        } catch (e) { console.error("Error parsing average score per subject chart data:", e); }
+    }
+
+});
+</script>
+
+<!-- Include Chart.js just before the closing block, ensuring it's loaded before the script above runs -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 {% endblock %}

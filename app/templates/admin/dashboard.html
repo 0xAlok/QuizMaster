@@ -2,6 +2,12 @@
 
 {% block title %}Admin Dashboard - Quiz Master{% endblock %}
 
+{% block head %}
+{{ super() }}
+<!-- Include Chart.js from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
 {% block content %}
 <div class="row">
     <div class="col-12">
@@ -67,7 +73,7 @@
 </div>
 
 <!-- Admin actions -->
-<div class="row">
+<div class="row mb-4"> {# Add margin bottom #}
     <div class="col-12">
         <div class="card">
             <div class="card-header bg-dark text-white">
@@ -83,4 +89,171 @@
         </div>
     </div>
 </div>
+
+<!-- Charts Row 1 -->
+<div class="row mb-4">
+    <!-- Quizzes per Subject Chart -->
+    <div class="col-md-6 mb-4"> {# Adjust column size #}
+        <div class="card h-100">
+            <div class="card-header bg-secondary text-white">
+                <h5>Quizzes per Subject</h5>
+            </div>
+            <div class="card-body">
+                {% if subject_labels and quiz_counts_data %}
+                     <canvas id="quizzesPerSubjectChart"
+                             data-labels='{{ subject_labels|tojson|safe }}'
+                             data-counts='{{ quiz_counts_data|tojson|safe }}'></canvas>
+                {% else %}
+                    <p class="text-muted">No subject or quiz data available to display chart.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+     <!-- User Registration Trend Chart -->
+    <div class="col-md-6 mb-4"> {# Adjust column size #}
+        <div class="card h-100">
+            <div class="card-header bg-primary text-white">
+                <h5>User Registrations Over Time</h5>
+            </div>
+            <div class="card-body">
+                {% if registration_labels and registration_data %}
+                     <canvas id="userRegistrationChart"
+                             data-labels='{{ registration_labels|tojson|safe }}'
+                             data-counts='{{ registration_data|tojson|safe }}'></canvas>
+                {% else %}
+                    <p class="text-muted">No user registration data available.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row 2 -->
+<div class="row mb-4">
+     <!-- Average Score per Quiz Chart -->
+     <div class="col-12"> {# Full width for potentially many quizzes #}
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5>Average Score per Quiz</h5>
+            </div>
+            <div class="card-body">
+                 {% if avg_quiz_labels and avg_quiz_data %}
+                     <canvas id="avgScorePerQuizChart"
+                             data-labels='{{ avg_quiz_labels|tojson|safe }}'
+                             data-scores='{{ avg_quiz_data|tojson|safe }}'></canvas>
+                 {% else %}
+                    <p class="text-muted">No quiz score data available.</p>
+                 {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // --- Quizzes per Subject Chart ---
+    const quizzesPerSubjectCanvas = document.getElementById('quizzesPerSubjectChart');
+    if (quizzesPerSubjectCanvas && quizzesPerSubjectCanvas.dataset.labels && quizzesPerSubjectCanvas.dataset.counts) {
+        try {
+            const subjectLabels = JSON.parse(quizzesPerSubjectCanvas.dataset.labels);
+            const quizCountsData = JSON.parse(quizzesPerSubjectCanvas.dataset.counts);
+            if (Array.isArray(subjectLabels) && subjectLabels.length > 0 && Array.isArray(quizCountsData) && quizCountsData.length > 0) {
+                const ctx = quizzesPerSubjectCanvas.getContext('2d');
+                new Chart(ctx, { /* ... Quizzes per Subject Chart Config ... */ 
+                    type: 'bar', 
+                    data: {
+                        labels: subjectLabels,
+                        datasets: [{
+                            label: '# of Quizzes',
+                            data: quizCountsData,
+                            backgroundColor: 'rgba(54, 162, 235, 0.6)', 
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: { /* ... options ... */ }
+                });
+            } 
+        } catch (e) { console.error("Error parsing quizzes per subject chart data:", e); }
+    } 
+
+    // --- User Registration Trend Chart ---
+    const userRegCanvas = document.getElementById('userRegistrationChart');
+    if (userRegCanvas && userRegCanvas.dataset.labels && userRegCanvas.dataset.counts) {
+        try {
+            const regLabels = JSON.parse(userRegCanvas.dataset.labels);
+            const regData = JSON.parse(userRegCanvas.dataset.counts);
+            if (Array.isArray(regLabels) && regLabels.length > 0 && Array.isArray(regData) && regData.length > 0) {
+                const ctx = userRegCanvas.getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: regLabels,
+                        datasets: [{
+                            label: 'Registrations',
+                            data: regData,
+                            borderColor: 'rgb(255, 99, 132)',
+                            tension: 0.1,
+                            fill: false
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: { beginAtZero: true, title: { display: true, text: 'No. of Users Registered' } },
+                            x: { title: { display: true, text: 'Date' } }
+                        },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+        } catch (e) { console.error("Error parsing user registration chart data:", e); }
+    }
+
+    // --- Average Score per Quiz Chart ---
+    const avgScoreQuizCanvas = document.getElementById('avgScorePerQuizChart');
+    if (avgScoreQuizCanvas && avgScoreQuizCanvas.dataset.labels && avgScoreQuizCanvas.dataset.scores) {
+        try {
+            const avgQuizLabels = JSON.parse(avgScoreQuizCanvas.dataset.labels);
+            const avgQuizData = JSON.parse(avgScoreQuizCanvas.dataset.scores);
+             if (Array.isArray(avgQuizLabels) && avgQuizLabels.length > 0 && Array.isArray(avgQuizData) && avgQuizData.length > 0) {
+                const ctx = avgScoreQuizCanvas.getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: avgQuizLabels,
+                        datasets: [{
+                            label: 'Average Score (%)',
+                            data: avgQuizData,
+                            backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                     options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                title: { display: true, text: 'Average Score (%)' }
+                            },
+                            x: {
+                                title: { display: true, text: 'Quiz ID' }
+                            }
+                        },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+        } catch (e) { console.error("Error parsing average score per quiz chart data:", e); }
+    }
+
+});
+</script>
+
+<!-- Include Chart.js just before the closing block, ensuring it's loaded before the script above runs -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 {% endblock %}

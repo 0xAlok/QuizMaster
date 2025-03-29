@@ -8,6 +8,7 @@ from app.models.chapter import Chapter
 from app.models.quiz import Quiz
 from app.models.question import Question
 from app.models.score import Score
+from sqlalchemy import func, cast, Date # Import func for count/avg, cast/Date for grouping
 
 user_bp = Blueprint('user', __name__, url_prefix='/user')
 
@@ -27,10 +28,44 @@ def user_required(f):
 def dashboard():
     # Get available subjects for the user
     subjects = Subject.query.all()
-    # Get user's past quiz attempts
-    scores = Score.query.filter_by(user_id=current_user.id).order_by(Score.time_stamp_of_attempt.desc()).all()
+    # Get user's past quiz attempts, ordered chronologically for the chart
+    scores = Score.query.filter_by(user_id=current_user.id).order_by(Score.time_stamp_of_attempt.asc()).all() # Order ascending for score trend chart
     
-    # Calculate stats
+    # --- Prepare data for Score Trend Chart ---
+    score_labels = [score.time_stamp_of_attempt.strftime('%Y-%m-%d %H:%M') for score in scores]
+    score_data = [score.total_scored for score in scores]
+
+    # --- Prepare data for Average Score per Subject Chart ---
+    avg_scores_per_subject = db.session.query(
+            Subject.name,
+            func.avg(Score.total_scored)
+        ).select_from(Score)\
+        .join(Quiz, Score.quiz_id == Quiz.id)\
+        .join(Chapter, Quiz.chapter_id == Chapter.id)\
+        .join(Subject, Chapter.subject_id == Subject.id)\
+        .filter(Score.user_id == current_user.id)\
+        .group_by(Subject.name)\
+        .order_by(Subject.name)\
+        .all()
+    avg_score_subject_labels = [item[0] for item in avg_scores_per_subject]
+    avg_score_subject_data = [round(item[1], 1) if item[1] is not None else 0 for item in avg_scores_per_subject]
+
+    # --- Prepare data for Attempts per Subject Chart ---
+    attempts_per_subject = db.session.query(
+            Subject.name,
+            func.count(Score.id)
+        ).select_from(Score)\
+        .join(Quiz, Score.quiz_id == Quiz.id)\
+        .join(Chapter, Quiz.chapter_id == Chapter.id)\
+        .join(Subject, Chapter.subject_id == Subject.id)\
+        .filter(Score.user_id == current_user.id)\
+        .group_by(Subject.name)\
+        .order_by(Subject.name)\
+        .all()
+    attempt_subject_labels = [item[0] for item in attempts_per_subject]
+    attempt_subject_data = [item[1] for item in attempts_per_subject]
+    
+    # --- Calculate overall stats (using the same scores list) ---
     total_attempts = len(scores)
     average_score = 0
     if total_attempts > 0:
@@ -38,9 +73,19 @@ def dashboard():
     
     return render_template('user/dashboard.html', 
                            subjects=subjects,
-                           scores=scores,
+                           scores=scores, # Pass original scores list too if needed elsewhere
                            total_attempts=total_attempts,
-                           average_score=average_score)
+                           average_score=average_score,
+                           # Chart data
+                           score_labels=score_labels, 
+                           score_data=score_data,
+                           avg_score_subject_labels=avg_score_subject_labels, 
+                           avg_score_subject_data=avg_score_subject_data,   
+                           attempt_subject_labels=attempt_subject_labels, 
+                           attempt_subject_data=attempt_subject_data,
+                           # Pass the actual list of Score objects for the table 
+                           # (already passed earlier in the argument list)
+                           )     
 
 @user_bp.route('/subjects')
 @user_required
