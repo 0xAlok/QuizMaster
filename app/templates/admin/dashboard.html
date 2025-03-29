@@ -52,7 +52,8 @@
             <div class="card-body">
                 <h3>{{ chapter_count }}</h3>
                 <p>Total Chapters</p>
-                <a href="{{ url_for('admin.subjects') }}" class="btn btn-outline-info">View Subjects</a>
+                {# Standardize button text and link #}
+                <a href="{{ url_for('admin.subjects') }}" class="btn btn-outline-info">Manage Chapters</a>
             </div>
         </div>
     </div>
@@ -65,7 +66,8 @@
             <div class="card-body">
                 <h3>{{ quiz_count }}</h3>
                 <p>Total Quizzes</p>
-                <a href="{{ url_for('admin.subjects') }}" class="btn btn-outline-warning">View Subjects</a>
+                 {# Standardize button text and link #}
+                <a href="{{ url_for('admin.subjects') }}" class="btn btn-outline-warning">Manage Quizzes</a>
             </div>
         </div>
     </div>

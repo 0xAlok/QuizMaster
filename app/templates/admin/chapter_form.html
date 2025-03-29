@@ -24,7 +24,8 @@
                     
                     <div class="mb-3">
                         {{ form.name.label(class="form-label") }}
-                        {{ form.name(class="form-control", placeholder="Enter chapter name") }}
+                        {# Add required, minlength, maxlength #}
+                        {{ form.name(class="form-control", placeholder="e.g., Algebra, World War II", required=true, minlength="2", maxlength="100") }}
                         {% if form.name.errors %}
                             <div class="text-danger">
                                 {% for error in form.name.errors %}
@@ -36,7 +37,8 @@
                     
                     <div class="mb-3">
                         {{ form.description.label(class="form-label") }}
-                        {{ form.description(class="form-control", rows=4, placeholder="Enter chapter description") }}
+                        {# Add required #}
+                        {{ form.description(class="form-control", rows=3, placeholder="A brief description of the chapter", required=true) }}
                         {% if form.description.errors %}
                             <div class="text-danger">
                                 {% for error in form.description.errors %}

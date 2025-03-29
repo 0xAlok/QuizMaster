@@ -14,7 +14,8 @@
                     {{ form.hidden_tag() }}
                     <div class="mb-3">
                         {{ form.username.label(class="form-label") }}
-                        {{ form.username(class="form-control", placeholder="Enter email address") }}
+                        {# Add required and type="email" #}
+                        {{ form.username(class="form-control", placeholder="Enter email address", required=true, type="email") }}
                         {% if form.username.errors %}
                             <div class="text-danger">
                                 {% for error in form.username.errors %}
@@ -26,7 +27,8 @@
                     
                     <div class="mb-3">
                         {{ form.password.label(class="form-label") }}
-                        {{ form.password(class="form-control", placeholder="Enter password") }}
+                        {# Add required #}
+                        {{ form.password(class="form-control", placeholder="Enter password", required=true) }}
                         {% if form.password.errors %}
                             <div class="text-danger">
                                 {% for error in form.password.errors %}
