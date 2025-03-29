@@ -1,0 +1,33 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*.class
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# SQLite database files
+# *.db
+# *.sqlite3
+# *.sqlite
+
+# Logs
+*.log
+
+# Keep these files
+wireframe.png
+Instructions.md
