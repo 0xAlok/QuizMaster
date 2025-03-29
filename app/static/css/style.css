@@ -75,39 +75,7 @@ body {
   box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 }
 
-/* quiz history score circle */
-.score-circle {
-  width: 50px; /* Smaller size for table */
-  height: 50px;
-  border-radius: 50%;
-  display: inline-flex; /* Use inline-flex for better table cell alignment */
-  align-items: center;
-  justify-content: center;
-  /* margin removed, will center via parent td */
-  font-weight: bold;
-  color: white; /* Default color, background will provide contrast */
-  vertical-align: middle; /* Align vertically in the cell */
-}
-
-/* Copied from quiz_result.html styles */
-.score-percentage-text {
-    font-size: 1.1rem; /* Adjusted size for smaller circle */
-    font-weight: bold;
-    color: white; /* White text for contrast on colored background */
-    display: block;
-    line-height: 1;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4); /* Optional shadow */
-}
-
-.high-score {
-  background-color: #198754; /* Green */
-}
-.medium-score {
-  background-color: #ffc107; /* Yellow */
-}
-.low-score {
-  background-color: #dc3545; /* Red */
-}
+/* Score circle styles removed */
 
 /* Custom radio button styles removed - using Bootstrap defaults */
 
