@@ -13,8 +13,8 @@
 </div>
 
 <div class="row mb-4">
-    <div class="col-md-4">
-        <div class="card text-center">
+    <div class="col-md-3">
+        <div class="card text-center dashboard-stat-card">
             <div class="card-header bg-primary text-white">
                 <h5>Users</h5>
             </div>
@@ -26,7 +26,44 @@
         </div>
     </div>
     
-    <!-- We'll add more cards for subjects, chapters, quizzes once we implement those features -->
+    <div class="col-md-3">
+        <div class="card text-center dashboard-stat-card">
+            <div class="card-header bg-success text-white">
+                <h5>Subjects</h5>
+            </div>
+            <div class="card-body">
+                <h3>{{ subject_count }}</h3>
+                <p>Total Subjects</p>
+                <a href="{{ url_for('admin.subjects') }}" class="btn btn-outline-success">Manage Subjects</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-center dashboard-stat-card">
+            <div class="card-header bg-info text-white">
+                <h5>Chapters</h5>
+            </div>
+            <div class="card-body">
+                <h3>{{ chapter_count }}</h3>
+                <p>Total Chapters</p>
+                <a href="{{ url_for('admin.subjects') }}" class="btn btn-outline-info">View Subjects</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-center dashboard-stat-card">
+            <div class="card-header bg-warning text-white">
+                <h5>Quizzes</h5>
+            </div>
+            <div class="card-body">
+                <h3>{{ quiz_count }}</h3>
+                <p>Total Quizzes</p>
+                <a href="{{ url_for('admin.subjects') }}" class="btn btn-outline-warning">View Subjects</a>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Admin actions -->
@@ -38,9 +75,9 @@
             </div>
             <div class="card-body">
                 <div class="d-flex gap-2 flex-wrap">
-                    <a href="#" class="btn btn-primary">Add Subject</a>
-                    <a href="#" class="btn btn-success">Add Chapter</a>
-                    <a href="#" class="btn btn-info">Create Quiz</a>
+                    <a href="{{ url_for('admin.add_subject') }}" class="btn btn-primary">Add Subject</a>
+                    <a href="{{ url_for('admin.subjects') }}" class="btn btn-success">Manage Subjects</a>
+                    <a href="{{ url_for('admin.users') }}" class="btn btn-info">Manage Users</a>
                 </div>
             </div>
         </div>

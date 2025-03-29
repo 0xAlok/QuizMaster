@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Quizzes - {{ chapter.name }} - Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4">Manage Quizzes: {{ chapter.name }}</h2>
+        <a href="{{ url_for('admin.chapters', subject_id=chapter.subject_id) }}" class="btn btn-secondary mb-3">
+            <i class="bi bi-arrow-left"></i> Back to Chapters
+        </a>
+        <a href="{{ url_for('admin.add_quiz', chapter_id=chapter.id) }}" class="btn btn-primary mb-3">
+            <i class="bi bi-plus-circle"></i> Add New Quiz
+        </a>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-info">
+                <h5 class="text-white">Chapter Information</h5>
+            </div>
+            <div class="card-body">
+                <h4>{{ chapter.name }}</h4>
+                <p>{{ chapter.description }}</p>
+                <p><small class="text-muted">Subject: {{ chapter.subject.name }}</small></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h5>Quiz List</h5>
+    </div>
+    <div class="card-body">
+        {% if quizzes %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Date</th>
+                            <th>Duration</th>
+                            <th>Questions</th>
+                            <th>Remarks</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for quiz in quizzes %}
+                            <tr>
+                                <td>{{ quiz.id }}</td>
+                                <td>{{ quiz.date_of_quiz.strftime('%Y-%m-%d') }}</td>
+                                <td>
+                                    {% set hours = quiz.time_duration // 60 %}
+                                    {% set minutes = quiz.time_duration % 60 %}
+                                    {{ '%02d:%02d'|format(hours, minutes) }}
+                                </td>
+                                <td>
+                                    <span class="badge bg-info">{{ quiz.questions|length }} questions</span>
+                                </td>
+                                <td>{{ quiz.remarks or 'N/A' }}</td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a href="{{ url_for('admin.questions', quiz_id=quiz.id) }}" class="btn btn-sm btn-info">
+                                            View Questions
+                                        </a>
+                                        <a href="{{ url_for('admin.edit_quiz', id=quiz.id) }}" class="btn btn-sm btn-warning">
+                                            Edit
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-{{ quiz.id }}">
+                                            Delete
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            <!-- Delete Modal for Quiz #{{ quiz.id }} -->
+                            <div class="modal fade" id="deleteModal-{{ quiz.id }}" tabindex="-1" aria-labelledby="deleteModalLabel-{{ quiz.id }}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-danger text-white">
+                                            <h5 class="modal-title" id="deleteModalLabel-{{ quiz.id }}">Confirm Delete</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Are you sure you want to delete this quiz scheduled for <strong>{{ quiz.date_of_quiz.strftime('%Y-%m-%d') }}</strong>?</p>
+                                            <p class="text-danger"><strong>Warning:</strong> This will also delete all questions and scores associated with this quiz.</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <form action="{{ url_for('admin.delete_quiz', id=quiz.id) }}" method="POST">
+                                                <button type="submit" class="btn btn-danger">Delete Quiz</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info">No quizzes available for this chapter. Click "Add New Quiz" to create one.</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

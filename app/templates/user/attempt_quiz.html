@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+
+{% block title %}Quiz in Progress - Quiz Master{% endblock %}
+
+{% block head %}
+{{ super() }}
+<style>
+    #quiz-timer {
+        font-size: 1.2rem;
+        padding: 10px;
+        border-radius: 5px;
+    }
+    .timer-warning {
+        background-color: #ffc107;
+        color: #212529;
+    }
+    .timer-danger {
+        background-color: #dc3545;
+        color: white;
+    }
+    .question-card {
+        margin-bottom: 20px;
+        padding-bottom: 15px; /* Add some padding at the bottom */
+    }
+    .question-text {
+        margin-bottom: 15px; /* Space below question text */
+    }
+    /* Styling for standard radio button options */
+    .quiz-options-container {
+        margin-top: 1rem; /* Space above options */
+    }
+    .quiz-option {
+        display: flex; /* Align radio and label horizontally */
+        align-items: center; /* Align items vertically */
+        margin-bottom: 12px; /* Space between options */
+        cursor: pointer; /* Indicate clickable area */
+    }
+    .quiz-option input[type="radio"] {
+        margin-right: 10px; /* Space between radio button and label text */
+        /* Use browser default appearance */
+        width: auto; /* Override potential global styles */
+        height: auto; /* Override potential global styles */
+        opacity: 1; /* Ensure visible */
+        position: static; /* Ensure normal flow */
+        cursor: pointer;
+    }
+    .quiz-option label {
+        margin-bottom: 0; /* Remove default label margin */
+        font-weight: normal; /* Default font weight */
+        cursor: pointer;
+    }
+    .option-prefix {
+        font-weight: bold;
+        margin-right: 8px;
+    }
+    /* Optional: Style for checked label */
+    /* .quiz-option input[type="radio"]:checked + label { */
+        /* font-weight: bold; */
+        /* color: #0d6efd; */
+    /* } */
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>{{ quiz.chapter.subject.name }} - {{ quiz.chapter.name }}</h2>
+                <div id="quiz-timer" class="border">
+                    Time Remaining: <span id="minutes">--</span>:<span id="seconds">--</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form id="quiz-form" method="POST" action="{{ url_for('user.submit_quiz', quiz_id=quiz.id) }}">
+        {% for question in questions %}
+        <div class="card question-card" id="question-{{ question.id }}">
+            <div class="card-header">
+                <h5 class="mb-0">Question {{ loop.index }}</h5>
+            </div>
+            <div class="card-body">
+                <p class="question-text">{{ question.question_text }}</p>
+
+                <div class="quiz-options-container">
+                    <div class="quiz-option">
+                        <input type="radio" name="question_{{ question.id }}" id="question_{{ question.id }}_option1" value="1" required>
+                        <label for="question_{{ question.id }}_option1">
+                             {{ question.option1 }}
+                        </label>
+                    </div>
+
+                    <div class="quiz-option">
+                        <input type="radio" name="question_{{ question.id }}" id="question_{{ question.id }}_option2" value="2" required>
+                        <label for="question_{{ question.id }}_option2">
+                             {{ question.option2 }}
+                        </label>
+                    </div>
+
+                    <div class="quiz-option">
+                        <input type="radio" name="question_{{ question.id }}" id="question_{{ question.id }}_option3" value="3" required>
+                        <label for="question_{{ question.id }}_option3">
+                             {{ question.option3 }}
+                        </label>
+                    </div>
+
+                    <div class="quiz-option">
+                        <input type="radio" name="question_{{ question.id }}" id="question_{{ question.id }}_option4" value="4" required>
+                        <label for="question_{{ question.id }}_option4">
+                             {{ question.option4 }}
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        <div class="d-flex justify-content-between my-4">
+            <button type="submit" class="btn btn-primary btn-lg">Submit Quiz</button>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Timer functionality (Keep this)
+    function updateTimer() {
+        fetch('{{ url_for("user.check_quiz_time") }}')
+            .then(response => response.json())
+            .then(data => {
+                if (data.expired) {
+                    if (!document.getElementById('quiz-form').dataset.submittedByTimer) {
+                        document.getElementById('quiz-form').dataset.submittedByTimer = 'true';
+                        alert('Time is up! Your quiz will be submitted now.');
+                        document.getElementById('quiz-form').submit();
+                    }
+                    return;
+                }
+
+                const minutes = Math.floor(data.time_remaining / 60);
+                const seconds = data.time_remaining % 60;
+
+                document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+                document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+
+                const timerElement = document.getElementById('quiz-timer');
+                timerElement.classList.remove('timer-danger', 'timer-warning');
+                if (data.time_remaining < 60) {
+                    timerElement.classList.add('timer-danger');
+                } else if (data.time_remaining < 180) {
+                    timerElement.classList.add('timer-warning');
+                }
+            })
+            .catch(error => console.error('Error updating timer:', error));
+    }
+
+    updateTimer();
+    const timerInterval = setInterval(updateTimer, 1000);
+
+    document.getElementById('quiz-form').addEventListener('submit', function() {
+        clearInterval(timerInterval);
+    });
+
+    // No need for button click handlers anymore
+});
+</script>
+{% endblock %}
