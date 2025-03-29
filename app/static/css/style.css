@@ -1,76 +1,110 @@
 /* Custom styles for Quiz Master application */
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f8f9fa;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f8f9fa;
 }
 
 .navbar {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .card {
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    margin-bottom: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  margin-bottom: 20px;
 }
 
 .card-header {
-    border-radius: 8px 8px 0 0;
+  border-radius: 8px 8px 0 0;
 }
 
 .btn {
-    border-radius: 5px;
-    padding: 8px 15px;
-    font-weight: 500;
+  border-radius: 5px;
+  padding: 8px 15px;
+  font-weight: 500;
 }
 
 /* Auth pages */
 .auth-container {
-    max-width: 500px;
-    margin: 0 auto;
+  max-width: 500px;
+  margin: 0 auto;
 }
 
 /* Dashboard styling */
 .dashboard-stat-card {
-    transition: transform 0.3s;
+  transition: transform 0.3s;
 }
 
 .dashboard-stat-card:hover {
-    transform: translateY(-5px);
+  transform: translateY(-5px);
 }
 
 /* Quiz styling - will be expanded in later milestones */
 .question-card {
-    border-left: 4px solid #007bff;
+  border-left: 4px solid #007bff;
 }
 
 .option-label {
-    display: block;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    margin-bottom: 8px;
-    cursor: pointer;
-    transition: all 0.3s;
+  display: block;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
 }
 
 .option-label:hover {
-    background-color: #f1f8ff;
-    border-color: #007bff;
+  background-color: #f1f8ff;
+  border-color: #007bff;
 }
 
 /* User profile */
 .profile-header {
-    background-color: #343a40;
-    color: white;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
+  background-color: #343a40;
+  color: white;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
 }
 
 /* Custom form styling */
 .form-control:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* quiz history score circle */
+.score-circle {
+  width: 50px; /* Smaller size for table */
+  height: 50px;
+  border-radius: 50%;
+  display: inline-flex; /* Use inline-flex for better table cell alignment */
+  align-items: center;
+  justify-content: center;
+  /* margin removed, will center via parent td */
+  font-weight: bold;
+  color: white; /* Default color, background will provide contrast */
+  vertical-align: middle; /* Align vertically in the cell */
+}
+
+/* Copied from quiz_result.html styles */
+.score-percentage-text {
+    font-size: 1.1rem; /* Adjusted size for smaller circle */
+    font-weight: bold;
+    color: white; /* White text for contrast on colored background */
+    display: block;
+    line-height: 1;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4); /* Optional shadow */
+}
+
+.high-score {
+  background-color: #198754; /* Green */
+}
+.medium-score {
+  background-color: #ffc107; /* Yellow */
+}
+.low-score {
+  background-color: #dc3545; /* Red */
 }

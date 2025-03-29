@@ -1,194 +1,227 @@
-{% extends 'base.html' %}
-
-{% block title %}Quiz Results - Quiz Master{% endblock %}
-
-{% block head %}
-{{ super() }}
+{% extends 'base.html' %} {% block title %}Quiz Results - Quiz Master{% endblock
+%} {% block head %} {{ super() }}
 <style>
-    /* Remove background styles for correct/incorrect */
-    /* .correct-answer { background-color: #d1e7dd; border-color: #a3cfbb; } */
-    /* .incorrect-answer { background-color: #f8d7da; border-color: #f1aeb5; } */
-    
-    /* Style for the text indicating user's answer */
-    .user-selected-indicator {
-        font-weight: bold;
-        margin-right: 5px; /* Add some space */
-    }
-    /* Style for the text indicating the correct answer */
-    .correct-answer-indicator {
-         /* No specific style needed unless desired */
-    }
-    /* Style for correct answer text (bold) */
-    .list-group-item label span.text-correct {
-        font-weight: bold; /* Bold style for correct answer */
-    }
-    /* Style for incorrect answer text (color applied inline) */
-    .list-group-item label span.text-incorrect {
-        /* Color applied inline */
-    }
-    .unanswered {
-        background-color: #f8f9fa;
-        border-color: #dee2e6;
-        color: #6c757d; /* Muted text for unanswered */
-    }
-    .stats-card {
-        border-radius: 10px;
-        padding: 20px;
-        margin-bottom: 20px;
-        transition: transform 0.3s;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-    .stats-card:hover {
-        transform: translateY(-5px);
-    }
-    .score-circle {
-        width: 150px;
-        height: 150px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 20px;
-        font-size: 2.5rem;
-        font-weight: bold;
-        color: white;
-    }
-    .high-score {
-        background-color: #198754;
-    }
-    .medium-score {
-        background-color: #ffc107;
-    }
-    .low-score {
-        background-color: #dc3545;
-    }
+  /* Remove background styles for correct/incorrect */
+  /* .correct-answer { background-color: #d1e7dd; border-color: #a3cfbb; } */
+  /* .incorrect-answer { background-color: #f8d7da; border-color: #f1aeb5; } */
+
+  /* Style for the text indicating user's answer */
+  .user-selected-indicator {
+    font-weight: bold;
+    margin-right: 5px; /* Add some space */
+  }
+  /* Style for the text indicating the correct answer */
+  .correct-answer-indicator {
+    /* No specific style needed unless desired */
+  }
+  /* Style for correct answer text (bold) */
+  .list-group-item label span.text-correct {
+    font-weight: bold; /* Bold style for correct answer */
+  }
+  /* Style for incorrect answer text (color applied inline) */
+  .list-group-item label span.text-incorrect {
+    /* Color applied inline */
+  }
+  /* .score-percentage-text rule removed */
+  .unanswered {
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+    color: #6c757d; /* Muted text for unanswered */
+  }
+  .stats-card {
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: transform 0.3s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  .stats-card:hover {
+    transform: translateY(-5px);
+  }
+  .score-circle {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 25px; /* Increased bottom margin */
+    font-size: 3.5rem; /* Adjusted font size */
+    font-weight: bold;
+    /* .score-circle and related background rules removed */
 </style>
-{% endblock %}
-
-{% block content %}
+{% endblock %} {% block content %}
 <div class="container">
-    <div class="row mb-4">
-        <div class="col-12">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ url_for('user.dashboard') }}">Dashboard</a></li>
-                    <li class="breadcrumb-item active">Quiz Results</li>
-                </ol>
-            </nav>
+  <div class="row mb-4">
+    <div class="col-12">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="{{ url_for('user.dashboard') }}">Dashboard</a>
+          </li>
+          <li class="breadcrumb-item active">Quiz Results</li>
+        </ol>
+      </nav>
 
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">Quiz Results</h4>
-                </div>
-                <div class="card-body">
-                    <h3>{{ quiz.chapter.subject.name }} - {{ quiz.chapter.name }}</h3>
-                    
-                    <!-- Score summary section -->
-                    <div class="row mt-4">
-                        <div class="col-md-6 mb-4">
-                            <div class="card stats-card h-100">
-                                <div class="card-body text-center">
-                                    <h4 class="card-title">Your Score</h4>
-                                    <div class="score-circle {% if score >= 70 %}high-score{% elif score >= 40 %}medium-score{% else %}low-score{% endif %}">
-                                        {{ score|round(1) }}%
-                                    </div>
-                                    <h5>{{ correct_answers }} correct out of {{ total_questions }} questions</h5>
-                                    <p class="text-muted">
-                                        {% if score >= 70 %}
-                                            Excellent work! You've mastered this material.
-                                        {% elif score >= 40 %}
-                                            Good job! Keep practicing to improve.
-                                        {% else %}
-                                            You might need more practice with this material.
-                                        {% endif %}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-6 mb-4">
-                            <div class="card stats-card h-100">
-                                <div class="card-body">
-                                    <h4 class="card-title">Quiz Statistics</h4>
-                                    <table class="table">
-                                        <tr>
-                                            <td><i class="bi bi-check-circle-fill text-success"></i> Correct Answers:</td>
-                                            <td>{{ correct_answers }} ({{ (correct_answers / total_questions * 100)|round(1) }}%)</td>
-                                        </tr>
-                                        <tr>
-                                            <td><i class="bi bi-x-circle-fill text-danger"></i> Incorrect Answers:</td>
-                                            <td>{{ total_questions - correct_answers }} ({{ ((total_questions - correct_answers) / total_questions * 100)|round(1) }}%)</td>
-                                        </tr>
-                                        <tr>
-                                            <td><i class="bi bi-stopwatch"></i> Quiz Date:</td>
-                                            <td>{{ quiz.date_of_quiz.strftime('%B %d, %Y') }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td><i class="bi bi-clock-history"></i> Completion Time:</td>
-                                            <td>Now</td>
-                                        </tr>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <h4 class="mt-4 mb-3">Question Review</h4>
-                    
-                    {% for question in questions %}
-                        {% set question_id = question.id|string %}
-                        {% set question_result = results.get(question_id, {}) %}
-                        {% set was_answered = question_id in results %}
-                        
-                        <div class="card mb-4">
-                            <div class="card-header d-flex justify-content-between align-items-center">
-                                <h5 class="mb-0">Question {{ loop.index }}</h5>
-                                {% if not was_answered %}
-                                    <span class="badge bg-secondary">Not Answered</span>
-                                {% elif question_result.is_correct %}
-                                    <span class="badge bg-success">Correct</span>
-                                {% else %}
-                                    <span class="badge bg-danger">Incorrect</span>
-                                {% endif %}
-                            </div>
-                            <div class="card-body">
-                                <p>{{ question.question_text }}</p>
-                                
-                                <div class="list-group list-group-flush mt-3"> <!-- Use list-group-flush for less borders -->
-                                    {% set user_answer = question_result.selected if was_answered else None %}
-                                    {% set correct_answer_num = question.correct_answer %}
-
-                                    {% for i in range(1, 5) %}
-                                        {% set option_text = question['option' ~ i] %} {# Correct way to access dynamic attribute #}
-                                        {% set is_correct = (i == correct_answer_num) %}
-                                        {% set is_user_choice = (was_answered and i == user_answer) %}
-                                        {% set is_user_incorrect_choice = (is_user_choice and not question_result.is_correct) %}
-
-                                        <div class="list-group-item {% if not was_answered %}unanswered{% endif %}">
-                                            <div class="d-flex align-items-center">
-                                                <input type="radio" name="review_{{ question.id }}" id="review_{{ question.id }}_opt{{ i }}" value="{{ i }}" disabled {% if is_user_choice %}checked{% endif %} style="margin-right: 10px; accent-color: #555;"> {# Added accent-color #}
-                                                <label for="review_{{ question.id }}_opt{{ i }}" class="flex-grow-1 mb-0">
-                                                    {# Apply text-correct (green/bold) or text-incorrect (red) based only on correctness #}
-                                                    <span class="{% if is_correct %}text-correct{% else %}text-incorrect{% endif %}"
-                                                          style="{% if is_correct %}color: #198754; font-weight: bold;{% else %}color: #dc3545;{% endif %}">
-                                                        {{ option_text }}
-                                                    </span>
-                                                </label>
-                                            </div>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                    
-                    <div class="d-flex justify-content-between mt-4">
-                        <a href="{{ url_for('user.dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
-                        <a href="{{ url_for('user.quizzes', chapter_id=quiz.chapter_id) }}" class="btn btn-primary">Try Another Quiz</a>
-                    </div>
-                </div>
-            </div>
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0">Quiz Results</h4>
         </div>
+        <div class="card-body">
+          <h3>{{ quiz.chapter.subject.name }} - {{ quiz.chapter.name }}</h3>
+
+          <!-- Score summary section -->
+          <div class="row mt-4">
+            <div class="col-md-6 mb-4">
+              <div class="card stats-card h-100">
+                <div class="card-body text-center">
+                  <h4 class="card-title mb-3">Your Score</h4> {# Added mb-3 #}
+                  {# Replaced circle div with styled badge span #}
+                  <span class="badge fs-4 mb-3 {% if score >= 70 %}bg-success{% elif score >= 40 %}bg-warning text-dark{% else %}bg-danger{% endif %}">
+                      {{ score|round(1) }}%
+                  </span>
+                  <h5 class="mt-3"> {# Added mt-3 #}
+                    {{ correct_answers }} correct out of {{ total_questions }}
+                    questions
+                  </h5>
+                  <p class="text-muted">
+                    {% if score >= 70 %} Excellent work! You've mastered this
+                    material. {% elif score >= 40 %} Good job! Keep practicing
+                    to improve. {% else %} You might need more practice with
+                    this material. {% endif %}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+              <div class="card stats-card h-100">
+                <div class="card-body">
+                  <h4 class="card-title">Quiz Statistics</h4>
+                  <table class="table">
+                    <tr>
+                      <td>
+                        <i class="bi bi-check-circle-fill text-success"></i>
+                        Correct Answers:
+                      </td>
+                      <td>
+                        {{ correct_answers }} ({{ (correct_answers /
+                        total_questions * 100)|round(1) }}%)
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <i class="bi bi-x-circle-fill text-danger"></i>
+                        Incorrect Answers:
+                      </td>
+                      <td>
+                        {{ total_questions - correct_answers }} ({{
+                        ((total_questions - correct_answers) / total_questions *
+                        100)|round(1) }}%)
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><i class="bi bi-stopwatch"></i> Quiz Date:</td>
+                      <td>{{ quiz.date_of_quiz.strftime('%B %d, %Y') }}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <i class="bi bi-clock-history"></i> Completion Time:
+                      </td>
+                      <td>Now</td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h4 class="mt-4 mb-3">Question Review</h4>
+
+          {% for question in questions %} {% set question_id =
+          question.id|string %} {% set question_result =
+          results.get(question_id, {}) %} {% set was_answered = question_id in
+          results %}
+
+          <div class="card mb-4">
+            <div
+              class="card-header d-flex justify-content-between align-items-center"
+            >
+              <h5 class="mb-0">Question {{ loop.index }}</h5>
+              {% if not was_answered %}
+              <span class="badge bg-secondary">Not Answered</span>
+              {% elif question_result.is_correct %}
+              <span class="badge bg-success">Correct</span>
+              {% else %}
+              <span class="badge bg-danger">Incorrect</span>
+              {% endif %}
+            </div>
+            <div class="card-body">
+              <p>{{ question.question_text }}</p>
+
+              <div class="list-group list-group-flush mt-3">
+                <!-- Use list-group-flush for less borders -->
+                {% set user_answer = question_result.selected if was_answered
+                else None %} {% set correct_answer_num = question.correct_answer
+                %} {% for i in range(1, 5) %} {% set option_text =
+                question['option' ~ i] %} {# Correct way to access dynamic
+                attribute #} {% set is_correct = (i == correct_answer_num) %} {%
+                set is_user_choice = (was_answered and i == user_answer) %} {%
+                set is_user_incorrect_choice = (is_user_choice and not
+                question_result.is_correct) %}
+
+                <div
+                  class="list-group-item {% if not was_answered %}unanswered{% endif %}"
+                >
+                  <div class="d-flex align-items-center">
+                    <input
+                      type="radio"
+                      name="review_{{ question.id }}"
+                      id="review_{{ question.id }}_opt{{ i }}"
+                      value="{{ i }}"
+                      disabled
+                      {%
+                      if
+                      is_user_choice
+                      %}checked{%
+                      endif
+                      %}
+                      style="margin-right: 10px;" {# Removed inline accent-color again #}
+                    />
+                    <label
+                      for="review_{{ question.id }}_opt{{ i }}"
+                      class="flex-grow-1 mb-0"
+                    >
+                      {# Apply text-correct (green/bold) or text-incorrect (red)
+                      based only on correctness #}
+                      <span
+                        class="{% if is_correct %}text-correct{% else %}text-incorrect{% endif %}"
+                        style="{% if is_correct %}color: #198754; font-weight: bold;{% else %}color: #dc3545;{% endif %}"
+                      >
+                        {{ option_text }}
+                      </span>
+                    </label>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+
+          <div class="d-flex justify-content-between mt-4">
+            <a href="{{ url_for('user.dashboard') }}" class="btn btn-secondary"
+              >Back to Dashboard</a
+            >
+            <a
+              href="{{ url_for('user.quizzes', chapter_id=quiz.chapter_id) }}"
+              class="btn btn-primary"
+              >Try Another Quiz</a
+            >
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
 {% endblock %}

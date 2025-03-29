@@ -106,9 +106,11 @@
                                         </td>
                                         <td>{{ score.quiz.chapter.subject.name }}</td>
                                         <td>{{ score.quiz.chapter.name }}</td>
-                                        <td>
-                                            {# Display score percentage directly #}
-                                            {{ score.total_scored|round(1) }}%
+                                        {# Apply score circle styling #}
+                                        <td class="text-center"> {# Center content in the cell #}
+                                            <div class="score-circle {% if score.total_scored >= 70 %}high-score{% elif score.total_scored >= 40 %}medium-score{% else %}low-score{% endif %}">
+                                                <span class="score-percentage-text">{{ score.total_scored|round(1) }}%</span>
+                                            </div>
                                         </td>
                                         <td>
                                             {# Corrected Status Badge Logic #}
