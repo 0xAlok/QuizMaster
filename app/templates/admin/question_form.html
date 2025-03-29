@@ -24,7 +24,8 @@
                     
                     <div class="mb-4">
                         {{ form.question_text.label(class="form-label") }}
-                        {{ form.question_text(class="form-control", rows=3, placeholder="Enter the question text") }}
+                        {# Add required #}
+                        {{ form.question_text(class="form-control", rows=3, placeholder="Enter the question text", required=true) }}
                         {% if form.question_text.errors %}
                             <div class="text-danger">
                                 {% for error in form.question_text.errors %}
@@ -38,7 +39,8 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 {{ form.option1.label(class="form-label") }}
-                                {{ form.option1(class="form-control", placeholder="Enter option 1") }}
+                                {# Add required #}
+                                {{ form.option1(class="form-control", placeholder="Enter option 1", required=true) }}
                                 {% if form.option1.errors %}
                                     <div class="text-danger">
                                         {% for error in form.option1.errors %}
@@ -50,7 +52,8 @@
                             
                             <div class="mb-3">
                                 {{ form.option2.label(class="form-label") }}
-                                {{ form.option2(class="form-control", placeholder="Enter option 2") }}
+                                {# Add required #}
+                                {{ form.option2(class="form-control", placeholder="Enter option 2", required=true) }}
                                 {% if form.option2.errors %}
                                     <div class="text-danger">
                                         {% for error in form.option2.errors %}
@@ -64,7 +67,8 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 {{ form.option3.label(class="form-label") }}
-                                {{ form.option3(class="form-control", placeholder="Enter option 3") }}
+                                {# Add required #}
+                                {{ form.option3(class="form-control", placeholder="Enter option 3", required=true) }}
                                 {% if form.option3.errors %}
                                     <div class="text-danger">
                                         {% for error in form.option3.errors %}
@@ -76,7 +80,8 @@
                             
                             <div class="mb-3">
                                 {{ form.option4.label(class="form-label") }}
-                                {{ form.option4(class="form-control", placeholder="Enter option 4") }}
+                                {# Add required #}
+                                {{ form.option4(class="form-control", placeholder="Enter option 4", required=true) }}
                                 {% if form.option4.errors %}
                                     <div class="text-danger">
                                         {% for error in form.option4.errors %}
@@ -94,7 +99,8 @@
                             {% for subfield in form.correct_option %}
                                 <div class="col-md-3 mb-2">
                                     <div class="form-check">
-                                        {{ subfield(class="form-check-input") }}
+                                        {# Add required to each radio button #}
+                                        {{ subfield(class="form-check-input", required=true) }}
                                         {{ subfield.label(class="form-check-label") }}
                                     </div>
                                 </div>
