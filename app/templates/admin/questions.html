@@ -46,6 +46,14 @@
     </div>
 </div>
 
+<!-- Search Form -->
+<form method="GET" action="{{ url_for('admin.questions', quiz_id=quiz.id) }}" class="mb-3">
+    <div class="input-group">
+        <input type="text" name="search" class="form-control" placeholder="Search by Question Text..." value="{{ request.args.get('search', '') }}">
+        <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-search"></i> Search</button>
+    </div>
+</form>
+
 <div class="card">
     <div class="card-header bg-primary text-white">
         <h5>Question List</h5>

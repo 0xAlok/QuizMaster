@@ -45,8 +45,20 @@ def dashboard():
 @user_bp.route('/subjects')
 @user_required
 def subjects():
-    subjects = Subject.query.all()
-    return render_template('user/subjects.html', subjects=subjects)
+    search_term = request.args.get('search', '')
+    query = Subject.query
+    
+    if search_term:
+        search_pattern = f"%{search_term}%"
+        query = query.filter(
+            db.or_(
+                Subject.name.ilike(search_pattern),
+                Subject.description.ilike(search_pattern)
+            )
+        )
+        
+    subjects = query.all()
+    return render_template('user/subjects.html', subjects=subjects, search_term=search_term)
 
 @user_bp.route('/subject/<int:subject_id>/chapters')
 @user_required
@@ -59,9 +71,20 @@ def chapters(subject_id):
 @user_required
 def quizzes(chapter_id):
     chapter = Chapter.query.get_or_404(chapter_id)
-    quizzes = Quiz.query.filter_by(chapter_id=chapter_id).all()
+    search_term = request.args.get('search', '')
+    query = Quiz.query.filter_by(chapter_id=chapter_id)
+    
+    if search_term:
+        search_pattern = f"%{search_term}%"
+        query = query.filter(Quiz.remarks.ilike(search_pattern))
+        
+    quizzes = query.all()
     today = datetime.now().date()
-    return render_template('user/quizzes.html', chapter=chapter, quizzes=quizzes, today=today)
+    return render_template('user/quizzes.html', 
+                           chapter=chapter, 
+                           quizzes=quizzes, 
+                           today=today, 
+                           search_term=search_term)
 
 @user_bp.route('/quiz/<int:quiz_id>/start')
 @user_required

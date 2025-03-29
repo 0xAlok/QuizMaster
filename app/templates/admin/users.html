@@ -12,6 +12,14 @@
     </div>
 </div>
 
+<!-- Search Form -->
+<form method="GET" action="{{ url_for('admin.users') }}" class="mb-3">
+    <div class="input-group">
+        <input type="text" name="search" class="form-control" placeholder="Search by Email or Full Name..." value="{{ request.args.get('search', '') }}">
+        <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-search"></i> Search</button>
+    </div>
+</form>
+
 <div class="card">
     <div class="card-header bg-primary text-white">
         <h5>Registered Users</h5>
