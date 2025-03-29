@@ -15,17 +15,16 @@
     .history-card:hover {
         transform: translateY(-5px);
     }
-    .summary-box {
-        border-radius: 10px;
-        padding: 20px;
-        margin-bottom: 20px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
+    /* .summary-box class removed - using Bootstrap utilities instead */
     .summary-number {
-        font-size: 2rem;
+        font-size: 2rem; /* Keep this for the number size */
         font-weight: bold;
         display: block;
         margin-bottom: 5px;
+    }
+    /* Add this class to ensure icon has proper padding */
+    .summary-icon {
+        padding-left: 15px;
     }
 </style>
 {% endblock %}
@@ -50,18 +49,20 @@
     <!-- Summary Statistics -->
     <div class="row mb-4">
         <div class="col-md-4 mb-3"> {# Add mb-3 for spacing when stacked #}
-            <div class="summary-box bg-primary text-white d-flex align-items-center rounded"> {# Use flexbox, ensure rounded #}
-                <i class="bi bi-journals fs-2 me-3"></i> {# Icon larger and with margin #}
-                <div class="ps-2"> {# Add padding start #}
+            {# Replace summary-box with Bootstrap utilities #}
+            <div class="bg-primary text-white d-flex align-items-center rounded p-3 shadow-sm"> 
+                <i class="bi bi-journals fs-2 me-3"></i> {# Keep icon margin #}
+                <div class="ps-2"> {# Keep padding start for text #}
                     Total Quizzes Attempted
                     <span class="summary-number">{{ scores|length }}</span>
                 </div>
             </div>
         </div>
         <div class="col-md-4 mb-3"> {# Add mb-3 for spacing when stacked #}
-            <div class="summary-box bg-success text-white d-flex align-items-center rounded"> {# Use flexbox, ensure rounded #}
-                <i class="bi bi-graph-up fs-2 me-3"></i> {# Icon larger and with margin #}
-                <div class="ps-2"> {# Add padding start #}
+             {# Replace summary-box with Bootstrap utilities #}
+            <div class="bg-success text-white d-flex align-items-center rounded p-3 shadow-sm">
+                <i class="bi bi-graph-up fs-2 me-3"></i> {# Keep icon margin #}
+                <div class="ps-2"> {# Keep padding start for text #}
                     Average Score
                 <span class="summary-number">
                     {% set total_score = namespace(value=0) %}
@@ -73,24 +74,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4 mb-3"> {# Add mb-3 for spacing when stacked #}
-            <div class="summary-box bg-info text-white d-flex align-items-center rounded"> {# Use flexbox, ensure rounded #}
-                <i class="bi bi-trophy fs-2 me-3"></i> {# Icon larger and with margin #}
-                <div class="ps-2"> {# Add padding start #}
-                    Latest Achievement
-                <span class="summary-number">
-                    {% if scores[0].total_scored >= 70 %}
-                        Excellent!
-                    {% elif scores[0].total_scored >= 40 %}
-                        Good
-                    {% else %}
-                        Needs Work
-                    {% endif %}
-                </span>
-                <small>{{ scores[0].quiz.chapter.name }}</small>
-            </div>
-        </div>
-    </div>
+        {# Remove Latest Achievement Box #}
     {% endif %}
 
     <div class="row">
