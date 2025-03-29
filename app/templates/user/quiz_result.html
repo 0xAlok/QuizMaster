@@ -8,7 +8,7 @@
     /* Remove background styles for correct/incorrect */
     /* .correct-answer { background-color: #d1e7dd; border-color: #a3cfbb; } */
     /* .incorrect-answer { background-color: #f8d7da; border-color: #f1aeb5; } */
-
+    
     /* Style for the text indicating user's answer */
     .user-selected-indicator {
         font-weight: bold;
@@ -18,13 +18,13 @@
     .correct-answer-indicator {
          /* No specific style needed unless desired */
     }
-    /* Text color for correct answer */
-    .text-correct {
-        color: #198754; /* Bootstrap success green */
+    /* Style for correct answer text (bold) */
+    .list-group-item label span.text-correct {
+        font-weight: bold; /* Bold style for correct answer */
     }
-    /* Text color for user's incorrect answer */
-    .text-incorrect {
-        color: #dc3545; /* Bootstrap danger red */
+    /* Style for incorrect answer text (color applied inline) */
+    .list-group-item label span.text-incorrect {
+        /* Color applied inline */
     }
     .unanswered {
         background-color: #f8f9fa;
@@ -167,11 +167,12 @@
                                         <div class="list-group-item {% if not was_answered %}unanswered{% endif %}">
                                             <div class="d-flex align-items-center">
                                                 <input type="radio" name="review_{{ question.id }}" id="review_{{ question.id }}_opt{{ i }}" value="{{ i }}" disabled {% if is_user_choice %}checked{% endif %} style="margin-right: 10px; accent-color: #555;"> {# Added accent-color #}
-                                                <label for="review_{{ question.id }}_opt{{ i }}"
-                                                       class="flex-grow-1 mb-0 {% if is_correct %}text-correct{% elif is_user_incorrect_choice %}text-incorrect{% endif %}">
-                                                    {% if is_user_choice %}<span class="user-selected-indicator"></span>{% endif %}
-                                                    {{ option_text }}
-                                                    {% if is_correct %}<span class="float-end correct-answer-indicator">(Correct Answer)</span>{% endif %}
+                                                <label for="review_{{ question.id }}_opt{{ i }}" class="flex-grow-1 mb-0">
+                                                    {# Apply text-correct (green/bold) or text-incorrect (red) based only on correctness #}
+                                                    <span class="{% if is_correct %}text-correct{% else %}text-incorrect{% endif %}"
+                                                          style="{% if is_correct %}color: #198754; font-weight: bold;{% else %}color: #dc3545;{% endif %}">
+                                                        {{ option_text }}
+                                                    </span>
                                                 </label>
                                             </div>
                                         </div>
