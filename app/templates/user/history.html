@@ -49,15 +49,20 @@
     {% if scores %}
     <!-- Summary Statistics -->
     <div class="row mb-4">
-        <div class="col-md-4">
-            <div class="summary-box bg-primary text-white">
-                <i class="bi bi-journals"></i> Total Quizzes Attempted
-                <span class="summary-number">{{ scores|length }}</span>
+        <div class="col-md-4 mb-3"> {# Add mb-3 for spacing when stacked #}
+            <div class="summary-box bg-primary text-white d-flex align-items-center rounded"> {# Use flexbox, ensure rounded #}
+                <i class="bi bi-journals fs-2 me-3"></i> {# Icon larger and with margin #}
+                <div class="ps-2"> {# Add padding start #}
+                    Total Quizzes Attempted
+                    <span class="summary-number">{{ scores|length }}</span>
+                </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="summary-box bg-success text-white">
-                <i class="bi bi-graph-up"></i> Average Score
+        <div class="col-md-4 mb-3"> {# Add mb-3 for spacing when stacked #}
+            <div class="summary-box bg-success text-white d-flex align-items-center rounded"> {# Use flexbox, ensure rounded #}
+                <i class="bi bi-graph-up fs-2 me-3"></i> {# Icon larger and with margin #}
+                <div class="ps-2"> {# Add padding start #}
+                    Average Score
                 <span class="summary-number">
                     {% set total_score = namespace(value=0) %}
                     {% for score in scores %}
@@ -65,11 +70,14 @@
                     {% endfor %}
                     {{ (total_score.value / scores|length)|round(1) }}%
                 </span>
+                </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="summary-box bg-info text-white">
-                <i class="bi bi-trophy"></i> Latest Achievement
+        <div class="col-md-4 mb-3"> {# Add mb-3 for spacing when stacked #}
+            <div class="summary-box bg-info text-white d-flex align-items-center rounded"> {# Use flexbox, ensure rounded #}
+                <i class="bi bi-trophy fs-2 me-3"></i> {# Icon larger and with margin #}
+                <div class="ps-2"> {# Add padding start #}
+                    Latest Achievement
                 <span class="summary-number">
                     {% if scores[0].total_scored >= 70 %}
                         Excellent!
@@ -116,23 +124,11 @@
                                         <td>{{ score.quiz.chapter.subject.name }}</td>
                                         <td>{{ score.quiz.chapter.name }}</td>
                                         <td>
-                                            <div class="progress" style="height: 20px;" title="{{ score.total_scored }}%">
-                                                <div class="progress-bar 
-                                                    {% if score.total_scored >= 70 %}
-                                                        bg-success
-                                                    {% elif score.total_scored >= 40 %}
-                                                        bg-warning
-                                                    {% else %}
-                                                        bg-danger
-                                                    {% endif %}"
-                                                    role="progressbar" 
-                                                    style="width: {{ score.total_scored }}%"
-                                                    aria-valuenow="{{ score.total_scored }}" 
-                                                    aria-valuemin="0" 
-                                                    aria-valuemax="100">{{ score.total_scored }}%</div>
-                                            </div>
+                                            {# Display score percentage directly #}
+                                            {{ score.total_scored|round(1) }}%
                                         </td>
                                         <td>
+                                            {# Corrected Status Badge Logic #}
                                             {% if score.total_scored >= 70 %}
                                                 <span class="badge bg-success score-badge">Excellent</span>
                                             {% elif score.total_scored >= 40 %}

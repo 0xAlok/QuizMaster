@@ -65,7 +65,8 @@
                     <div class="accordion-item mb-3">
                         <h2 class="accordion-header" id="heading-{{ question.id }}">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ question.id }}" aria-expanded="false" aria-controls="collapse-{{ question.id }}">
-                                Question #{{ loop.index }}: {{ question.question_text|truncate(70) }}
+                                {# Use question.id instead of loop.index #}
+                                Question ID {{ question.id }}: {{ question.question_text|truncate(70) }}
                             </button>
                         </h2>
                         <div id="collapse-{{ question.id }}" class="accordion-collapse collapse" aria-labelledby="heading-{{ question.id }}" data-bs-parent="#questionAccordion">
