@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ subject.name }} Chapters - Quiz Master{% endblock %}
+
+{% block content %}
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('user.dashboard') }}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('user.subjects') }}">Subjects</a></li>
+            <li class="breadcrumb-item active">{{ subject.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2>{{ subject.name }}</h2>
+            <p class="lead">{{ subject.description }}</p>
+        </div>
+    </div>
+
+    <div class="row">
+        {% if chapters %}
+            {% for chapter in chapters %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ chapter.name }}</h5>
+                            <p class="card-text">{{ chapter.description }}</p>
+                        </div>
+                        <div class="card-footer bg-white border-top-0">
+                            <a href="{{ url_for('user.quizzes', chapter_id=chapter.id) }}" class="btn btn-primary">View Quizzes</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <p>No chapters are available for this subject at the moment. Please check back later.</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="mt-4">
+        <a href="{{ url_for('user.subjects') }}" class="btn btn-secondary">Back to Subjects</a>
+    </div>
+</div>
+{% endblock %}

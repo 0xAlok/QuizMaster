@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ chapter.name }} Quizzes - Quiz Master{% endblock %}
+
+{% block content %}
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('user.dashboard') }}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('user.subjects') }}">Subjects</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('user.chapters', subject_id=chapter.subject_id) }}">{{ chapter.subject.name }}</a></li>
+            <li class="breadcrumb-item active">{{ chapter.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2>{{ chapter.name }} - Quizzes</h2>
+            <p class="lead">{{ chapter.description }}</p>
+        </div>
+    </div>
+
+    <div class="row">
+        {% if quizzes %}
+            {% for quiz in quizzes %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Quiz #{{ quiz.id }}</h5>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Date:</strong> {{ quiz.date_of_quiz.strftime('%Y-%m-%d') }}</p>
+                            <p><strong>Duration:</strong> {{ quiz.time_duration }} minutes</p>
+                            {% if quiz.remarks %}
+                                <p><strong>Remarks:</strong> {{ quiz.remarks }}</p>
+                            {% endif %}
+                            
+                            {% if quiz.date_of_quiz == today %}
+                                <div class="mt-2">
+                                    <span class="badge bg-success">Available Today</span>
+                                </div>
+                            {% elif quiz.date_of_quiz < today %}
+                                <div class="mt-2">
+                                    <span class="badge bg-secondary">Expired</span>
+                                </div>
+                            {% else %}
+                                <div class="mt-2">
+                                    <span class="badge bg-warning text-dark">Available on {{ quiz.date_of_quiz.strftime('%b %d, %Y') }}</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="card-footer bg-white">
+                            {% if quiz.date_of_quiz == today %}
+                                <a href="{{ url_for('user.start_quiz', quiz_id=quiz.id) }}" class="btn btn-primary">Start Quiz</a>
+                            {% else %}
+                                <button class="btn btn-secondary" disabled>Not Available Today</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <p>No quizzes are available for this chapter at the moment. Please check back later.</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="mt-4">
+        <a href="{{ url_for('user.chapters', subject_id=chapter.subject_id) }}" class="btn btn-secondary">Back to Chapters</a>
+    </div>
+</div>
+{% endblock %}
