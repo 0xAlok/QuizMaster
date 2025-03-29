@@ -21,9 +21,12 @@ ENV/
 .DS_Store
 
 # SQLite database files
-# *.db
-# *.sqlite3
-# *.sqlite
+*.db
+*.sqlite3
+*.sqlite
+
+# Instance folder (often contains DB and config)
+instance/
 
 # Logs
 *.log
