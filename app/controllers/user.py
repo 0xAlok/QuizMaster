@@ -32,7 +32,8 @@ def dashboard():
     scores = Score.query.filter_by(user_id=current_user.id).order_by(Score.time_stamp_of_attempt.asc()).all() # Order ascending for score trend chart
     
     # --- Prepare data for Score Trend Chart ---
-    score_labels = [score.time_stamp_of_attempt.strftime('%Y-%m-%d %H:%M') for score in scores]
+    # Pass timestamps (milliseconds) for the time scale
+    score_labels = [score.time_stamp_of_attempt.timestamp() * 1000 for score in scores] 
     score_data = [score.total_scored for score in scores]
 
     # --- Prepare data for Average Score per Subject Chart ---
