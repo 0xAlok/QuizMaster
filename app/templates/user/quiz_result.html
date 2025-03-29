@@ -5,20 +5,31 @@
 {% block head %}
 {{ super() }}
 <style>
-    .correct-answer {
-        background-color: #d1e7dd;
-        border-color: #a3cfbb;
-    }
-    .incorrect-answer {
-        background-color: #f8d7da;
-        border-color: #f1aeb5;
-    }
-    .user-selected {
+    /* Remove background styles for correct/incorrect */
+    /* .correct-answer { background-color: #d1e7dd; border-color: #a3cfbb; } */
+    /* .incorrect-answer { background-color: #f8d7da; border-color: #f1aeb5; } */
+
+    /* Style for the text indicating user's answer */
+    .user-selected-indicator {
         font-weight: bold;
+        margin-right: 5px; /* Add some space */
+    }
+    /* Style for the text indicating the correct answer */
+    .correct-answer-indicator {
+         /* No specific style needed unless desired */
+    }
+    /* Text color for correct answer */
+    .text-correct {
+        color: #198754; /* Bootstrap success green */
+    }
+    /* Text color for user's incorrect answer */
+    .text-incorrect {
+        color: #dc3545; /* Bootstrap danger red */
     }
     .unanswered {
         background-color: #f8f9fa;
         border-color: #dee2e6;
+        color: #6c757d; /* Muted text for unanswered */
     }
     .stats-card {
         border-radius: 10px;
@@ -143,27 +154,28 @@
                             <div class="card-body">
                                 <p>{{ question.question_text }}</p>
                                 
-                                <div class="list-group mt-3">
-                                    <div class="list-group-item {% if question.correct_answer == 1 %}correct-answer{% endif %} {% if was_answered and question_result.selected == 1 and question_result.selected != question_result.correct %}incorrect-answer{% endif %} {% if not was_answered %}unanswered{% endif %}">
-                                        {% if was_answered and question_result.selected == 1 %}<span class="user-selected">✓ </span>{% endif %}
-                                        {% if question.correct_answer == 1 %}<span class="float-end">✅ Correct Answer</span>{% endif %}
-                                        <span class="option-prefix">A)</span> {{ question.option1 }}
-                                    </div>
-                                    <div class="list-group-item {% if question.correct_answer == 2 %}correct-answer{% endif %} {% if was_answered and question_result.selected == 2 and question_result.selected != question_result.correct %}incorrect-answer{% endif %} {% if not was_answered %}unanswered{% endif %}">
-                                        {% if was_answered and question_result.selected == 2 %}<span class="user-selected">✓ </span>{% endif %}
-                                        {% if question.correct_answer == 2 %}<span class="float-end">✅ Correct Answer</span>{% endif %}
-                                        <span class="option-prefix">B)</span> {{ question.option2 }}
-                                    </div>
-                                    <div class="list-group-item {% if question.correct_answer == 3 %}correct-answer{% endif %} {% if was_answered and question_result.selected == 3 and question_result.selected != question_result.correct %}incorrect-answer{% endif %} {% if not was_answered %}unanswered{% endif %}">
-                                        {% if was_answered and question_result.selected == 3 %}<span class="user-selected">✓ </span>{% endif %}
-                                        {% if question.correct_answer == 3 %}<span class="float-end">✅ Correct Answer</span>{% endif %}
-                                        <span class="option-prefix">C)</span> {{ question.option3 }}
-                                    </div>
-                                    <div class="list-group-item {% if question.correct_answer == 4 %}correct-answer{% endif %} {% if was_answered and question_result.selected == 4 and question_result.selected != question_result.correct %}incorrect-answer{% endif %} {% if not was_answered %}unanswered{% endif %}">
-                                        {% if was_answered and question_result.selected == 4 %}<span class="user-selected">✓ </span>{% endif %}
-                                        {% if question.correct_answer == 4 %}<span class="float-end">✅ Correct Answer</span>{% endif %}
-                                        <span class="option-prefix">D)</span> {{ question.option4 }}
-                                    </div>
+                                <div class="list-group list-group-flush mt-3"> <!-- Use list-group-flush for less borders -->
+                                    {% set user_answer = question_result.selected if was_answered else None %}
+                                    {% set correct_answer_num = question.correct_answer %}
+
+                                    {% for i in range(1, 5) %}
+                                        {% set option_text = question['option' ~ i] %} {# Correct way to access dynamic attribute #}
+                                        {% set is_correct = (i == correct_answer_num) %}
+                                        {% set is_user_choice = (was_answered and i == user_answer) %}
+                                        {% set is_user_incorrect_choice = (is_user_choice and not question_result.is_correct) %}
+
+                                        <div class="list-group-item {% if not was_answered %}unanswered{% endif %}">
+                                            <div class="d-flex align-items-center">
+                                                <input type="radio" name="review_{{ question.id }}" id="review_{{ question.id }}_opt{{ i }}" value="{{ i }}" disabled {% if is_user_choice %}checked{% endif %} style="margin-right: 10px; accent-color: #555;"> {# Added accent-color #}
+                                                <label for="review_{{ question.id }}_opt{{ i }}"
+                                                       class="flex-grow-1 mb-0 {% if is_correct %}text-correct{% elif is_user_incorrect_choice %}text-incorrect{% endif %}">
+                                                    {% if is_user_choice %}<span class="user-selected-indicator"></span>{% endif %}
+                                                    {{ option_text }}
+                                                    {% if is_correct %}<span class="float-end correct-answer-indicator">(Correct Answer)</span>{% endif %}
+                                                </label>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
                                 </div>
                             </div>
                         </div>

@@ -21,9 +21,9 @@ def create_app():
     login_manager.init_app(app)
     
     # Import and register blueprints
-    from app.routes.auth import auth_bp
-    from app.routes.admin import admin_bp
-    from app.routes.user import user_bp
+    from app.controllers.auth import auth_bp
+    from app.controllers.admin import admin_bp
+    from app.controllers.user import user_bp
     
     app.register_blueprint(auth_bp)
     app.register_blueprint(admin_bp)
