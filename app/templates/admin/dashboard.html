@@ -1,6 +1,9 @@
-{% extends 'base.html' %} {% block title %}Admin Dashboard - Quiz Master{%
-endblock %} {% block head %} {{ super() }} {# Chart.js scripts will be loaded at
-the end of the content block #} {% endblock %} {% block content %}
+{% extends 'base.html' %} 
+{% block title %}Admin Dashboard - Quiz Master{% endblock %} 
+
+{# Chart.js library will be loaded at the end of the content block #}
+
+{% block content %}
 <div class="row mb-4">
   <div class="col-12 d-flex justify-content-between align-items-center">
     <h2 class="mb-0">Admin Dashboard</h2>
@@ -18,12 +21,12 @@ the end of the content block #} {% endblock %} {% block content %}
         class="card-header d-flex justify-content-between align-items-center"
       >
         <h5 class="mb-0">{{ subject.name }}</h5>
-        {# Subject Actions #}
         <div>
           <a
             href="{{ url_for('admin.edit_subject', id=subject.id) }}"
             class="btn btn-sm btn-outline-warning me-1"
             title="Edit Subject"
+            aria-label="Edit Subject {{ subject.name }}" {# Added aria-label #}
           >
             <i class="bi bi-pencil"></i>
           </a>
@@ -33,6 +36,7 @@ the end of the content block #} {% endblock %} {% block content %}
             data-bs-toggle="modal"
             data-bs-target="#deleteSubjectModal-{{ subject.id }}"
             title="Delete Subject"
+            aria-label="Delete Subject {{ subject.name }}" {# Added aria-label #}
           >
             <i class="bi bi-trash"></i>
           </button>
@@ -79,23 +83,28 @@ the end of the content block #} {% endblock %} {% block content %}
                 href="{{ url_for('admin.edit_chapter', id=chapter.id) }}"
                 class="btn btn-sm btn-outline-warning"
                 title="Edit Chapter"
+                aria-label="Edit Chapter {{ chapter.name }}" {# Added aria-label #}
               >
                 <i class="bi bi-pencil"></i>
               </a>
-              {# Delete Button #}
               <button
                 type="button"
                 class="btn btn-sm btn-outline-danger"
                 data-bs-toggle="modal"
                 data-bs-target="#deleteChapterModal-{{ chapter.id }}"
                 title="Delete Chapter"
+                aria-label="Delete Chapter {{ chapter.name }}" {# Added aria-label #}
               >
                 <i class="bi bi-trash"></i>
               </button>
             </div>
           </li>
-
-          <!-- Delete Chapter Modal -->
+          {% endfor %} {# End chapter loop #}
+        </ul>
+        
+        {# Move Modals outside the UL but keep within the subject loop #}
+        {% for chapter in subject.chapters %}
+          <!-- Delete Chapter Modal for {{ chapter.name }} -->
           <div
             class="modal fade"
             id="deleteChapterModal-{{ chapter.id }}"
@@ -138,8 +147,7 @@ the end of the content block #} {% endblock %} {% block content %}
               </div>
             </div>
           </div>
-          {% endfor %}
-        </ul>
+        {% endfor %} {# End modal loop #}
         {% else %}
         <p class="text-muted">No chapters added yet.</p>
         {% endif %}
@@ -276,9 +284,43 @@ the end of the content block #} {% endblock %} {% block content %}
   }|tojson|safe }}
 </script>
 
+{# Load Chart.js library *before* the initialization script #}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
+
 {# Chart Initialization Script #}
 <script>
   document.addEventListener("DOMContentLoaded", function () {
+    // ---  function to create charts ---
+    function createChart(canvasId, chartType, chartData, chartOptions = {}) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) {
+        console.error(`Canvas element with ID '${canvasId}' not found.`);
+        return;
+      }
+      // checks if essential data arrays exist and are not empty
+      if (!chartData || !chartData.labels || chartData.labels.length === 0 || !chartData.datasets || chartData.datasets.length === 0 || !chartData.datasets[0].data || chartData.datasets[0].data.length === 0) {
+        console.warn(`No valid data provided for chart '${canvasId}'.`);
+        return; 
+      }
+
+      try {
+  
+        if (typeof Chart === 'undefined') {
+            console.error('Chart.js library is not loaded or available.');
+            return;
+        }
+        const ctx = canvas.getContext("2d");
+        new Chart(ctx, {
+          type: chartType,
+          data: chartData,
+          options: chartOptions,
+        });
+      } catch (e) {
+        console.error(`Error creating chart '${canvasId}':`, e);
+      }
+    }
+
+    // --- Get Embedded Chart Data ---
     let adminChartData = {};
     try {
       const chartDataElement = document.getElementById("adminChartData");
@@ -291,151 +333,91 @@ the end of the content block #} {% endblock %} {% block content %}
       console.error("Error parsing admin chart data JSON:", e);
     }
 
-    // --- Quizzes per Subject Chart ---
-    const quizzesPerSubjectCanvas = document.getElementById(
-      "quizzesPerSubjectChart"
+    // 1. Quizzes per Subject Chart
+    createChart(
+      "quizzesPerSubjectChart",
+      "bar",
+      {
+        labels: adminChartData.subjectLabels,
+        datasets: [
+          {
+            label: "# of Quizzes",
+            data: adminChartData.quizCountsData,
+            backgroundColor: "rgba(54, 162, 235, 0.6)",
+            borderColor: "rgba(54, 162, 235, 1)",
+            borderWidth: 1,
+          },
+        ],
+      },
     );
-    if (
-      quizzesPerSubjectCanvas &&
-      adminChartData.subjectLabels &&
-      adminChartData.quizCountsData
-    ) {
-      try {
-        if (
-          Array.isArray(adminChartData.subjectLabels) &&
-          adminChartData.subjectLabels.length > 0 &&
-          Array.isArray(adminChartData.quizCountsData) &&
-          adminChartData.quizCountsData.length > 0
-        ) {
-          const ctx = quizzesPerSubjectCanvas.getContext("2d");
-          new Chart(ctx, {
-            type: "bar",
-            data: {
-              labels: adminChartData.subjectLabels,
-              datasets: [
-                {
-                  label: "# of Quizzes",
-                  data: adminChartData.quizCountsData,
-                  backgroundColor: "rgba(54, 162, 235, 0.6)",
-                  borderColor: "rgba(54, 162, 235, 1)",
-                  borderWidth: 1,
-                },
-              ],
-            },
-            options: {
-              /* ... options ... */
-            },
-          });
-        }
-      } catch (e) {
-        console.error("Error creating quizzes per subject chart:", e);
-      }
-    }
 
-    // --- User Registration Trend Chart ---
-    const userRegCanvas = document.getElementById("userRegistrationChart");
-    if (
-      userRegCanvas &&
-      adminChartData.registrationLabels &&
-      adminChartData.registrationData
-    ) {
-      try {
-        if (
-          Array.isArray(adminChartData.registrationLabels) &&
-          adminChartData.registrationLabels.length > 0 &&
-          Array.isArray(adminChartData.registrationData) &&
-          adminChartData.registrationData.length > 0
-        ) {
-          const ctx = userRegCanvas.getContext("2d");
-          new Chart(ctx, {
-            type: "line",
-            data: {
-              labels: adminChartData.registrationLabels,
-              datasets: [
-                {
-                  label: "Registrations",
-                  data: adminChartData.registrationData,
-                  borderColor: "rgb(255, 99, 132)",
-                  tension: 0.1,
-                  fill: false,
-                },
-              ],
-            },
-            options: {
-              responsive: true,
-              scales: {
-                y: {
-                  beginAtZero: true,
-                  title: { display: true, text: "No. of Users Registered" },
-                },
-                x: {
-                  title: { display: true, text: "Date" },
-                },
-              },
-              plugins: { legend: { display: false } },
-            },
-          });
-        }
-      } catch (e) {
-        console.error("Error creating user registration chart:", e);
+    // 2. User Registration Trend Chart
+    createChart(
+      "userRegistrationChart",
+      "line",
+      {
+        labels: adminChartData.registrationLabels,
+        datasets: [
+          {
+            label: "Registrations",
+            data: adminChartData.registrationData,
+            borderColor: "rgb(255, 99, 132)",
+            tension: 0.1,
+            fill: false,
+          },
+        ],
+      },
+      {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: { display: true, text: "No. of Users Registered" },
+          },
+          x: {
+            title: { display: true, text: "Date" },
+          },
+        },
+        plugins: { legend: { display: false } },
       }
-    }
+    );
 
-    // --- Average Score per Quiz Chart ---
-    const avgScoreQuizCanvas = document.getElementById("avgScorePerQuizChart");
-    if (
-      avgScoreQuizCanvas &&
-      adminChartData.avgQuizLabels &&
-      adminChartData.avgQuizData
-    ) {
-      try {
-        if (
-          Array.isArray(adminChartData.avgQuizLabels) &&
-          adminChartData.avgQuizLabels.length > 0 &&
-          Array.isArray(adminChartData.avgQuizData) &&
-          adminChartData.avgQuizData.length > 0
-        ) {
-          const ctx = avgScoreQuizCanvas.getContext("2d");
-          new Chart(ctx, {
-            type: "bar",
-            data: {
-              labels: adminChartData.avgQuizLabels,
-              datasets: [
-                {
-                  label: "Average Score (%)",
-                  data: adminChartData.avgQuizData,
-                  backgroundColor: "rgba(75, 192, 192, 0.6)",
-                  borderColor: "rgba(75, 192, 192, 1)",
-                  borderWidth: 1,
-                },
-              ],
-            },
-            options: {
-              responsive: true,
-              scales: {
-                y: {
-                  beginAtZero: true,
-                  max: 100,
-                  title: { display: true, text: "Average Score (%)" },
-                },
-                x: {
-                  title: { display: true, text: "Quiz ID" },
-                },
-              },
-              plugins: { legend: { display: false } },
-            },
-          });
-        }
-      } catch (e) {
-        console.error("Error creating average score per quiz chart:", e);
+    // 3. Average Score per Quiz Chart
+    createChart(
+      "avgScorePerQuizChart",
+      "bar",
+      {
+        labels: adminChartData.avgQuizLabels,
+        datasets: [
+          {
+            label: "Average Score (%)",
+            data: adminChartData.avgQuizData,
+            backgroundColor: "rgba(75, 192, 192, 0.6)",
+            borderColor: "rgba(75, 192, 192, 1)",
+            borderWidth: 1,
+          },
+        ],
+      },
+      {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100,
+            title: { display: true, text: "Average Score (%)" },
+          },
+          x: {
+            title: { display: true, text: "Quiz ID" },
+          },
+        },
+        plugins: { legend: { display: false } },
       }
-    }
+    );
   });
 </script>
 
-<!-- Include Chart.js and Date Adapter *after* the chart initialization script -->
-{# Note: Date adapter might not be needed if no time scale is used here #}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-{#
-<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
-#} {% endblock %}
+{# Date adapter is not needed for these charts #}
+{# 
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script> 
+#} 
+{% endblock %}

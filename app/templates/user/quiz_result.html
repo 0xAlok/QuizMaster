@@ -1,56 +1,10 @@
-{% extends 'base.html' %} {% block title %}Quiz Results - Quiz Master{% endblock
-%} {% block head %} {{ super() }}
-<style>
-  /* Remove background styles for correct/incorrect */
-  /* .correct-answer { background-color: #d1e7dd; border-color: #a3cfbb; } */
-  /* .incorrect-answer { background-color: #f8d7da; border-color: #f1aeb5; } */
+{% extends 'base.html' %} 
 
-  /* Style for the text indicating user's answer */
-  .user-selected-indicator {
-    font-weight: bold;
-    margin-right: 5px; /* Add some space */
-  }
-  /* Style for the text indicating the correct answer */
-  .correct-answer-indicator {
-    /* No specific style needed unless desired */
-  }
-  /* Style for correct answer text (bold) */
-  .list-group-item label span.text-correct {
-    font-weight: bold; /* Bold style for correct answer */
-  }
-  /* Style for incorrect answer text (color applied inline) */
-  .list-group-item label span.text-incorrect {
-    /* Color applied inline */
-  }
-  /* .score-percentage-text rule removed */
-  .unanswered {
-    background-color: #f8f9fa;
-    border-color: #dee2e6;
-    color: #6c757d; /* Muted text for unanswered */
-  }
-  .stats-card {
-    border-radius: 10px;
-    padding: 20px;
-    margin-bottom: 20px;
-    transition: transform 0.3s;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  .stats-card:hover {
-    transform: translateY(-5px);
-  }
-  .score-circle {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 25px; /* Increased bottom margin */
-    font-size: 3.5rem; /* Adjusted font size */
-    font-weight: bold;
-    /* .score-circle and related background rules removed */
-</style>
-{% endblock %} {% block content %}
+{% block title %}Quiz Results - Quiz Master{% endblock %} 
+
+{# Custom styles moved to static/css/style.css #}
+
+{% block content %}
 <div class="container">
   <div class="row mb-4">
     <div class="col-12">
@@ -75,18 +29,18 @@
             <div class="col-md-6 mb-4">
               <div class="card stats-card h-100">
                 <div class="card-body text-center">
-                  <h4 class="card-title mb-3">Your Score</h4> {# Added mb-3 #}
-                  {# Replaced circle div with styled badge span #}
-                  <span class="badge fs-4 mb-3 {% if score >= 70 %}bg-success{% elif score >= 40 %}bg-warning text-dark{% else %}bg-danger{% endif %}">
-                      {{ score|round(1) }}%
+                  <h4 class="card-title mb-3">Your Score</h4>
+                  {# Use score_percent passed from controller #}
+                  <span class="badge fs-4 mb-3 {% if score_percent >= 70 %}bg-success{% elif score_percent >= 40 %}bg-warning text-dark{% else %}bg-danger{% endif %}">
+                      {{ score_percent|round(1) }}%
                   </span>
-                  <h5 class="mt-3"> {# Added mt-3 #}
+                  <h5 class="mt-3">
                     {{ correct_answers }} correct out of {{ total_questions }}
                     questions
                   </h5>
                   <p class="text-muted">
-                    {% if score >= 70 %} Excellent work! You've mastered this
-                    material. {% elif score >= 40 %} Good job! Keep practicing
+                    {% if score_percent >= 70 %} Excellent work! You've mastered this
+                    material. {% elif score_percent >= 40 %} Good job! Keep practicing
                     to improve. {% else %} You might need more practice with
                     this material. {% endif %}
                   </p>
@@ -121,14 +75,15 @@
                       </td>
                     </tr>
                     <tr>
-                      <td><i class="bi bi-stopwatch"></i> Quiz Date:</td>
+                      <td><i class="bi bi-calendar-event"></i> Quiz Date:</td> {# Changed icon #}
                       <td>{{ quiz.date_of_quiz.strftime('%B %d, %Y') }}</td>
                     </tr>
                     <tr>
                       <td>
                         <i class="bi bi-clock-history"></i> Completion Time:
                       </td>
-                      <td>Now</td>
+                      {# Use timestamp from score_object #}
+                      <td>{{ score_object.time_stamp_of_attempt.strftime('%Y-%m-%d %H:%M:%S') if score_object else 'N/A' }}</td>
                     </tr>
                   </table>
                 </div>
@@ -138,71 +93,71 @@
 
           <h4 class="mt-4 mb-3">Question Review</h4>
 
-          {% for question in questions %} {% set question_id =
-          question.id|string %} {% set question_result =
-          results.get(question_id, {}) %} {% set was_answered = question_id in
-          results %}
+          {% for question in questions %} 
+            {% set question_id = question.id|string %} 
+            {% set question_result = results.get(question_id, {}) %} 
+            {% set was_answered = question_id in results and question_result.selected is not none %} {# Check if selected is not None #}
+            {% set user_answer = question_result.selected if was_answered else None %} 
+            {% set correct_answer_num = question.correct_answer %}
 
-          <div class="card mb-4">
-            <div
-              class="card-header d-flex justify-content-between align-items-center"
-            >
-              <h5 class="mb-0">Question {{ loop.index }}</h5>
-              {% if not was_answered %}
-              <span class="badge bg-secondary">Not Answered</span>
-              {% elif question_result.is_correct %}
-              <span class="badge bg-success">Correct</span>
-              {% else %}
-              <span class="badge bg-danger">Incorrect</span>
-              {% endif %}
-            </div>
-            <div class="card-body">
-              <p>{{ question.question_text }}</p>
+            <div class="card mb-4">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Question {{ loop.index }}</h5>
+                {% if not was_answered %}
+                  <span class="badge bg-secondary">Not Answered</span>
+                {% elif question_result.is_correct %}
+                  <span class="badge bg-success">Correct</span>
+                {% else %}
+                  <span class="badge bg-danger">Incorrect</span>
+                {% endif %}
+              </div>
+              <div class="card-body">
+                <p>{{ question.question_text }}</p>
 
-              <div class="list-group list-group-flush mt-3">
-                <!-- Use list-group-flush for less borders -->
-                {% set user_answer = question_result.selected if was_answered
-                else None %} {% set correct_answer_num = question.correct_answer
-                %} {% for i in range(1, 5) %} {% set option_text =
-                question['option' ~ i] %} {# Correct way to access dynamic
-                attribute #} {% set is_correct = (i == correct_answer_num) %} {%
-                set is_user_choice = (was_answered and i == user_answer) %} {%
-                set is_user_incorrect_choice = (is_user_choice and not
-                question_result.is_correct) %}
+                <div class="list-group list-group-flush mt-3">
+                  {% for i in range(1, 5) %} 
+                    {% set option_text = question['option' ~ i] %} 
+                    {% set is_correct = (i == correct_answer_num) %} 
+                    {% set is_user_choice = (was_answered and i == user_answer) %}
 
-                {# Use Bootstrap form-check structure #}
-                <div class="list-group-item form-check {% if not was_answered %}unanswered{% endif %}">
-                  <input
-                    class="form-check-input"
-                    type="radio"
-                    name="review_{{ question.id }}"
-                    id="review_{{ question.id }}_opt{{ i }}"
-                    value="{{ i }}"
-                    disabled
-                    {% if is_user_choice %}checked{% endif %}
-                  />
-                  <label class="form-check-label" for="review_{{ question.id }}_opt{{ i }}">
-                    {# Apply text color styling directly to label text #}
-                    <span style="{% if is_correct %}color: #198754; font-weight: bold;{% else %}color: #dc3545;{% endif %}">
-                      {{ option_text }}
-                    </span>
-                  </label>
+                    <div class="list-group-item form-check {% if not was_answered %}unanswered{% endif %}">
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        name="review_{{ question.id }}"
+                        id="review_{{ question.id }}_opt{{ i }}"
+                        value="{{ i }}"
+                        disabled
+                        {% if is_user_choice %}checked{% endif %}
+                      />
+                      <label class="form-check-label" for="review_{{ question.id }}_opt{{ i }}">
+                        {# Style only the correct answer text #}
+                        <span {% if is_correct %}style="color: #198754; font-weight: bold;"{% endif %}>
+                          {{ option_text }}
+                        </span>
+                        {# Indicate correct answer clearly if user was wrong #}
+                        {% if is_correct and not question_result.is_correct and was_answered %}
+                           <i class="bi bi-check-lg text-success ms-2" title="Correct Answer"></i>
+                        {% endif %}
+                        {# Indicate user's incorrect choice #}
+                        {% if is_user_choice and not question_result.is_correct %}
+                           <i class="bi bi-x-lg text-danger ms-2" title="Your Answer"></i>
+                        {% endif %}
+                      </label>
+                    </div>
+                  {% endfor %}
                 </div>
-                {% endfor %}
               </div>
             </div>
-          </div>
           {% endfor %}
 
           <div class="d-flex justify-content-between mt-4">
-            <a href="{{ url_for('user.dashboard') }}" class="btn btn-secondary"
-              >Back to Dashboard</a
-            >
-            <a
-              href="{{ url_for('user.quizzes', chapter_id=quiz.chapter_id) }}"
-              class="btn btn-primary"
-              >Try Another Quiz</a
-            >
+            <a href="{{ url_for('user.dashboard') }}" class="btn btn-secondary">
+              <i class="bi bi-arrow-left"></i> Back to Dashboard
+            </a>
+            <a href="{{ url_for('user.quizzes', chapter_id=quiz.chapter_id) }}" class="btn btn-primary">
+              <i class="bi bi-arrow-clockwise"></i> Try Another Quiz
+            </a>
           </div>
         </div>
       </div>

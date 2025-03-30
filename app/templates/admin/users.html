@@ -44,9 +44,9 @@
                                 <td>{{ user.id }}</td>
                                 <td>{{ user.username }}</td>
                                 <td>{{ user.full_name }}</td>
-                                <td>{{ user.qualification or 'N/A' }}</td>
-                                <td>{{ user.dob.strftime('%Y-%m-%d') if user.dob else 'N/A' }}</td>
-                                <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
+                                <td>{{ user.qualification or '--' }}</td>
+                                <td>{{ user.dob.strftime('%Y-%m-%d') if user.dob else '--' }}</td>
+                                <td>{{ user.created_at.strftime('%Y-%m-%d %H:%M') }}</td> {# Added time #}
                             </tr>
                         {% endfor %}
                     </tbody>

@@ -15,10 +15,9 @@
                     
                     <div class="mb-3">
                         {{ form.email.label(class="form-label") }}
-                        {# Add required and type="email" #}
                         {{ form.email(class="form-control", placeholder="Enter email address", required=true, type="email") }}
                         {% if form.email.errors %}
-                            <div class="text-danger">
+                            <div class="text-danger small mt-1"> {# Added small/mt-1 for style #}
                                 {% for error in form.email.errors %}
                                     {{ error }}
                                 {% endfor %}
@@ -28,10 +27,9 @@
                     
                     <div class="mb-3">
                         {{ form.full_name.label(class="form-label") }}
-                        {# Add required, minlength, maxlength #}
                         {{ form.full_name(class="form-control", placeholder="Enter your full name", required=true, minlength="2", maxlength="100") }}
                         {% if form.full_name.errors %}
-                            <div class="text-danger">
+                            <div class="text-danger small mt-1"> {# Added small/mt-1 for style #}
                                 {% for error in form.full_name.errors %}
                                     {{ error }}
                                 {% endfor %}
@@ -41,10 +39,9 @@
                     
                     <div class="mb-3">
                         {{ form.password.label(class="form-label") }}
-                        {# Add required, minlength #}
                         {{ form.password(class="form-control", placeholder="Enter password", required=true, minlength="6") }}
                         {% if form.password.errors %}
-                            <div class="text-danger">
+                            <div class="text-danger small mt-1"> {# Added small/mt-1 for style #}
                                 {% for error in form.password.errors %}
                                     {{ error }}
                                 {% endfor %}
@@ -54,10 +51,9 @@
                     
                     <div class="mb-3">
                         {{ form.confirm_password.label(class="form-label") }}
-                        {# Add required #}
                         {{ form.confirm_password(class="form-control", placeholder="Confirm your password", required=true) }}
                         {% if form.confirm_password.errors %}
-                            <div class="text-danger">
+                            <div class="text-danger small mt-1"> {# Added small/mt-1 for style #}
                                 {% for error in form.confirm_password.errors %}
                                     {{ error }}
                                 {% endfor %}
@@ -74,7 +70,7 @@
                         {{ form.dob.label(class="form-label") }}
                         {{ form.dob(class="form-control", placeholder="YYYY-MM-DD") }}
                         {% if form.dob.errors %}
-                            <div class="text-danger">
+                            <div class="text-danger small mt-1"> {# Added small/mt-1 for style #}
                                 {% for error in form.dob.errors %}
                                     {{ error }}
                                 {% endfor %}

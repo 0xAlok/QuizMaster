@@ -1,29 +1,10 @@
-{% extends 'base.html' %} {% block title %}Quiz History - Quiz Master{% endblock
-%} {% block head %} {{ super() }}
-<style>
-  .score-badge {
-    font-size: 1rem;
-    padding: 8px 12px;
-  }
-  .history-card {
-    transition: transform 0.2s;
-  }
-  .history-card:hover {
-    transform: translateY(-5px);
-  }
-  /* .summary-box class removed - using Bootstrap utilities instead */
-  .summary-number {
-    font-size: 2rem; /* Keep this for the number size */
-    font-weight: bold;
-    display: block;
-    margin-bottom: 5px;
-  }
-  /* Add this class to ensure icon has proper padding */
-  .summary-icon {
-    padding-left: 15px;
-  }
-</style>
-{% endblock %} {% block content %}
+{% extends 'base.html' %} 
+
+{% block title %}Quiz History - Quiz Master{% endblock %} 
+
+{# Custom styles moved to static/css/style.css #}
+
+{% block content %}
 <div class="container">
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -121,39 +102,30 @@
   <!-- Summary Statistics -->
   <div class="row mb-4">
     <div class="col-md-6 mb-3">
-      {# Changed from col-md-4 #} {# Replace summary-box with Bootstrap
-      utilities #}
       <div
         class="bg-primary text-white d-flex align-items-center rounded p-3 shadow-sm"
       >
-        <i class="bi bi-journals fs-2 me-3"></i> {# Keep icon margin #}
+        <i class="bi bi-journals fs-2 me-3"></i> 
         <div class="ps-2">
-          {# Keep padding start for text #} Total Quizzes Attempted :
+          Total Quizzes Attempted :
           <span class="summary-number">{{ scores|length }}</span>
         </div>
       </div>
     </div>
     <div class="col-md-6 mb-3">
-      {# Changed from col-md-4 #} {# Replace summary-box with Bootstrap
-      utilities #}
       <div
         class="bg-success text-white d-flex align-items-center rounded p-3 shadow-sm"
       >
-        <i class="bi bi-graph-up fs-2 me-3"></i> {# Keep icon margin #}
+        <i class="bi bi-graph-up fs-2 me-3"></i> 
         <div class="ps-2">
-          {# Keep padding start for text #} Average Score :
-          <span class="summary-number">
-            {% set total_score = namespace(value=0) %} {% for score in scores %}
-            {% set total_score.value = total_score.value + score.total_scored %}
-            {% endfor %} {{ (total_score.value / scores|length)|round(1) }}%
-          </span>
+           Average Score :
+           {# Use average_score calculated in the view function #}
+          <span class="summary-number">{{ average_score|round(1) }}%</span>
         </div>
       </div>
     </div>
-    {# Remove Latest Achievement Box #} {# Move Quiz Attempts card into the same
-    row as summary boxes #}
+    
     <div class="col-12 mt-4">
-      {# Add margin-top for spacing #}
       <div class="card">
         <div class="card-header bg-primary text-white">
           <h4 class="mb-0">Quiz Attempts</h4>
@@ -185,20 +157,14 @@
                   </td>
                   <td>{{ score.quiz.chapter.subject.name }}</td>
                   <td>{{ score.quiz.chapter.name }}</td>
-                  {# Reverted to plain text score #}
                   <td>{{ score.total_scored|round(1) }}%</td>
                   <td>
-                    {# Corrected Status Badge Logic #} {% if score.total_scored
-                    >= 70 %}
+                    {% if score.total_scored >= 70 %}
                     <span class="badge bg-success score-badge">Excellent</span>
                     {% elif score.total_scored >= 40 %}
-                    <span class="badge bg-warning text-dark score-badge"
-                      >Good</span
-                    >
+                    <span class="badge bg-warning text-dark score-badge">Good</span>
                     {% else %}
-                    <span class="badge bg-danger score-badge"
-                      >Needs Improvement</span
-                    >
+                    <span class="badge bg-danger score-badge">Needs Improvement</span>
                     {% endif %}
                   </td>
                 </tr>
@@ -207,27 +173,37 @@
             </table>
           </div>
           {% else %}
+          {# This inner 'else' might be unreachable if the outer 'if scores' is false, but kept for structure #}
           <div class="alert alert-info">
             <p>
-              <i class="bi bi-info-circle-fill me-2"></i> You haven't attempted
-              any quizzes yet. Go to the dashboard to find available quizzes.
+              <i class="bi bi-info-circle-fill me-2"></i> No attempts match the current filters.
             </p>
           </div>
-          <div class="text-center mt-4">
-            <a
-              href="{{ url_for('user.subjects') }}"
-              class="btn btn-primary btn-lg"
-            >
-              <i class="bi bi-journal-text me-2"></i>Browse Subjects
-            </a>
-          </div>
-          {% endif %} {% endif %}
+          {% endif %} 
         </div>
       </div>
     </div>
   </div>
+  {% else %} {# This 'else' corresponds to the outer 'if scores' #}
+    <div class="col-12">
+        <div class="alert alert-info">
+            <p>
+            <i class="bi bi-info-circle-fill me-2"></i> You haven't attempted
+            any quizzes yet, or no attempts match the current filters.
+            </p>
+        </div>
+        <div class="text-center mt-4">
+            <a
+            href="{{ url_for('user.subjects') }}"
+            class="btn btn-primary btn-lg"
+            >
+            <i class="bi bi-journal-text me-2"></i>Browse Subjects
+            </a>
+        </div>
+    </div>
+  {% endif %}
 
-  {% if scores %}
+  {% if scores %} {# Only show bottom buttons if there are scores displayed #}
   <div class="mt-4">
     <a href="{{ url_for('user.dashboard') }}" class="btn btn-secondary">
       <i class="bi bi-speedometer2 me-1"></i>Back to Dashboard

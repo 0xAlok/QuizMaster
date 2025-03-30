@@ -24,10 +24,9 @@
                     
                     <div class="mb-3">
                         {{ form.name.label(class="form-label") }}
-                        {# Add required, minlength, maxlength #}
                         {{ form.name(class="form-control", placeholder="e.g., Mathematics, History", required=true, minlength="2", maxlength="100") }}
                         {% if form.name.errors %}
-                            <div class="text-danger">
+                            <div class="text-danger small mt-1"> {# Added small/mt-1 for style #}
                                 {% for error in form.name.errors %}
                                     {{ error }}
                                 {% endfor %}
@@ -37,10 +36,9 @@
                     
                     <div class="mb-3">
                         {{ form.description.label(class="form-label") }}
-                        {# Add required #}
                         {{ form.description(class="form-control", rows=3, placeholder="A brief description of the subject", required=true) }}
                         {% if form.description.errors %}
-                            <div class="text-danger">
+                            <div class="text-danger small mt-1"> {# Added small/mt-1 for style #}
                                 {% for error in form.description.errors %}
                                     {{ error }}
                                 {% endfor %}

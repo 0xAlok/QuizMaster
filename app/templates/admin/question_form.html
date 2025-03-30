@@ -24,10 +24,9 @@
                     
                     <div class="mb-4">
                         {{ form.question_text.label(class="form-label") }}
-                        {# Add required #}
                         {{ form.question_text(class="form-control", rows=3, placeholder="Enter the question text", required=true) }}
                         {% if form.question_text.errors %}
-                            <div class="text-danger">
+                            <div class="text-danger small mt-1"> {# Added small/mt-1 for style #}
                                 {% for error in form.question_text.errors %}
                                     {{ error }}
                                 {% endfor %}
@@ -39,10 +38,9 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 {{ form.option1.label(class="form-label") }}
-                                {# Add required #}
                                 {{ form.option1(class="form-control", placeholder="Enter option 1", required=true) }}
                                 {% if form.option1.errors %}
-                                    <div class="text-danger">
+                                    <div class="text-danger small mt-1"> {# Added small/mt-1 for style #}
                                         {% for error in form.option1.errors %}
                                             {{ error }}
                                         {% endfor %}
@@ -52,10 +50,9 @@
                             
                             <div class="mb-3">
                                 {{ form.option2.label(class="form-label") }}
-                                {# Add required #}
                                 {{ form.option2(class="form-control", placeholder="Enter option 2", required=true) }}
                                 {% if form.option2.errors %}
-                                    <div class="text-danger">
+                                    <div class="text-danger small mt-1"> {# Added small/mt-1 for style #}
                                         {% for error in form.option2.errors %}
                                             {{ error }}
                                         {% endfor %}
@@ -67,10 +64,9 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 {{ form.option3.label(class="form-label") }}
-                                {# Add required #}
                                 {{ form.option3(class="form-control", placeholder="Enter option 3", required=true) }}
                                 {% if form.option3.errors %}
-                                    <div class="text-danger">
+                                    <div class="text-danger small mt-1"> {# Added small/mt-1 for style #}
                                         {% for error in form.option3.errors %}
                                             {{ error }}
                                         {% endfor %}
@@ -80,10 +76,9 @@
                             
                             <div class="mb-3">
                                 {{ form.option4.label(class="form-label") }}
-                                {# Add required #}
                                 {{ form.option4(class="form-control", placeholder="Enter option 4", required=true) }}
                                 {% if form.option4.errors %}
-                                    <div class="text-danger">
+                                    <div class="text-danger small mt-1"> {# Added small/mt-1 for style #}
                                         {% for error in form.option4.errors %}
                                             {{ error }}
                                         {% endfor %}
@@ -99,7 +94,6 @@
                             {% for subfield in form.correct_option %}
                                 <div class="col-md-3 mb-2">
                                     <div class="form-check">
-                                        {# Add required to each radio button #}
                                         {{ subfield(class="form-check-input", required=true) }}
                                         {{ subfield.label(class="form-check-label") }}
                                     </div>
@@ -107,7 +101,7 @@
                             {% endfor %}
                         </div>
                         {% if form.correct_option.errors %}
-                            <div class="text-danger">
+                            <div class="text-danger small mt-1"> {# Added small/mt-1 for style #}
                                 {% for error in form.correct_option.errors %}
                                     {{ error }}
                                 {% endfor %}

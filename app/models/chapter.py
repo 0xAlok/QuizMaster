@@ -2,6 +2,7 @@ from app import db
 from datetime import datetime
 
 class Chapter(db.Model):
+    """Represents a chapter within a subject, containing quizzes."""
     __tablename__ = 'chapters'
     
     id = db.Column(db.Integer, primary_key=True)
@@ -14,4 +15,5 @@ class Chapter(db.Model):
     quizzes = db.relationship('Quiz', backref='chapter', lazy=True, cascade="all, delete-orphan")
     
     def __repr__(self):
+        """Provides a developer-friendly representation of the Chapter object."""
         return f'<Chapter {self.name}>'

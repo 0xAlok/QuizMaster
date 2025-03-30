@@ -14,10 +14,9 @@
                     {{ form.hidden_tag() }}
                     <div class="mb-3">
                         {{ form.username.label(class="form-label") }}
-                        {# Add required and type="email" #}
                         {{ form.username(class="form-control", placeholder="Enter email address", required=true, type="email") }}
                         {% if form.username.errors %}
-                            <div class="text-danger">
+                            <div class="text-danger small mt-1"> {# Added small/mt-1 for style #}
                                 {% for error in form.username.errors %}
                                     {{ error }}
                                 {% endfor %}
@@ -27,10 +26,9 @@
                     
                     <div class="mb-3">
                         {{ form.password.label(class="form-label") }}
-                        {# Add required #}
                         {{ form.password(class="form-control", placeholder="Enter password", required=true) }}
                         {% if form.password.errors %}
-                            <div class="text-danger">
+                            <div class="text-danger small mt-1"> {# Added small/mt-1 for style #}
                                 {% for error in form.password.errors %}
                                     {{ error }}
                                 {% endfor %}

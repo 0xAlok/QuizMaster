@@ -27,13 +27,12 @@
                         <div class="col-md-6">
                             <p><strong>Date:</strong> {{ quiz.date_of_quiz.strftime('%Y-%m-%d') }}</p>
                             <p><strong>Duration:</strong> {{ quiz.time_duration }} minutes</p>
-                            {# Question count moved to the other column #}
                         </div>
                         <div class="col-md-6">
                             {% if quiz.remarks %}
                                 <p><strong>Remarks:</strong> {{ quiz.remarks }}</p>
                             {% endif %}
-                            <p><strong>Questions:</strong> {{ quiz.questions | length }}</p> {# Moved question count here #}
+                            <p><strong>Questions:</strong> {{ quiz.questions | length }}</p>
                         </div>
                     </div>
 

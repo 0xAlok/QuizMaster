@@ -2,64 +2,7 @@
 
 {% block title %}Quiz in Progress - Quiz Master{% endblock %}
 
-{% block head %}
-{{ super() }}
-<style>
-    #quiz-timer {
-        font-size: 1.2rem;
-        padding: 10px;
-        border-radius: 5px;
-    }
-    .timer-warning {
-        background-color: #ffc107;
-        color: #212529;
-    }
-    .timer-danger {
-        background-color: #dc3545;
-        color: white;
-    }
-    .question-card {
-        margin-bottom: 20px;
-        padding-bottom: 15px; /* Add some padding at the bottom */
-    }
-    .question-text {
-        margin-bottom: 15px; /* Space below question text */
-    }
-    /* Styling for standard radio button options */
-    .quiz-options-container {
-        margin-top: 1rem; /* Space above options */
-    }
-    .quiz-option {
-        display: flex; /* Align radio and label horizontally */
-        align-items: center; /* Align items vertically */
-        margin-bottom: 12px; /* Space between options */
-        cursor: pointer; /* Indicate clickable area */
-    }
-    .quiz-option input[type="radio"] {
-        margin-right: 10px; /* Space between radio button and label text */
-        /* Use browser default appearance */
-        width: auto; /* Override potential global styles */
-        height: auto; /* Override potential global styles */
-        opacity: 1; /* Ensure visible */
-        position: static; /* Ensure normal flow */
-        cursor: pointer;
-    }
-    .quiz-option label {
-        margin-bottom: 0; /* Remove default label margin */
-        font-weight: normal; /* Default font weight */
-        cursor: pointer;
-    }
-    .option-prefix {
-        font-weight: bold;
-        margin-right: 8px;
-    }
-    /* Optional: Style for checked label */
-    /* .quiz-option input[type="radio"]:checked + label { */
-        /* font-weight: bold; */
-        /* color: #0d6efd; */
-    /* } */
-</style>
-{% endblock %}
+{# Custom styles moved to static/css/style.css #}
 
 {% block content %}
 <div class="container">
@@ -126,18 +69,24 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Timer functionality (Keep this)
     function updateTimer() {
+        // Fetch remaining time from the server
         fetch('{{ url_for("user.check_quiz_time") }}')
             .then(response => response.json())
             .then(data => {
+                // Check if the server indicates the time has expired
                 if (data.expired) {
+                    // Check if the form hasn't already been submitted by this timer logic
                     if (!document.getElementById('quiz-form').dataset.submittedByTimer) {
-                        document.getElementById('quiz-form').dataset.submittedByTimer = 'true';
-                        alert('Time is up! Your quiz will be submitted now.');
-                        document.getElementById('quiz-form').submit();
+                        // Mark the form as submitted by the timer to prevent multiple submissions
+                        document.getElementById('quiz-form').dataset.submittedByTimer = 'true'; 
+                        alert('Time is up! Your quiz will be submitted automatically.');
+                        // Programmatically submit the form
+                        document.getElementById('quiz-form').submit(); 
                     }
-                    return;
+                    return; // Stop further timer updates
                 }
 
+                // Calculate minutes and seconds
                 const minutes = Math.floor(data.time_remaining / 60);
                 const seconds = data.time_remaining % 60;
 
@@ -155,14 +104,18 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => console.error('Error updating timer:', error));
     }
 
-    updateTimer();
+    // Initial call to display timer immediately
+    updateTimer(); 
+    // Set interval to update timer every second
     const timerInterval = setInterval(updateTimer, 1000);
 
+    // Clear the interval timer if the user submits the form manually
     document.getElementById('quiz-form').addEventListener('submit', function() {
+        console.log('Quiz submitted manually, clearing timer interval.');
         clearInterval(timerInterval);
     });
 
-    // No need for button click handlers anymore
+    // Note: No separate button click handlers needed as the form has a single submit button.
 });
 </script>
 {% endblock %}

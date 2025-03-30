@@ -39,7 +39,7 @@
                         <div class="card-body">
                             <p><strong>Date:</strong> {{ quiz.date_of_quiz.strftime('%Y-%m-%d') }}</p>
                             <p><strong>Duration:</strong> {{ quiz.time_duration }} minutes</p>
-                            <p><strong>Questions:</strong> {{ quiz.questions | length }}</p> {# Added question count #}
+                            <p><strong>Questions:</strong> {{ quiz.questions | length }}</p>
                             {% if quiz.remarks %}
                                 <p><strong>Remarks:</strong> {{ quiz.remarks }}</p>
                             {% endif %}
