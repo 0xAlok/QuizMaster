@@ -1,0 +1,116 @@
+/* Authentication Page Specific Styles (Login & Register) */
+
+/* Styles for the two-column layout */
+.auth-page-container {
+    /* Takes full width, height adjusted in template */
+    overflow: hidden; /* Prevent scrollbars if image is slightly too big */
+}
+
+.auth-image-container {
+    background-size: contain; /* Changed from cover to contain */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: var(--qm-bg-light); /* Add a light background for empty space */
+}
+
+/* Specific background images */
+#login-image-col {
+    background-image: url('../images/login.jpeg');
+}
+#signup-image-col {
+    background-image: url('../images/signup.jpeg');
+}
+
+
+.auth-form-col {
+    background-color: var(--qm-bg-white); /* White background for form side */
+}
+
+/* Original container styling, now applied to the form wrapper inside the column */
+.auth-form-container {
+  /* max-width is set inline in template */
+  /* margin: 60px auto; /* Removed, centering handled by flexbox */
+  /* padding: 2.5rem; /* Padding applied inline in template */
+  /* background-color: var(--qm-bg-white); /* Moved to auth-form-col */
+  /* border-radius: 12px; /* No border/radius needed for inner container */
+  /* box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); /* No shadow needed for inner container */
+  /* border: 1px solid var(--qm-border-color); /* No border needed for inner container */
+}
+
+.auth-form-container h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: var(--qm-text-dark);
+  font-weight: 600;
+}
+
+/* Form Styling */
+.auth-form-container .form-label {
+  /* Visually hide labels but keep them for screen readers */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap; /* added line */
+  border: 0;
+}
+
+.auth-form-container .form-control {
+  border-radius: 8px; 
+  padding: 0.75rem 1rem; 
+  border: 1px solid var(--qm-border-color);
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.auth-form-container .form-control:focus {
+  border-color: var(--qm-primary);
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.2); 
+}
+
+/* Checkbox styling (for admin login) */
+.auth-form-container .form-check-input {
+    border-radius: 4px;
+    border-color: var(--qm-border-color);
+}
+.auth-form-container .form-check-input:checked {
+    background-color: var(--qm-primary);
+    border-color: var(--qm-primary);
+}
+.auth-form-container .form-check-label {
+    color: var(--qm-muted);
+    font-size: 0.9rem;
+}
+
+/* Button Styling */
+.auth-form-container .btn-primary {
+  width: 100%; 
+  padding: 0.8rem; 
+  font-size: 1.05rem;
+  margin-top: 1.5rem; 
+}
+
+/* Links below form */
+.auth-links {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+.auth-links a {
+  color: var(--qm-primary);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+}
+
+.auth-links a:hover {
+  color: #0b5ed7; /* Darker blue on hover */
+  text-decoration: underline;
+}
+
+.auth-links span { /* Separator */
+    color: var(--qm-muted);
+    margin: 0 0.5rem;
+}

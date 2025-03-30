@@ -2,25 +2,32 @@
 
 {% block title %}All Subjects - Quiz Master{% endblock %}
 
+{# Add page-specific CSS link #}
+{% block head %}
+    {{ super() }} {# Includes CSS from base.html #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/management.css') }}">
+{% endblock %}
+
 {% block content %}
-<div class="container">
-    <nav aria-label="breadcrumb">
+<div class="container mt-4"> {# Keep container #}
+    <nav aria-label="breadcrumb" class="mb-4"> {# Add margin #}
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ url_for('user.dashboard') }}">Dashboard</a></li>
-            <li class="breadcrumb-item active">Subjects</li>
+            <li class="breadcrumb-item active" aria-current="page">Subjects</li> {# Added aria-current #}
         </ol>
     </nav>
 
-    <div class="row mb-4">
-        <div class="col-12">
-            <h2>All Subjects</h2>
-            <p class="lead">Browse all available subjects and find quizzes to test your knowledge.</p>
-        </div>
+    {# Use page-header class #}
+    <div class="page-header">
+        <h2>All Subjects</h2>
+        {# Optional: Add back button here if desired, or keep at bottom #}
     </div>
+    <p class="lead mb-4">Browse all available subjects and find quizzes to test your knowledge.</p>
+
 
     <!-- Search Form -->
     <form method="GET" action="{{ url_for('user.subjects') }}" class="mb-4">
-        <div class="input-group">
+        <div class="input-group input-group-lg"> {# Larger search bar #}
             <input type="text" name="search" class="form-control" placeholder="Search Subjects by Name or Description..." value="{{ request.args.get('search', '') }}">
             <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-search"></i> Search</button>
         </div>
@@ -30,28 +37,29 @@
         {% if subjects %}
             {% for subject in subjects %}
                 <div class="col-md-4 mb-4">
-                    <div class="card h-100">
-                        <div class="card-body">
+                    {# Card styling handled by management.css #}
+                    <div class="card h-100 shadow-sm"> {# Added shadow #}
+                        <div class="card-body d-flex flex-column"> {# Use flex for button alignment #}
                             <h5 class="card-title">{{ subject.name }}</h5>
-                            <p class="card-text">{{ subject.description }}</p>
+                            <p class="card-text text-muted flex-grow-1">{{ subject.description }}</p> {# text-muted and grow #}
+                            <a href="{{ url_for('user.chapters', subject_id=subject.id) }}" class="btn btn-primary mt-auto">View Chapters</a> {# mt-auto pushes button down #}
                         </div>
-                        <div class="card-footer bg-white border-top-0">
-                            <a href="{{ url_for('user.chapters', subject_id=subject.id) }}" class="btn btn-primary">View Chapters</a>
-                        </div>
+                        {# Removed card-footer #}
                     </div>
                 </div>
             {% endfor %}
         {% else %}
             <div class="col-12">
                 <div class="alert alert-info">
-                    <p>No subjects are available at the moment. Please check back later.</p>
+                    <p class="mb-0">No subjects are available at the moment. Please check back later.</p> {# Removed extra p tag #}
                 </div>
             </div>
         {% endif %}
     </div>
 
-    <div class="mt-4">
+    {# Keep back button if not moved to header #}
+    {# <div class="mt-4">
         <a href="{{ url_for('user.dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
-    </div>
+    </div> #}
 </div>
 {% endblock %}

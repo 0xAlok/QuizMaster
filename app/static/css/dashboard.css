@@ -1,0 +1,221 @@
+/* User & Admin Dashboard Specific Styles */
+
+/* Main Dashboard Title */
+.dashboard-title {
+  font-size: 1.8rem; /* Adjust as needed */
+  font-weight: 600;
+  color: var(--qm-text-dark);
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--qm-border-color);
+}
+
+/* Grid for Chart Cards */
+.chart-grid {
+  display: grid;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  /* Default to single column, centered, with max width */
+  grid-template-columns: minmax(0, 550px); 
+  justify-content: center; 
+}
+
+/* Apply 2-column layout for medium screens and up (Bootstrap's md breakpoint ~768px) */
+@media (min-width: 768px) {
+  .chart-grid {
+    /* Two columns, each constrained */
+    grid-template-columns: repeat(2, minmax(0, 550px)); 
+    /* Justify content might still be useful if container is very wide */
+     justify-content: center; 
+  }
+}
+
+/* General Card Styling Enhancements for Dashboards */
+.card {
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06); /* Slightly softer shadow */
+  border-radius: 10px;
+  margin-bottom: 2rem; /* Consistent spacing */
+  background-color: var(--qm-bg-white);
+  overflow: hidden; /* Ensure content respects border-radius */
+}
+
+.card-header {
+  background-color: var(--qm-bg-light);
+  color: var(--qm-text-dark);
+  border-bottom: 1px solid var(--qm-border-color);
+  border-radius: 10px 10px 0 0;
+  padding: 1rem 1.5rem;
+  font-weight: 600; /* Bolder header */
+  /* Default header style - will be overridden for charts */
+}
+
+/* --- REMOVE Specific Header Colors --- */
+/*
+.card-header.bg-primary { ... }
+.card-header.bg-success { ... }
+.card-header.bg-info { ... }
+.card-header.bg-warning { ... }
+.card-header.bg-secondary { ... }
+*/
+/* --- END REMOVE --- */
+
+
+/* Chart Card Specific Header Styling (Option A) */
+.chart-grid .card .card-header {
+  background-color: var(--qm-bg-white) !important; /* White background */
+  color: var(--qm-text-dark) !important; /* Standard text color */
+  border-bottom: 1px solid var(--qm-border-color); /* Subtle border */
+  border-radius: 10px 10px 0 0; /* Keep radius */
+  padding: 1rem 1.5rem; /* Consistent padding */
+  font-size: 1.1rem; /* Consistent font size */
+  font-weight: 600; /* Consistent weight */
+}
+
+
+.card-body {
+  padding: 1.5rem;
+  /* Ensure charts have some space */
+}
+
+/* Ensure chart canvas has space from header */
+.chart-grid .card .card-body {
+    padding-top: 1rem;
+}
+
+/* Welcome Alert */
+.alert-info {
+  background-color: #e0f2fe; /* Lighter blue */
+  color: #075985; /* Darker blue text */
+  border-color: #bae6fd;
+  border-left: 4px solid var(--qm-primary);
+  border-radius: 8px;
+}
+
+/* Stat Boxes inside Cards */
+.stat-box {
+  /* Use a dedicated class instead of relying on Bootstrap structure */
+  background-color: var(--qm-bg-light);
+  border: 1px solid var(--qm-border-color);
+  border-radius: 8px;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+  margin-bottom: 1rem; /* Spacing between boxes */
+}
+.stat-box:hover {
+  background-color: #e9ecef;
+  transform: translateY(-3px);
+}
+.stat-box h3 {
+  color: var(--qm-primary);
+  margin-bottom: 0.3rem;
+  font-weight: 700;
+  font-size: 2rem; /* Larger number */
+}
+.stat-box p {
+  color: var(--qm-muted);
+  margin-bottom: 0;
+  font-size: 0.9rem;
+}
+
+/* Table Styling */
+.table {
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-bottom: 0;
+  width: 100%;
+}
+.table thead th {
+  background-color: var(--qm-bg-light);
+  border-bottom: 2px solid var(--qm-border-color);
+  font-weight: 600; /* Bolder headers */
+  color: var(--qm-text-dark);
+  vertical-align: middle;
+  text-align: left;
+  padding: 0.9rem 1rem;
+  font-size: 1rem;
+}
+.table tbody tr:hover {
+  background-color: #f1f3f5;
+}
+.table td,
+.table th {
+  padding: 0.9rem 1rem;
+  vertical-align: middle;
+  text-align: left;
+  border-bottom: 1px solid var(--qm-border-color); /* Add subtle row lines */
+}
+.table tbody tr:last-child td {
+  border-bottom: none; /* Remove border on last row */
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(0, 0, 0, 0.02); /* Very subtle stripe */
+}
+.table-responsive {
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--qm-border-color); /* Add border to container */
+}
+
+/* Buttons within tables/cards */
+.table .btn {
+  padding: 0.3rem 0.7rem; /* Smaller buttons in tables */
+  font-size: 0.85rem;
+  margin-right: 0.3rem;
+}
+.btn-outline-secondary {
+  color: var(--qm-muted);
+  border-color: var(--qm-muted);
+}
+.btn-outline-secondary:hover {
+  background-color: var(--qm-muted);
+  color: white;
+}
+.btn-success {
+  background-color: var(--qm-success);
+  color: white;
+}
+.btn-success:hover {
+  background-color: #157347; /* Darker green */
+  color: white;
+}
+
+/* Chart Containers */
+.card canvas {
+  max-height: 350px;
+  width: 100% !important;
+}
+
+/* Text muted */
+.text-muted {
+  color: var(--qm-muted) !important;
+}
+
+/* Refined Badge Styling */
+.badge {
+  padding: 0.4em 0.7em; /* Adjust padding */
+  font-size: 1rem; /* Slightly smaller font */
+  font-weight: 500;
+}
+.badge.bg-light {
+  /* Specific style for light badges used in dashboard */
+  border: 1px solid var(--qm-border-color);
+}
+
+/* Styling for count displays in dashboard chapter list */
+.count-display {
+  display: inline-block;
+  padding: 0.35em 0.65em; /* Similar to badge padding */
+  font-size: 1em;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--qm-text-dark);
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 0.375rem; /* Match default badge radius */
+  border: 1px solid var(--qm-border-color);
+  background-color: var(--qm-bg-light);
+}

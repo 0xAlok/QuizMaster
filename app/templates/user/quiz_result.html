@@ -2,166 +2,114 @@
 
 {% block title %}Quiz Results - Quiz Master{% endblock %} 
 
-{# Custom styles moved to static/css/style.css #}
+{# Add page-specific CSS link #}
+{% block head %}
+    {{ super() }} {# Includes CSS from base.html #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/quiz.css') }}">
+{% endblock %}
 
 {% block content %}
-<div class="container">
-  <div class="row mb-4">
-    <div class="col-12">
-      <nav aria-label="breadcrumb">
+{# Use new container class #}
+<div class="quiz-result-container">
+    <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
-          <li class="breadcrumb-item">
-            <a href="{{ url_for('user.dashboard') }}">Dashboard</a>
-          </li>
-          <li class="breadcrumb-item active">Quiz Results</li>
+            <li class="breadcrumb-item"><a href="{{ url_for('user.dashboard') }}">Dashboard</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Quiz Results</li>
         </ol>
-      </nav>
+    </nav>
 
-      <div class="card">
-        <div class="card-header bg-primary text-white">
-          <h4 class="mb-0">Quiz Results</h4>
+    {# Use new summary card class #}
+    <div class="result-summary-card">
+        <h2>{{ quiz.chapter.subject.name }} - {{ quiz.chapter.name }}</h2>
+        
+        {# Use new score display classes #}
+        <div class="score-display {% if score_percent >= 70 %}pass{% else %}fail{% endif %}">
+            {{ score_percent|round(1) }}%
         </div>
-        <div class="card-body">
-          <h3>{{ quiz.chapter.subject.name }} - {{ quiz.chapter.name }}</h3>
+        <div class="result-stats mb-3">
+            <p><strong>{{ correct_answers }}</strong> correct out of <strong>{{ total_questions }}</strong> questions</p>
+            <p class="text-muted">
+                {% if score_percent >= 70 %} Excellent work! You've mastered this material. 
+                {% elif score_percent >= 40 %} Good job! Keep practicing to improve. 
+                {% else %} You might need more practice with this material. 
+                {% endif %}
+            </p>
+        </div>
+        <hr>
+        {# Simplified stats display #}
+        <div class="result-stats mt-3">
+             <p><i class="bi bi-check-circle-fill text-success me-2"></i>Correct Answers: <strong>{{ correct_answers }} ({{ (correct_answers / total_questions * 100)|round(1) }}%)</strong></p>
+             <p><i class="bi bi-x-circle-fill text-danger me-2"></i>Incorrect Answers: <strong>{{ total_questions - correct_answers }} ({{ ((total_questions - correct_answers) / total_questions * 100)|round(1) }}%)</strong></p>
+             <p><i class="bi bi-calendar-event me-2"></i>Quiz Date: <strong>{{ quiz.date_of_quiz.strftime('%B %d, %Y') }}</strong></p>
+             <p><i class="bi bi-clock-history me-2"></i>Completion Time: <strong>{{ score_object.time_stamp_of_attempt.strftime('%Y-%m-%d %H:%M:%S') if score_object else 'N/A' }}</strong></p>
+        </div>
+    </div>
 
-          <!-- Score summary section -->
-          <div class="row mt-4">
-            <div class="col-md-6 mb-4">
-              <div class="card stats-card h-100">
-                <div class="card-body text-center">
-                  <h4 class="card-title mb-3">Your Score</h4>
-                  {# Use score_percent passed from controller #}
-                  <span class="badge fs-4 mb-3 {% if score_percent >= 70 %}bg-success{% elif score_percent >= 40 %}bg-warning text-dark{% else %}bg-danger{% endif %}">
-                      {{ score_percent|round(1) }}%
-                  </span>
-                  <h5 class="mt-3">
-                    {{ correct_answers }} correct out of {{ total_questions }}
-                    questions
-                  </h5>
-                  <p class="text-muted">
-                    {% if score_percent >= 70 %} Excellent work! You've mastered this
-                    material. {% elif score_percent >= 40 %} Good job! Keep practicing
-                    to improve. {% else %} You might need more practice with
-                    this material. {% endif %}
-                  </p>
-                </div>
-              </div>
-            </div>
+    <div class="review-section">
+        <h3>Question Review</h3>
 
-            <div class="col-md-6 mb-4">
-              <div class="card stats-card h-100">
-                <div class="card-body">
-                  <h4 class="card-title">Quiz Statistics</h4>
-                  <table class="table">
-                    <tr>
-                      <td>
-                        <i class="bi bi-check-circle-fill text-success"></i>
-                        Correct Answers:
-                      </td>
-                      <td>
-                        {{ correct_answers }} ({{ (correct_answers /
-                        total_questions * 100)|round(1) }}%)
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <i class="bi bi-x-circle-fill text-danger"></i>
-                        Incorrect Answers:
-                      </td>
-                      <td>
-                        {{ total_questions - correct_answers }} ({{
-                        ((total_questions - correct_answers) / total_questions *
-                        100)|round(1) }}%)
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><i class="bi bi-calendar-event"></i> Quiz Date:</td> {# Changed icon #}
-                      <td>{{ quiz.date_of_quiz.strftime('%B %d, %Y') }}</td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <i class="bi bi-clock-history"></i> Completion Time:
-                      </td>
-                      {# Use timestamp from score_object #}
-                      <td>{{ score_object.time_stamp_of_attempt.strftime('%Y-%m-%d %H:%M:%S') if score_object else 'N/A' }}</td>
-                    </tr>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <h4 class="mt-4 mb-3">Question Review</h4>
-
-          {% for question in questions %} 
+        {% for question in questions %} 
             {% set question_id = question.id|string %} 
             {% set question_result = results.get(question_id, {}) %} 
-            {% set was_answered = question_id in results and question_result.selected is not none %} {# Check if selected is not None #}
+            {% set was_answered = question_id in results and question_result.selected is not none %} 
             {% set user_answer = question_result.selected if was_answered else None %} 
             {% set correct_answer_num = question.correct_answer %}
+            {% set is_correct_q = question_result.is_correct if was_answered else false %}
 
-            <div class="card mb-4">
-              <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Question {{ loop.index }}</h5>
-                {% if not was_answered %}
-                  <span class="badge bg-secondary">Not Answered</span>
-                {% elif question_result.is_correct %}
-                  <span class="badge bg-success">Correct</span>
-                {% else %}
-                  <span class="badge bg-danger">Incorrect</span>
-                {% endif %}
-              </div>
-              <div class="card-body">
-                <p>{{ question.question_text }}</p>
-
-                <div class="list-group list-group-flush mt-3">
-                  {% for i in range(1, 5) %} 
-                    {% set option_text = question['option' ~ i] %} 
-                    {% set is_correct = (i == correct_answer_num) %} 
-                    {% set is_user_choice = (was_answered and i == user_answer) %}
-
-                    <div class="list-group-item form-check {% if not was_answered %}unanswered{% endif %}">
-                      <input
-                        class="form-check-input"
-                        type="radio"
-                        name="review_{{ question.id }}"
-                        id="review_{{ question.id }}_opt{{ i }}"
-                        value="{{ i }}"
-                        disabled
-                        {% if is_user_choice %}checked{% endif %}
-                      />
-                      <label class="form-check-label" for="review_{{ question.id }}_opt{{ i }}">
-                        {# Style only the correct answer text #}
-                        <span {% if is_correct %}style="color: #198754; font-weight: bold;"{% endif %}>
-                          {{ option_text }}
-                        </span>
-                        {# Indicate correct answer clearly if user was wrong #}
-                        {% if is_correct and not question_result.is_correct and was_answered %}
-                           <i class="bi bi-check-lg text-success ms-2" title="Correct Answer"></i>
-                        {% endif %}
-                        {# Indicate user's incorrect choice #}
-                        {% if is_user_choice and not question_result.is_correct %}
-                           <i class="bi bi-x-lg text-danger ms-2" title="Your Answer"></i>
-                        {% endif %}
-                      </label>
-                    </div>
-                  {% endfor %}
+            {# Use new review card class with dynamic correct/incorrect/unanswered class #}
+            <div class="review-question-card {% if not was_answered %}unanswered{% elif is_correct_q %}correct{% else %}incorrect{% endif %}">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="question-number">Question {{ loop.index }}</span>
+                    {# Badge based on result #}
+                    {% if not was_answered %}
+                        <span class="badge bg-secondary">Not Answered</span>
+                    {% elif is_correct_q %}
+                        <span class="badge bg-success">Correct</span>
+                    {% else %}
+                        <span class="badge bg-danger">Incorrect</span>
+                    {% endif %}
                 </div>
-              </div>
-            </div>
-          {% endfor %}
+                <p class="question-text">{{ question.question_text }}</p>
 
-          <div class="d-flex justify-content-between mt-4">
-            <a href="{{ url_for('user.dashboard') }}" class="btn btn-secondary">
-              <i class="bi bi-arrow-left"></i> Back to Dashboard
-            </a>
-            <a href="{{ url_for('user.quizzes', chapter_id=quiz.chapter_id) }}" class="btn btn-primary">
-              <i class="bi bi-arrow-clockwise"></i> Try Another Quiz
-            </a>
-          </div>
-        </div>
-      </div>
+                <div class="review-options list-group list-group-flush mt-3">
+                    {% for i in range(1, 5) %} 
+                        {% set option_text = question['option' ~ i] %} 
+                        {% set is_correct_opt = (i == correct_answer_num) %} 
+                        {% set is_user_choice = (was_answered and i == user_answer) %}
+
+                        {# Add classes for user selection and correct answer #}
+                        <div class="list-group-item form-check 
+                            {% if is_user_choice and not is_correct_opt %}incorrect-selection
+                            {% elif is_user_choice and is_correct_opt %}correct-answer
+                            {% elif is_correct_opt %}correct-answer{% endif %}"> 
+                            
+                            <input class="form-check-input" type="radio" name="review_{{ question.id }}" id="review_{{ question.id }}_opt{{ i }}" value="{{ i }}" disabled {% if is_user_choice %}checked{% endif %}>
+                            <label class="form-check-label" for="review_{{ question.id }}_opt{{ i }}">
+                                <span class="option-prefix">{{ ['A', 'B', 'C', 'D'][i-1] }})</span> {{ option_text }}
+                                
+                                {# Indicators using classes from quiz.css #}
+                                {% if is_correct_opt %}
+                                    <span class="correct-answer-indicator">(Correct Answer)</span>
+                                {% endif %}
+                                {% if is_user_choice and not is_correct_opt %}
+                                    <span class="user-selected-indicator">(Your Answer)</span>
+                                {% endif %}
+                            </label>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
     </div>
-  </div>
+
+    {# Use result-actions class for centering #}
+    <div class="result-actions mt-4">
+        <a href="{{ url_for('user.dashboard') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
+        <a href="{{ url_for('user.quizzes', chapter_id=quiz.chapter_id) }}" class="btn btn-primary ms-2"> 
+            <i class="bi bi-arrow-clockwise"></i> Try Another Quiz
+        </a>
+    </div>
 </div>
 {% endblock %}

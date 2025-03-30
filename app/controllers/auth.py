@@ -9,8 +9,13 @@ auth_bp = Blueprint('auth', __name__)
 
 @auth_bp.route('/')
 def index():
-    """Redirects the root URL ('/') to the login page."""
-    return redirect(url_for('auth.login'))
+    """Serves the main landing page."""
+    # If user is already logged in, maybe redirect to their dashboard?
+    if current_user.is_authenticated:
+        dashboard_endpoint = 'admin.dashboard' if isinstance(current_user, Admin) else 'user.dashboard'
+        return redirect(url_for(dashboard_endpoint))
+    # Otherwise, show the landing page
+    return render_template('landing.html')
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():

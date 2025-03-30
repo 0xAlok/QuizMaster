@@ -2,58 +2,64 @@
 
 {% block title %}Manage Quizzes - {{ chapter.name }} - Admin Dashboard{% endblock %}
 
+{# Add page-specific CSS link #}
+{% block head %}
+    {{ super() }} {# Includes CSS from base.html #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/management.css') }}">
+{% endblock %}
+
 {% block content %}
-<div class="row">
-    <div class="col-12">
-        <h2 class="mb-4">Manage Quizzes: {{ chapter.name }}</h2>
-        <a href="{{ url_for('admin.chapters', subject_id=chapter.subject_id) }}" class="btn btn-secondary mb-3">
+{# Use page-header class #}
+<div class="page-header">
+    <h2>Manage Quizzes: {{ chapter.name }}</h2>
+    <div> {# Group buttons #}
+        <a href="{{ url_for('admin.chapters', subject_id=chapter.subject_id) }}" class="btn btn-outline-secondary">
             <i class="bi bi-arrow-left"></i> Back to Chapters
         </a>
-        <a href="{{ url_for('admin.add_quiz', chapter_id=chapter.id) }}" class="btn btn-primary mb-3">
+        <a href="{{ url_for('admin.add_quiz', chapter_id=chapter.id) }}" class="btn btn-primary">
             <i class="bi bi-plus-circle"></i> Add New Quiz
         </a>
     </div>
 </div>
 
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header bg-info">
-                <h5 class="text-white">Chapter Information</h5>
-            </div>
-            <div class="card-body">
-                <h4>{{ chapter.name }}</h4>
-                <p>{{ chapter.description }}</p>
-                <p><small class="text-muted">Subject: {{ chapter.subject.name }}</small></p>
-            </div>
-        </div>
+{# Chapter Info Card #}
+<div class="card mb-4"> 
+    <div class="card-header"> 
+        <h5>Chapter Information</h5>
+    </div>
+    <div class="card-body">
+        <h4>{{ chapter.name }}</h4>
+        <p>{{ chapter.description }}</p>
+        <p><small class="text-muted">Subject: {{ chapter.subject.name }}</small></p>
     </div>
 </div>
 
 <!-- Search Form -->
-<form method="GET" action="{{ url_for('admin.quizzes', chapter_id=chapter.id) }}" class="mb-3">
-    <div class="input-group">
+<form method="GET" action="{{ url_for('admin.quizzes', chapter_id=chapter.id) }}" class="mb-4"> 
+    <div class="input-group input-group-lg"> 
         <input type="text" name="search" class="form-control" placeholder="Search by Remarks..." value="{{ request.args.get('search', '') }}">
         <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-search"></i> Search</button>
     </div>
 </form>
 
+{# Quiz List Card #}
 <div class="card">
-    <div class="card-header bg-primary text-white">
-        <h5>Quiz List</h5>
+    {# Moved Title into Card Header #}
+    <div class="card-header"> 
+        <h5 class="mb-0">Quiz List</h5>
     </div>
-    <div class="card-body">
+    <div class="card-body p-0"> 
         {% if quizzes %}
             <div class="table-responsive">
-                <table class="table table-striped">
+                <table class="table table-striped table-hover mb-0"> 
                     <thead>
                         <tr>
                             <th>ID</th>
                             <th>Date</th>
-                            <th>Duration</th>
+                            <th>Duration (HH:MM)</th>
                             <th>Questions</th>
                             <th>Remarks</th>
-                            <th>Actions</th>
+                            <th class="text-end">Actions</th> 
                         </tr>
                     </thead>
                     <tbody>
@@ -67,18 +73,20 @@
                                     {{ '%02d:%02d'|format(hours, minutes) }}
                                 </td>
                                 <td>
-                                    <span class="badge bg-info">{{ quiz.questions|length }} questions</span>
+                                    {# Removed badge styling #}
+                                    {{ quiz.questions|length }}
                                 </td>
-                                <td>{{ quiz.remarks or '--' }}</td> {# Use -- for N/A #}
-                                <td>
-                                    <div class="btn-group" role="group" aria-label="Quiz Actions for Quiz ID {{ quiz.id }}">
-                                        <a href="{{ url_for('admin.questions', quiz_id=quiz.id) }}" class="btn btn-sm btn-info" title="View Questions">
+                                <td>{{ quiz.remarks or '--' }}</td> 
+                                <td class="text-end"> 
+                                    {# Changed to small outline buttons #}
+                                    <div class="btn-group btn-group-sm" role="group" aria-label="Quiz Actions for Quiz ID {{ quiz.id }}">
+                                        <a href="{{ url_for('admin.questions', quiz_id=quiz.id) }}" class="btn btn-outline-info" title="View Questions">
                                             <i class="bi bi-question-circle"></i> Questions
                                         </a>
-                                        <a href="{{ url_for('admin.edit_quiz', id=quiz.id) }}" class="btn btn-sm btn-warning" title="Edit Quiz">
+                                        <a href="{{ url_for('admin.edit_quiz', id=quiz.id) }}" class="btn btn-outline-primary" title="Edit Quiz"> {# Changed from warning to primary #}
                                             <i class="bi bi-pencil"></i> Edit
                                         </a>
-                                        <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-{{ quiz.id }}" title="Delete Quiz">
+                                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-{{ quiz.id }}" title="Delete Quiz">
                                             <i class="bi bi-trash"></i> Delete
                                         </button>
                                     </div>
@@ -89,8 +97,8 @@
                             <div class="modal fade" id="deleteModal-{{ quiz.id }}" tabindex="-1" aria-labelledby="deleteModalLabel-{{ quiz.id }}" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
-                                        <div class="modal-header bg-danger text-white">
-                                            <h5 class="modal-title" id="deleteModalLabel-{{ quiz.id }}">Confirm Delete</h5>
+                                        <div class="modal-header"> 
+                                            <h5 class="modal-title" id="deleteModalLabel-{{ quiz.id }}">Confirm Delete Quiz</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
@@ -99,7 +107,7 @@
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                            <form action="{{ url_for('admin.delete_quiz', id=quiz.id) }}" method="POST" class="d-inline"> {# Added d-inline #}
+                                            <form action="{{ url_for('admin.delete_quiz', id=quiz.id) }}" method="POST" class="d-inline"> 
                                                 <button type="submit" class="btn btn-danger">
                                                     <i class="bi bi-trash"></i> Confirm Delete
                                                 </button>
@@ -113,7 +121,7 @@
                 </table>
             </div>
         {% else %}
-            <div class="alert alert-info">No quizzes available for this chapter. Click "Add New Quiz" to create one.</div>
+            <div class="alert alert-info m-3">No quizzes available for this chapter. Click "Add New Quiz" to create one.</div> 
         {% endif %}
     </div>
 </div>

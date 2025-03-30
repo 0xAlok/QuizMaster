@@ -2,21 +2,34 @@
 
 {% block title %}Login - Quiz Master{% endblock %}
 
+{# Add page-specific CSS link #}
+{% block head %}
+    {{ super() }} {# Includes CSS from base.html #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+{% endblock %}
+
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="text-center">Login</h3>
-            </div>
-            <div class="card-body">
+{# Two-column layout for login page #}
+<div class="container-fluid auth-page-container"> {# Full width container #}
+    <div class="row g-0 align-items-stretch" style="min-height: calc(100vh - 70px);"> {# Adjust 70px based on navbar height #}
+        
+        {# Left Column: Image - ID added, inline style removed #}
+        <div id="login-image-col" class="col-lg-6 d-none d-lg-flex auth-image-container">
+            
+        </div>
+        
+        {# Right Column: Form #}
+        <div class="col-lg-6 d-flex align-items-center justify-content-center auth-form-col">
+            {# Use the auth-container styling, but remove margin/max-width as it's handled by column #}
+            <div class="auth-form-container p-4 p-md-5 w-100" style="max-width: 480px;"> 
+                <h2 class="text-center mb-4">Login</h2>
                 <form method="POST" action="{{ url_for('auth.login') }}">
                     {{ form.hidden_tag() }}
                     <div class="mb-3">
-                        {{ form.username.label(class="form-label") }}
-                        {{ form.username(class="form-control", placeholder="Enter email address", required=true, type="email") }}
+                        {# Label removed, relying on placeholder #}
+                        {{ form.username(class="form-control", placeholder="Email Address", required=true, type="email") }} {# Updated placeholder #}
                         {% if form.username.errors %}
-                            <div class="text-danger small mt-1"> {# Added small/mt-1 for style #}
+                            <div class="text-danger small mt-1">
                                 {% for error in form.username.errors %}
                                     {{ error }}
                                 {% endfor %}
@@ -25,10 +38,10 @@
                     </div>
                     
                     <div class="mb-3">
-                        {{ form.password.label(class="form-label") }}
-                        {{ form.password(class="form-control", placeholder="Enter password", required=true) }}
+                        {# Label removed, relying on placeholder #}
+                        {{ form.password(class="form-control", placeholder="Password", required=true) }} {# Updated placeholder #}
                         {% if form.password.errors %}
-                            <div class="text-danger small mt-1"> {# Added small/mt-1 for style #}
+                            <div class="text-danger small mt-1">
                                 {% for error in form.password.errors %}
                                     {{ error }}
                                 {% endfor %}
@@ -41,13 +54,11 @@
                         {{ form.is_admin.label(class="form-check-label") }}
                     </div>
                     
-                    <div class="d-grid">
-                        {{ form.submit(class="btn btn-primary") }}
-                    </div>
+                    {{ form.submit(class="btn btn-primary w-100") }} {# Ensure button is full width #}
                 </form>
-            </div>
-            <div class="card-footer text-center">
-                <p>Don't have an account? <a href="{{ url_for('auth.register') }}">Register here</a></p>
+                <div class="auth-links mt-3"> {# Added margin top #}
+                    <a href="{{ url_for('auth.register') }}">Don't have an account? Register here</a>
+                </div>
             </div>
         </div>
     </div>

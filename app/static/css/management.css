@@ -1,0 +1,290 @@
+/* Management Pages Specific Styles (Admin CRUD, User Lists/History) */
+
+/* Page Header */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--qm-border-color);
+}
+.page-header h2 {
+  margin-bottom: 0;
+  font-weight: 600;
+}
+
+/* General Card Styling (if used as containers) */
+.card {
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  border-radius: 10px;
+  margin-bottom: 2rem;
+  background-color: var(--qm-bg-white);
+  overflow: hidden;
+}
+.card-header {
+  background-color: var(--qm-bg-light);
+  color: var(--qm-text-dark);
+  border-bottom: 1px solid var(--qm-border-color);
+  border-radius: 10px 10px 0 0;
+  padding: 1rem 1.5rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.card-header h5,
+.card-header h4 {
+  margin-bottom: 0;
+}
+.card-body {
+  padding: 1.5rem;
+}
+.card-footer {
+  background-color: var(--qm-bg-light);
+  border-top: 1px solid var(--qm-border-color);
+  padding: 1rem 1.5rem;
+}
+
+/* Table Styling - Modified for Card-like Rows */
+.table {
+  border-collapse: separate; /* Crucial for border-radius on rows */
+  border-spacing: 0 1rem; /* Vertical spacing between rows (cards) */
+  margin-bottom: 0;
+  width: 100%;
+  background-color: transparent; /* Ensure table itself has no background */
+}
+
+/* Hide traditional table header visually, but keep for accessibility */
+.table thead th {
+  /* display: none; Remove header visually */
+  /* Alternative: Keep header but style minimally */
+  background-color: transparent;
+  border: none;
+  font-weight: 600;
+  color: var(--qm-text-dark);
+  padding: 0 1.25rem; /* Adjust padding */
+  text-align: left;
+  white-space: nowrap;
+  font-size: 0.9rem; /* Smaller header text */
+  color: var(--qm-muted); /* Muted color */
+  font-size: 1rem;
+}
+
+/* Style each table row as a card */
+.table tbody tr {
+  background-color: var(--qm-bg-white);
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06); /* Card shadow */
+  transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+  border: 1px solid var(--qm-border-color); /* Subtle border */
+  overflow: hidden; /* Ensure content respects border-radius */
+}
+
+.table tbody tr:hover {
+  background-color: var(--qm-bg-white); /* Keep background white on hover */
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.09); /* Slightly larger shadow on hover */
+  transform: translateY(-2px); /* Slight lift effect */
+}
+
+/* Remove default table cell borders */
+.table td,
+.table th {
+  border: none; /* Remove all cell borders */
+  padding: 1rem 1.25rem; /* Consistent padding within the card-row */
+  vertical-align: middle;
+  text-align: left;
+}
+
+/* Ensure first and last cells curve with the row */
+.table tbody tr td:first-child,
+.table tbody tr th:first-child {
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+.table tbody tr td:last-child,
+.table tbody tr th:last-child {
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+/* Remove striping if it was used */
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: var(
+    --qm-bg-white
+  ); /* Ensure all rows have same background */
+}
+
+/* Adjustments for table-responsive container if used */
+.table-responsive {
+  border: none; /* Remove border from the container */
+  border-radius: 0;
+  overflow: visible; /* Allow shadows from rows to show */
+  background-color: transparent;
+}
+.table-responsive > .table {
+  border: none;
+}
+
+/* Badge Styling within Tables */
+.table .badge {
+  background-color: #e9ecef !important; /* Light grey background - Override */
+  color: var(--qm-text-dark) !important; /* Dark text - Override */
+  font-weight: 500; /* Slightly bolder */
+  padding: 0.35em 0.65em; /* Adjust padding if needed */
+  font-size: 0.8em; /* Adjust font size if needed */
+}
+
+/* Action Buttons in Tables/Lists (Re-added for outline buttons) */
+.table .btn-sm,
+.list-group-item .btn-sm {
+  /* Target small buttons specifically */
+  padding: 0.25rem 0.6rem; /* Adjust padding for small buttons */
+  font-size: 1.2rem; /* Smaller font */
+  margin-left: 0.3rem;
+  vertical-align: middle;
+}
+/* Style for icon-only buttons */
+.btn-icon.btn-sm {
+  padding: 0.4rem 0.7rem; /* Increased padding */
+  width: auto;
+  line-height: 1.2; /* Increased line height */
+  font-size: 1rem; /* Added larger font size */
+}
+.btn-icon.btn-sm i {
+  vertical-align: middle; /* Better icon alignment */
+}
+.table .btn-group > .btn-sm {
+  margin-left: 0;
+}
+.btn-outline-info {
+  color: var(--qm-text-dark);
+  border-color: var(--qm-text-dark);
+  font-size: 1rem;
+}
+.btn-outline-info:hover {
+  background-color: var(--qm-text-dark);
+  color: white;
+}
+/* Ensure primary outline uses correct variable */
+.btn-outline-primary {
+  color: var(--qm-primary);
+  border-color: var(--qm-primary);
+  font-size: 1rem;
+}
+.btn-outline-primary:hover {
+  background-color: var(--qm-primary);
+  color: white;
+}
+/* Keep warning outline orange */
+.btn-outline-warning {
+  color: var(--qm-primary);
+  border-color: var(--qm-primary);
+  font-size: 1rem;
+}
+.btn-outline-warning:hover {
+  background-color: var(--qm-secondary);
+  color: white;
+}
+.btn-outline-danger {
+  color: var(--qm-danger);
+  border-color: var(--qm-danger);
+  font-size: 1rem;
+}
+.btn-outline-danger:hover {
+  background-color: var(--qm-danger);
+  color: white;
+}
+
+/* List Group Styling */
+.list-group-item {
+  padding: 1rem 1.25rem;
+  border-color: var(--qm-border-color);
+}
+.list-group-item a {
+  color: var(--qm-primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+.list-group-item a:hover {
+  text-decoration: underline;
+}
+
+/* Form Styling (for admin forms etc.) */
+.form-container {
+  background-color: var(--qm-bg-white);
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+.form-container .form-label {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: var(--qm-text-dark);
+}
+.form-container .form-control,
+.form-container .form-select {
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--qm-border-color);
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+.form-container .form-control:focus,
+.form-container .form-select:focus {
+  border-color: var(--qm-primary);
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.2);
+}
+.form-container .form-text {
+  font-size: 0.85rem;
+  color: var(--qm-muted);
+}
+.form-container .btn-primary {
+  margin-top: 1.5rem;
+  padding: 0.7rem 1.5rem;
+}
+.form-container .btn-secondary {
+  margin-top: 1.5rem;
+  padding: 0.7rem 1.5rem;
+}
+
+/* Breadcrumbs */
+.breadcrumb {
+  background-color: transparent;
+  padding: 0.5rem 0;
+  margin-bottom: 1.5rem;
+}
+.breadcrumb-item a {
+  color: var(--qm-primary);
+  text-decoration: none;
+}
+.breadcrumb-item a:hover {
+  text-decoration: underline;
+}
+.breadcrumb-item.active {
+  color: var(--qm-muted);
+}
+
+/* Modal Styling */
+.modal-content {
+  border-radius: 10px;
+  border: none;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+.modal-header {
+  background-color: var(--qm-bg-light);
+  border-bottom: 1px solid var(--qm-border-color);
+  border-radius: 10px 10px 0 0;
+}
+.modal-header .btn-close {
+  filter: invert(50%);
+}
+.modal-title {
+  font-weight: 600;
+}
+.modal-footer {
+  background-color: var(--qm-bg-light);
+  border-top: 1px solid var(--qm-border-color);
+  border-radius: 0 0 10px 10px;
+}

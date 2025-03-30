@@ -2,22 +2,34 @@
 
 {% block title %}Register - Quiz Master{% endblock %}
 
+{# Add page-specific CSS link #}
+{% block head %}
+    {{ super() }} {# Includes CSS from base.html #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+{% endblock %}
+
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="text-center">Register</h3>
-            </div>
-            <div class="card-body">
+{# Two-column layout for registration page #}
+<div class="container-fluid auth-page-container"> {# Full width container #}
+    <div class="row g-0 align-items-stretch" style="min-height: calc(100vh - 70px);"> {# Adjust 70px based on navbar height #}
+        
+        {# Left Column: Image - ID added, inline style removed #}
+        <div id="signup-image-col" class="col-lg-6 d-none d-lg-flex auth-image-container">
+            
+        </div>
+        
+        {# Right Column: Form #}
+        <div class="col-lg-6 d-flex align-items-center justify-content-center auth-form-col">
+            <div class="auth-form-container p-4 p-md-5 w-100" style="max-width: 480px;"> 
+                <h2 class="text-center mb-4">Register</h2>
                 <form method="POST" action="{{ url_for('auth.register') }}">
                     {{ form.hidden_tag() }}
                     
                     <div class="mb-3">
-                        {{ form.email.label(class="form-label") }}
-                        {{ form.email(class="form-control", placeholder="Enter email address", required=true, type="email") }}
+                        {# Label removed, relying on placeholder #}
+                        {{ form.email(class="form-control", placeholder="Email Address", required=true, type="email") }} {# Updated placeholder #}
                         {% if form.email.errors %}
-                            <div class="text-danger small mt-1"> {# Added small/mt-1 for style #}
+                            <div class="text-danger small mt-1">
                                 {% for error in form.email.errors %}
                                     {{ error }}
                                 {% endfor %}
@@ -26,10 +38,10 @@
                     </div>
                     
                     <div class="mb-3">
-                        {{ form.full_name.label(class="form-label") }}
-                        {{ form.full_name(class="form-control", placeholder="Enter your full name", required=true, minlength="2", maxlength="100") }}
+                        {# Label removed, relying on placeholder #}
+                        {{ form.full_name(class="form-control", placeholder="Full Name", required=true, minlength="2", maxlength="100") }} {# Updated placeholder #}
                         {% if form.full_name.errors %}
-                            <div class="text-danger small mt-1"> {# Added small/mt-1 for style #}
+                            <div class="text-danger small mt-1">
                                 {% for error in form.full_name.errors %}
                                     {{ error }}
                                 {% endfor %}
@@ -38,10 +50,10 @@
                     </div>
                     
                     <div class="mb-3">
-                        {{ form.password.label(class="form-label") }}
-                        {{ form.password(class="form-control", placeholder="Enter password", required=true, minlength="6") }}
+                        {# Label removed, relying on placeholder #}
+                        {{ form.password(class="form-control", placeholder="Password", required=true, minlength="6") }} {# Updated placeholder #}
                         {% if form.password.errors %}
-                            <div class="text-danger small mt-1"> {# Added small/mt-1 for style #}
+                            <div class="text-danger small mt-1">
                                 {% for error in form.password.errors %}
                                     {{ error }}
                                 {% endfor %}
@@ -50,10 +62,10 @@
                     </div>
                     
                     <div class="mb-3">
-                        {{ form.confirm_password.label(class="form-label") }}
-                        {{ form.confirm_password(class="form-control", placeholder="Confirm your password", required=true) }}
+                        {# Label removed, relying on placeholder #}
+                        {{ form.confirm_password(class="form-control", placeholder="Confirm Password", required=true) }} {# Updated placeholder #}
                         {% if form.confirm_password.errors %}
-                            <div class="text-danger small mt-1"> {# Added small/mt-1 for style #}
+                            <div class="text-danger small mt-1">
                                 {% for error in form.confirm_password.errors %}
                                     {{ error }}
                                 {% endfor %}
@@ -62,15 +74,15 @@
                     </div>
                     
                     <div class="mb-3">
-                        {{ form.qualification.label(class="form-label") }}
-                        {{ form.qualification(class="form-control", placeholder="Enter your qualification") }}
+                        {# Label removed, relying on placeholder #}
+                        {{ form.qualification(class="form-control", placeholder="Qualification (Optional)") }} {# Updated placeholder #}
                     </div>
                     
                     <div class="mb-3">
-                        {{ form.dob.label(class="form-label") }}
-                        {{ form.dob(class="form-control", placeholder="YYYY-MM-DD") }}
+                        {# Label removed, relying on placeholder #}
+                        {{ form.dob(class="form-control", placeholder="Date of Birth (Optional)", type="date", onfocus="(this.type='date')", onblur="(this.type='text')") }} {# Placeholder trick for date #}
                         {% if form.dob.errors %}
-                            <div class="text-danger small mt-1"> {# Added small/mt-1 for style #}
+                            <div class="text-danger small mt-1">
                                 {% for error in form.dob.errors %}
                                     {{ error }}
                                 {% endfor %}
@@ -78,13 +90,11 @@
                         {% endif %}
                     </div>
                     
-                    <div class="d-grid">
-                        {{ form.submit(class="btn btn-success") }}
-                    </div>
+                    {{ form.submit(class="btn btn-primary w-100") }} {# Ensure button is full width #}
                 </form>
-            </div>
-            <div class="card-footer text-center">
-                <p>Already have an account? <a href="{{ url_for('auth.login') }}">Login here</a></p>
+                <div class="auth-links mt-3"> {# Added margin top #}
+                    <a href="{{ url_for('auth.login') }}">Already have an account? Login here</a>
+                </div>
             </div>
         </div>
     </div>

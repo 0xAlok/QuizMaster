@@ -1,0 +1,111 @@
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@400;500;700&display=swap');
+
+/* Define Color Scheme Variables */
+:root {
+  --qm-bg-white: #ffffff;
+  --qm-text-dark: #343a40; /* Dark Gray / Charcoal */
+  --qm-primary: #0d6efd; /* Engaging Blue */
+  --qm-secondary: #ffa500; /* Warm Orange */
+  --qm-success: #198754; /* Green */
+  --qm-danger: #dc3545; /* Red */
+  --qm-info: #0dcaf0; /* Bootstrap Info Blue */
+  --qm-warning: #ffc107; /* Bootstrap Warning Yellow */
+  --qm-muted: #6c757d; /* Bootstrap Muted Grey */
+  --qm-border-color: #dee2e6; /* Default border */
+}
+
+/* Base styles */
+body {
+  font-family: "Inter", "Roboto", sans-serif;
+  background-color: var(--qm-bg-white);
+  color: var(--qm-text-dark);
+  line-height: 1.6;
+  /* Ensure footer is pushed down */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Make main content area grow */
+.container.mt-4 {
+  flex-grow: 1;
+}
+
+/* Updated Navbar Styles */
+.navbar {
+  /* Uses bg-white and shadow-sm from Bootstrap */
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
+.navbar-brand {
+  color: var(--qm-primary) !important; /* Use primary blue for brand */
+  font-weight: 600; /* Slightly bolder */
+  font-size: 2rem; /* Slightly larger */
+}
+.navbar-brand .fa-graduation-cap {
+  color: var(--qm-primary); /* Orange icon */
+}
+
+.navbar .nav-link {
+  color: var(--qm-text-dark); /* Dark text for links */
+  font-weight: 500;
+  font-size: 1.2rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link.active {
+  /* Style active links if you add that logic */
+  color: var(--qm-primary);
+}
+
+/* Adjust logged-in user text color */
+.navbar .navbar-nav .nav-link.text-light {
+  color: var(--qm-text-dark) !important; /* Override Bootstrap's text-light */
+}
+
+/* Basic Button Styling (using primary color) */
+.btn {
+  border-radius: 0.8rem; /* Rounded like inspiration */
+  padding: 0.6rem 1.2rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border: none; /* Remove default border */
+  cursor: pointer;
+}
+
+.btn-primary {
+  background-color: var(--qm-primary);
+  color: var(--qm-bg-white);
+  box-shadow: 0 3px 8px rgba(13, 110, 253, 0.3); /* Subtle shadow */
+}
+
+.btn-primary:hover {
+  background-color: #0b5ed7; /* Darker blue on hover */
+  color: var(--qm-bg-white);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 12px rgba(13, 110, 253, 0.4);
+}
+
+.btn-secondary {
+  /* Example for a secondary button style */
+  background-color: var(--qm-bg-white);
+  color: var(--qm-primary);
+  border: 1px solid var(--qm-primary);
+}
+
+.btn-secondary:hover {
+  background-color: var(--qm-bg-light);
+  color: var(--qm-primary);
+  border-color: var(--qm-primary);
+}
+
+/* Footer basic style */
+footer.bg-light {
+  background-color: var(--qm-bg-white) !important; /* Use white for footer */
+  border-top: 1px solid var(--qm-border-color);
+  color: var(--qm-muted);
+}

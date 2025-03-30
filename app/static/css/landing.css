@@ -1,0 +1,98 @@
+/* Landing Page Specific Styles */
+
+.landing-container .row {
+  min-height: calc(
+    100vh - 70px
+  ); /* Adjust 70px based on actual navbar height */
+  /* Ensures the row takes at least the full viewport height minus navbar */
+}
+
+.landing-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* Vertically center content in the left column */
+  background-color: var(--qm-bg-white); /* White background for content area */
+  padding: 4rem !important; /* Generous padding */
+}
+
+.landing-content h1 {
+  color: var(--qm-text-dark); /* Use dark text for heading */
+  font-weight: 700; /* Bold heading */
+  line-height: 1.3;
+}
+
+.landing-content h1 span {
+  /* If you add spans for color */
+  color: var(--qm-primary);
+}
+
+.landing-content p.lead {
+  color: var(--qm-muted); /* Muted color for paragraph */
+  font-size: 1.1rem;
+  margin-bottom: 2.5rem !important; /* More space below paragraph */
+}
+
+/* Style buttons specifically for landing page if needed */
+.landing-content .btn-primary {
+  padding: 0.8rem 1.8rem; /* Larger padding for main CTA */
+  font-size: 1.1rem;
+}
+
+.landing-content .btn-outline-secondary {
+  padding: 0.8rem 1.8rem;
+  font-size: 1.1rem;
+  color: var(--qm-primary); /* Use primary color for outline */
+  border-color: var(--qm-primary);
+  font-weight: 500;
+}
+
+.landing-content .btn-outline-secondary:hover {
+  background-color: var(--qm-primary);
+  color: var(--qm-bg-white);
+}
+
+.landing-image-container {
+  padding: 0 !important; /* Remove padding */
+  height: calc(100vh - 70px); /* Match row min-height */
+  overflow: hidden; /* Hide any overflow */
+  display: flex; /* Use flex to center image if needed */
+  align-items: center;
+  justify-content: center;
+  background-color: var(
+    --qm-bg-light
+  ); /* Optional: background for image area */
+}
+
+.landing-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Cover the container, might crop */
+  /* object-fit: contain; */ /* Fit within container, might leave gaps */
+}
+
+/* Responsive adjustments */
+@media (max-width: 991.98px) {
+  /* Below Large breakpoint (where columns stack) */
+  .landing-container .row {
+    min-height: auto; /* Reset min-height */
+  }
+
+  .landing-content {
+    padding: 3rem !important;
+    text-align: center; /* Center text on smaller screens */
+  }
+
+  .landing-content .d-md-flex {
+    justify-content: center !important; /* Center buttons */
+  }
+
+  .landing-image-container {
+    height: auto; /* Auto height for image */
+    max-height: 50vh; /* Limit image height */
+    order: -1; /* Move image above content on small screens */
+  }
+  .landing-image {
+    object-fit: contain; /* Better fit on smaller screens */
+  }
+}

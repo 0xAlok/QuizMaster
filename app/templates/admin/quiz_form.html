@@ -2,74 +2,77 @@
 
 {% block title %}{{ title }} - Admin Dashboard{% endblock %}
 
+{# Add page-specific CSS link #}
+{% block head %}
+    {{ super() }} {# Includes CSS from base.html #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/management.css') }}">
+{% endblock %}
+
 {% block content %}
-<div class="row">
-    <div class="col-12 mb-4">
-        <h2>{{ title }}</h2>
-        <a href="{{ url_for('admin.quizzes', chapter_id=chapter.id) }}" class="btn btn-secondary">
-            <i class="bi bi-arrow-left"></i> Back to Quizzes
-        </a>
-    </div>
+{# Use page-header class #}
+<div class="page-header">
+    <h2>{{ title }}</h2>
+    <a href="{{ url_for('admin.quizzes', chapter_id=chapter.id) }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Back to Quizzes
+    </a>
 </div>
 
 <div class="row">
     <div class="col-md-8">
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h5>Quiz Details</h5>
-            </div>
-            <div class="card-body">
-                <form method="POST">
-                    {{ form.hidden_tag() }}
-                    
-                    <div class="mb-3">
-                        {{ form.date_of_quiz.label(class="form-label") }}
-                        {{ form.date_of_quiz(class="form-control", type="date", required=true) }}
-                        {% if form.date_of_quiz.errors %}
-                            <div class="text-danger small mt-1"> {# Added small/mt-1 for style #}
-                                {% for error in form.date_of_quiz.errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="mb-3">
-                        {{ form.time_duration.label(class="form-label") }}
-                        {{ form.time_duration(class="form-control", placeholder="HH:MM", required=true, pattern="^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$", title="Enter time in HH:MM format (e.g., 01:30)") }}
-                        <small class="form-text text-muted">Format: Hours:Minutes (e.g. 01:30 for 1 hour and 30 minutes)</small>
-                        {% if form.time_duration.errors %}
-                            <div class="text-danger small mt-1"> {# Added small/mt-1 for style #}
-                                {% for error in form.time_duration.errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="mb-3">
-                        {{ form.remarks.label(class="form-label") }}
-                        {{ form.remarks(class="form-control", rows=3, placeholder="Additional information about this quiz (optional)") }}
-                        {% if form.remarks.errors %}
-                            <div class="text-danger small mt-1"> {# Added small/mt-1 for style #}
-                                {% for error in form.remarks.errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="d-grid">
-                        {{ form.submit(class="btn btn-primary") }}
-                    </div>
-                </form>
-            </div>
+        {# Use form-container class for styling #}
+        <div class="form-container">
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                
+                <div class="mb-3">
+                    {{ form.date_of_quiz.label(class="form-label") }}
+                    {{ form.date_of_quiz(class="form-control", type="date", required=true) }}
+                    {% if form.date_of_quiz.errors %}
+                        <div class="text-danger small mt-1">
+                            {% for error in form.date_of_quiz.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="mb-3">
+                    {{ form.time_duration.label(class="form-label") }}
+                    {# Note: The input type should ideally be 'number' for minutes, and conversion handled in backend/form #}
+                    {# Keeping text for now to match existing pattern, but consider changing type="number" min="1" #}
+                    {{ form.time_duration(class="form-control", placeholder="Enter duration in minutes (e.g., 90)", required=true, type="number", min="1") }}
+                    <small class="form-text text-muted">Enter total duration in minutes (e.g., 90 for 1 hour 30 minutes)</small>
+                    {% if form.time_duration.errors %}
+                        <div class="text-danger small mt-1">
+                            {% for error in form.time_duration.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="mb-3">
+                    {{ form.remarks.label(class="form-label") }}
+                    {{ form.remarks(class="form-control", rows=3, placeholder="Additional information about this quiz (optional)") }}
+                    {% if form.remarks.errors %}
+                        <div class="text-danger small mt-1">
+                            {% for error in form.remarks.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                {# Button styling handled by management.css #}
+                {{ form.submit(class="btn btn-primary") }}
+            </form>
         </div>
     </div>
     
+    {# Info Card #}
     <div class="col-md-4">
         <div class="card">
-            <div class="card-header bg-info text-white">
+            <div class="card-header"> {# Removed bg-info, text-white #}
                 <h5>Chapter Information</h5>
             </div>
             <div class="card-body">

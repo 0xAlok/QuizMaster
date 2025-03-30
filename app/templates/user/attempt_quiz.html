@@ -2,64 +2,66 @@
 
 {% block title %}Quiz in Progress - Quiz Master{% endblock %}
 
-{# Custom styles moved to static/css/style.css #}
+{# Add page-specific CSS link #}
+{% block head %}
+    {{ super() }} {# Includes CSS from base.html #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/quiz.css') }}">
+{% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="row mb-3">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <h2>{{ quiz.chapter.subject.name }} - {{ quiz.chapter.name }}</h2>
-                <div id="quiz-timer" class="border">
-                    Time Remaining: <span id="minutes">--</span>:<span id="seconds">--</span>
-                </div>
-            </div>
+{# Use new container class #}
+<div class="quiz-attempt-container">
+    {# Use new header class #}
+    <div class="quiz-header">
+        <h2>{{ quiz.chapter.subject.name }} - {{ quiz.chapter.name }}</h2>
+        {# Timer styling is now in quiz.css #}
+        <div id="quiz-timer">
+            Time Remaining: <span id="minutes">--</span>:<span id="seconds">--</span>
         </div>
     </div>
 
     <form id="quiz-form" method="POST" action="{{ url_for('user.submit_quiz', quiz_id=quiz.id) }}">
         {% for question in questions %}
-        <div class="card question-card" id="question-{{ question.id }}">
-            <div class="card-header">
-                <h5 class="mb-0">Question {{ loop.index }}</h5>
-            </div>
-            <div class="card-body">
-                <p class="question-text">{{ question.question_text }}</p>
+        {# Use new question card class - remove Bootstrap card structure #}
+        <div class="question-card" id="question-{{ question.id }}">
+            <span class="question-number">Question {{ loop.index }}</span>
+            <p class="question-text">{{ question.question_text }}</p>
 
-                <div class="quiz-options-container">
-                    <div class="quiz-option">
-                        <input type="radio" name="question_{{ question.id }}" id="question_{{ question.id }}_option1" value="1" required>
-                        <label for="question_{{ question.id }}_option1">
-                             {{ question.option1 }}
-                        </label>
-                    </div>
+            <div class="quiz-options-container">
+                {# Option structure updated for custom radio button styling #}
+                <div class="quiz-option">
+                    <input type="radio" name="question_{{ question.id }}" id="question_{{ question.id }}_option1" value="1" required>
+                    <label for="question_{{ question.id }}_option1">
+                        <span class="option-prefix">A)</span> {{ question.option1 }}
+                    </label>
+                </div>
 
-                    <div class="quiz-option">
-                        <input type="radio" name="question_{{ question.id }}" id="question_{{ question.id }}_option2" value="2" required>
-                        <label for="question_{{ question.id }}_option2">
-                             {{ question.option2 }}
-                        </label>
-                    </div>
+                <div class="quiz-option">
+                    <input type="radio" name="question_{{ question.id }}" id="question_{{ question.id }}_option2" value="2" required>
+                    <label for="question_{{ question.id }}_option2">
+                        <span class="option-prefix">B)</span> {{ question.option2 }}
+                    </label>
+                </div>
 
-                    <div class="quiz-option">
-                        <input type="radio" name="question_{{ question.id }}" id="question_{{ question.id }}_option3" value="3" required>
-                        <label for="question_{{ question.id }}_option3">
-                             {{ question.option3 }}
-                        </label>
-                    </div>
+                <div class="quiz-option">
+                    <input type="radio" name="question_{{ question.id }}" id="question_{{ question.id }}_option3" value="3" required>
+                    <label for="question_{{ question.id }}_option3">
+                        <span class="option-prefix">C)</span> {{ question.option3 }}
+                    </label>
+                </div>
 
-                    <div class="quiz-option">
-                        <input type="radio" name="question_{{ question.id }}" id="question_{{ question.id }}_option4" value="4" required>
-                        <label for="question_{{ question.id }}_option4">
-                             {{ question.option4 }}
-                        </label>
-                    </div>
+                <div class="quiz-option">
+                    <input type="radio" name="question_{{ question.id }}" id="question_{{ question.id }}_option4" value="4" required>
+                    <label for="question_{{ question.id }}_option4">
+                        <span class="option-prefix">D)</span> {{ question.option4 }}
+                    </label>
                 </div>
             </div>
         </div>
         {% endfor %}
 
-        <div class="d-flex justify-content-between my-4">
+        {# Use quiz-navigation class for centering #}
+        <div class="quiz-navigation my-4">
             <button type="submit" class="btn btn-primary btn-lg">Submit Quiz</button>
         </div>
     </form>

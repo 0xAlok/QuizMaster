@@ -2,49 +2,56 @@
 
 {% block title %}{{ subject.name }} Chapters - Quiz Master{% endblock %}
 
+{# Add page-specific CSS link #}
+{% block head %}
+    {{ super() }} {# Includes CSS from base.html #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/management.css') }}">
+{% endblock %}
+
 {% block content %}
-<div class="container">
-    <nav aria-label="breadcrumb">
+<div class="container mt-4"> {# Keep container #}
+    <nav aria-label="breadcrumb" class="mb-4"> {# Add margin #}
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ url_for('user.dashboard') }}">Dashboard</a></li>
             <li class="breadcrumb-item"><a href="{{ url_for('user.subjects') }}">Subjects</a></li>
-            <li class="breadcrumb-item active">{{ subject.name }}</li>
+            <li class="breadcrumb-item active" aria-current="page">{{ subject.name }}</li> {# Added aria-current #}
         </ol>
     </nav>
 
-    <div class="row mb-4">
-        <div class="col-12">
-            <h2>{{ subject.name }}</h2>
-            <p class="lead">{{ subject.description }}</p>
-        </div>
+    {# Use page-header class #}
+    <div class="page-header">
+        <h2>{{ subject.name }}</h2>
+        {# Optional: Add back button here if desired #}
     </div>
+    <p class="lead mb-4">{{ subject.description }}</p>
+
 
     <div class="row">
         {% if chapters %}
             {% for chapter in chapters %}
                 <div class="col-md-4 mb-4">
-                    <div class="card h-100">
-                        <div class="card-body">
+                    {# Card styling handled by management.css #}
+                    <div class="card h-100 shadow-sm"> {# Added shadow #}
+                        <div class="card-body d-flex flex-column"> {# Use flex for button alignment #}
                             <h5 class="card-title">{{ chapter.name }}</h5>
-                            <p class="card-text">{{ chapter.description }}</p>
+                            <p class="card-text text-muted flex-grow-1">{{ chapter.description }}</p> {# text-muted and grow #}
+                            <a href="{{ url_for('user.quizzes', chapter_id=chapter.id) }}" class="btn btn-primary mt-auto">View Quizzes</a> {# mt-auto pushes button down #}
                         </div>
-                        <div class="card-footer bg-white border-top-0">
-                            <a href="{{ url_for('user.quizzes', chapter_id=chapter.id) }}" class="btn btn-primary">View Quizzes</a>
-                        </div>
+                        {# Removed card-footer #}
                     </div>
                 </div>
             {% endfor %}
         {% else %}
             <div class="col-12">
                 <div class="alert alert-info">
-                    <p>No chapters are available for this subject at the moment. Please check back later.</p>
+                    <p class="mb-0">No chapters are available for this subject at the moment. Please check back later.</p> {# Removed extra p tag #}
                 </div>
             </div>
         {% endif %}
     </div>
 
     <div class="mt-4">
-        <a href="{{ url_for('user.subjects') }}" class="btn btn-secondary">Back to Subjects</a>
+        <a href="{{ url_for('user.subjects') }}" class="btn btn-outline-secondary">Back to Subjects</a> {# Changed to outline #}
     </div>
 </div>
 {% endblock %}

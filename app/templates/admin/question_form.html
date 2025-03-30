@@ -2,124 +2,124 @@
 
 {% block title %}{{ title }} - Admin Dashboard{% endblock %}
 
+{# Add page-specific CSS link #}
+{% block head %}
+    {{ super() }} {# Includes CSS from base.html #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/management.css') }}">
+{% endblock %}
+
 {% block content %}
-<div class="row">
-    <div class="col-12 mb-4">
-        <h2>{{ title }}</h2>
-        <a href="{{ url_for('admin.questions', quiz_id=quiz.id) }}" class="btn btn-secondary">
-            <i class="bi bi-arrow-left"></i> Back to Questions
-        </a>
-    </div>
+{# Use page-header class #}
+<div class="page-header">
+    <h2>{{ title }}</h2>
+    <a href="{{ url_for('admin.questions', quiz_id=quiz.id) }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Back to Questions
+    </a>
 </div>
 
 <div class="row">
     <div class="col-md-8">
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h5>Question Details</h5>
-            </div>
-            <div class="card-body">
-                <form method="POST">
-                    {{ form.hidden_tag() }}
-                    
-                    <div class="mb-4">
-                        {{ form.question_text.label(class="form-label") }}
-                        {{ form.question_text(class="form-control", rows=3, placeholder="Enter the question text", required=true) }}
-                        {% if form.question_text.errors %}
-                            <div class="text-danger small mt-1"> {# Added small/mt-1 for style #}
-                                {% for error in form.question_text.errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="row mb-4">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                {{ form.option1.label(class="form-label") }}
-                                {{ form.option1(class="form-control", placeholder="Enter option 1", required=true) }}
-                                {% if form.option1.errors %}
-                                    <div class="text-danger small mt-1"> {# Added small/mt-1 for style #}
-                                        {% for error in form.option1.errors %}
-                                            {{ error }}
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            </div>
-                            
-                            <div class="mb-3">
-                                {{ form.option2.label(class="form-label") }}
-                                {{ form.option2(class="form-control", placeholder="Enter option 2", required=true) }}
-                                {% if form.option2.errors %}
-                                    <div class="text-danger small mt-1"> {# Added small/mt-1 for style #}
-                                        {% for error in form.option2.errors %}
-                                            {{ error }}
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                {{ form.option3.label(class="form-label") }}
-                                {{ form.option3(class="form-control", placeholder="Enter option 3", required=true) }}
-                                {% if form.option3.errors %}
-                                    <div class="text-danger small mt-1"> {# Added small/mt-1 for style #}
-                                        {% for error in form.option3.errors %}
-                                            {{ error }}
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            </div>
-                            
-                            <div class="mb-3">
-                                {{ form.option4.label(class="form-label") }}
-                                {{ form.option4(class="form-control", placeholder="Enter option 4", required=true) }}
-                                {% if form.option4.errors %}
-                                    <div class="text-danger small mt-1"> {# Added small/mt-1 for style #}
-                                        {% for error in form.option4.errors %}
-                                            {{ error }}
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-4">
-                        <label class="form-label">{{ form.correct_option.label }}</label>
-                        <div class="row">
-                            {% for subfield in form.correct_option %}
-                                <div class="col-md-3 mb-2">
-                                    <div class="form-check">
-                                        {{ subfield(class="form-check-input", required=true) }}
-                                        {{ subfield.label(class="form-check-label") }}
-                                    </div>
-                                </div>
+        {# Use form-container class for styling #}
+        <div class="form-container">
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                
+                <div class="mb-4">
+                    {{ form.question_text.label(class="form-label") }}
+                    {{ form.question_text(class="form-control", rows=3, placeholder="Enter the question text", required=true) }}
+                    {% if form.question_text.errors %}
+                        <div class="text-danger small mt-1">
+                            {% for error in form.question_text.errors %}
+                                {{ error }}
                             {% endfor %}
                         </div>
-                        {% if form.correct_option.errors %}
-                            <div class="text-danger small mt-1"> {# Added small/mt-1 for style #}
-                                {% for error in form.correct_option.errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
+                    {% endif %}
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            {{ form.option1.label(class="form-label") }}
+                            {{ form.option1(class="form-control", placeholder="Enter option 1", required=true) }}
+                            {% if form.option1.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.option1.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.option2.label(class="form-label") }}
+                            {{ form.option2(class="form-control", placeholder="Enter option 2", required=true) }}
+                            {% if form.option2.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.option2.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
                     </div>
                     
-                    <div class="d-grid">
-                        {{ form.submit(class="btn btn-primary") }}
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            {{ form.option3.label(class="form-label") }}
+                            {{ form.option3(class="form-control", placeholder="Enter option 3", required=true) }}
+                            {% if form.option3.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.option3.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.option4.label(class="form-label") }}
+                            {{ form.option4(class="form-control", placeholder="Enter option 4", required=true) }}
+                            {% if form.option4.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.option4.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
                     </div>
-                </form>
-            </div>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label">{{ form.correct_option.label }}</label>
+                    {# Improved radio button layout #}
+                    <div class="d-flex flex-wrap gap-3"> 
+                        {% for subfield in form.correct_option %}
+                            <div class="form-check">
+                                {{ subfield(class="form-check-input", required=true) }}
+                                {{ subfield.label(class="form-check-label") }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {% if form.correct_option.errors %}
+                        <div class="text-danger small mt-1">
+                            {% for error in form.correct_option.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                {# Button styling handled by management.css #}
+                {{ form.submit(class="btn btn-primary") }}
+            </form>
         </div>
     </div>
     
+    {# Info Card #}
     <div class="col-md-4">
         <div class="card">
-            <div class="card-header bg-info text-white">
+            <div class="card-header"> {# Removed bg-info, text-white #}
                 <h5>Quiz Information</h5>
             </div>
             <div class="card-body">
@@ -136,8 +136,8 @@
                 
                 <hr>
                 
-                <div class="alert alert-warning">
-                    <p><strong>Note:</strong> Each question must have exactly one correct answer.</p>
+                <div class="alert alert-warning"> {# Keep alert styling #}
+                    <p class="mb-0"><strong>Note:</strong> Each question must have exactly one correct answer.</p> {# Removed extra p tag #}
                 </div>
             </div>
         </div>

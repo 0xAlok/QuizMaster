@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Welcome to Quiz Master{% endblock %}
+
+{# Add page-specific CSS link #}
+{% block head %}
+    {{ super() }} {# Includes CSS from base.html #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
+{% endblock %}
+
+{% block content %}
+{# Remove the default container padding for full-width sections if needed #}
+<div class="landing-container container-fluid px-0">
+    <div class="row g-0 align-items-center">
+        {# Left Column: Content #}
+        <div class="col-lg-6 landing-content p-5">
+            <h1 class="display-4 fw-bold mb-3">Master Your Subjects With Interactive Quizzes</h1>
+            <p class="lead mb-4">
+                A comprehensive learning platform designed to help you prepare for exams with customized quizzes and performance tracking.
+            </p>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg px-4 me-md-2">Register Now</a>
+                <a href="{{ url_for('auth.login') }}" class="btn btn-outline-secondary btn-lg px-4">User Login</a>
+                {# Consider adding an 'Admin Login' button if needed, maybe styled differently #}
+                {# <a href="{{ url_for('auth.login') }}?role=admin" class="btn btn-outline-secondary btn-lg px-4">Admin Login</a> #}
+            </div>
+        </div>
+
+        {# Right Column: Image #}
+        <div class="col-lg-6 landing-image-container">
+            <img src="{{ url_for('static', filename='images/quiz.jpg') }}" alt="Quiz illustration" class="img-fluid landing-image">
+        </div>
+    </div>
+</div>
+
+{# Optional: Add other sections like Features, Testimonials etc. below #}
+
+{% endblock %}
+
+{# Override footer or keep the default from base.html #}
+{# {% block footer %}{% endblock %} #}
