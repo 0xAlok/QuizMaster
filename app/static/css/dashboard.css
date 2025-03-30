@@ -13,31 +13,43 @@
 /* Grid for Chart Cards */
 .chart-grid {
   display: grid;
-  gap: 2rem;
+  /* Use 1fr units for flexible columns */
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem; /* Adjusted gap per prompt */
   margin-bottom: 2rem;
-  /* Default to single column, centered, with max width */
-  grid-template-columns: minmax(0, 550px); 
-  justify-content: center; 
+  /* Remove justify-content as grid spans container width */
 }
 
-/* Apply 2-column layout for medium screens and up (Bootstrap's md breakpoint ~768px) */
+/* Make the card with this class span both columns */
+.chart-grid .full-width-chart {
+  grid-column: 1 / -1;
+}
+
+/* Remove the media query override as the base style is now 2 columns */
+/*
 @media (min-width: 768px) {
   .chart-grid {
-    /* Two columns, each constrained */
-    grid-template-columns: repeat(2, minmax(0, 550px)); 
-    /* Justify content might still be useful if container is very wide */
-     justify-content: center; 
+    grid-template-columns: repeat(2, minmax(0, 550px));
+     justify-content: center;
   }
 }
+*/
 
 /* General Card Styling Enhancements for Dashboards */
+/* Apply general card styles */
 .card {
   border: none;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06); /* Slightly softer shadow */
   border-radius: 10px;
-  margin-bottom: 2rem; /* Consistent spacing */
+  margin-bottom: 2rem; /* Consistent spacing outside grid */
   background-color: var(--qm-bg-white);
   overflow: hidden; /* Ensure content respects border-radius */
+}
+
+/* Specific adjustments for cards within the chart grid */
+.chart-grid .card {
+  margin-bottom: 0; /* Grid gap handles spacing */
+  min-width: 0; /* Allow card to shrink properly within the grid column */
 }
 
 .card-header {
@@ -76,11 +88,14 @@
 .card-body {
   padding: 1.5rem;
   /* Ensure charts have some space */
+  position: relative; /* Add positioning context */
 }
 
-/* Ensure chart canvas has space from header */
+/* Ensure chart canvas has space from header AND override Bootstrap flex */
 .chart-grid .card .card-body {
     padding-top: 1rem;
+    display: block; /* Override Bootstrap's flex behavior for card-body */
+    flex: none; /* Explicitly remove flex properties */
 }
 
 /* Welcome Alert */
@@ -182,10 +197,20 @@
   color: white;
 }
 
+/* Chart Wrapper to contain canvas */
+.chart-wrapper {
+  position: relative; /* Needed for canvas responsiveness */
+  height: 300px; /* Define a height for the wrapper */
+  width: 100%; /* Take full width of card-body */
+}
+
 /* Chart Containers */
 .card canvas {
-  max-height: 350px;
-  width: 100% !important;
+  /* Canvas should fill the wrapper (block display) */
+  display: block; /* Ensure it's treated as a block */
+  width: 100%;
+  height: 100%;
+  /* Removed absolute positioning */
 }
 
 /* Text muted */

@@ -177,7 +177,9 @@
     </div>
     <div class="card-body">
         {% if subject_labels and quiz_counts_data %}
-        <canvas id="quizzesPerSubjectChart"></canvas>
+        <div class="chart-wrapper"> {# Added wrapper #}
+          <canvas id="quizzesPerSubjectChart"></canvas>
+        </div>
         {% else %}
         <p class="text-muted">
           No subject or quiz data available to display chart.
@@ -194,7 +196,9 @@
     </div>
     <div class="card-body">
         {% if registration_labels and registration_data %}
-        <canvas id="userRegistrationChart"></canvas>
+        <div class="chart-wrapper"> {# Added wrapper #}
+          <canvas id="userRegistrationChart"></canvas>
+        </div>
         {% else %}
         <p class="text-muted">No user registration data available.</p>
         {% endif %}
@@ -203,14 +207,16 @@
   </div>
 
   {# Chart Card 3: Average Score per Quiz #}
-  {# This will likely span full width if grid has 2 columns, or fit in if more #}
-  <div class="card h-100"> {# Removed col-12 and row mb-4 wrapper #}
+  {# Add full-width-chart class to make it span grid columns #}
+  <div class="card h-100 full-width-chart"> {# Added full-width-chart class #}
     <div class="card-header"> {# Removed bg-success text-white #}
       <h5>Average Score per Quiz</h5>
     </div>
     <div class="card-body">
         {% if avg_quiz_labels and avg_quiz_data %}
-        <canvas id="avgScorePerQuizChart"></canvas>
+        <div class="chart-wrapper"> {# Added wrapper #}
+          <canvas id="avgScorePerQuizChart"></canvas>
+        </div>
         {% else %}
         <p class="text-muted">No quiz score data available.</p>
         {% endif %}
