@@ -14,7 +14,7 @@
   font-weight: 600;
 }
 
-/* General Card Styling (if used as containers) */
+/* General Card Styling */
 .card {
   border: none;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
@@ -48,52 +48,50 @@
   padding: 1rem 1.5rem;
 }
 
-/* Table Styling - Modified for Card-like Rows */
+/* Table Styling */
 .table {
-  border-collapse: separate; /* Crucial for border-radius on rows */
-  border-spacing: 0 1rem; /* Vertical spacing between rows (cards) */
+  border-collapse: separate;
+  border-spacing: 0 1rem;
   margin-bottom: 0;
   width: 100%;
-  background-color: transparent; /* Ensure table itself has no background */
+  background-color: transparent;
 }
 
-/* Hide traditional table header visually, but keep for accessibility */
+/* Style table header minimally */
 .table thead th {
-  /* display: none; Remove header visually */
-  /* Alternative: Keep header but style minimally */
   background-color: transparent;
   border: none;
   font-weight: 600;
   color: var(--qm-text-dark);
-  padding: 0 1.25rem; /* Adjust padding */
+  padding: 0 1.25rem;
   text-align: left;
   white-space: nowrap;
-  font-size: 0.9rem; /* Smaller header text */
-  color: var(--qm-muted); /* Muted color */
+  font-size: 0.9rem;
+  color: var(--qm-muted);
   font-size: 1rem;
 }
 
 /* Style each table row as a card */
 .table tbody tr {
   background-color: var(--qm-bg-white);
-  border-radius: 10px; /* Rounded corners */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06); /* Card shadow */
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
   transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
-  border: 1px solid var(--qm-border-color); /* Subtle border */
-  overflow: hidden; /* Ensure content respects border-radius */
+  border: 1px solid var(--qm-border-color);
+  overflow: hidden;
 }
 
 .table tbody tr:hover {
-  background-color: var(--qm-bg-white); /* Keep background white on hover */
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.09); /* Slightly larger shadow on hover */
-  transform: translateY(-2px); /* Slight lift effect */
+  background-color: var(--qm-bg-white);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.09);
+  transform: translateY(-2px);
 }
 
 /* Remove default table cell borders */
 .table td,
 .table th {
-  border: none; /* Remove all cell borders */
-  padding: 1rem 1.25rem; /* Consistent padding within the card-row */
+  border: none;
+  padding: 1rem 1.25rem;
   vertical-align: middle;
   text-align: left;
 }
@@ -110,18 +108,15 @@
   border-bottom-right-radius: 10px;
 }
 
-/* Remove striping if it was used */
 .table-striped tbody tr:nth-of-type(odd) {
-  background-color: var(
-    --qm-bg-white
-  ); /* Ensure all rows have same background */
+  background-color: var(--qm-bg-white);
 }
 
-/* Adjustments for table-responsive container if used */
+/* Adjustments for table-responsive container */
 .table-responsive {
-  border: none; /* Remove border from the container */
+  border: none;
   border-radius: 0;
-  overflow: visible; /* Allow shadows from rows to show */
+  overflow: visible;
   background-color: transparent;
 }
 .table-responsive > .table {
@@ -130,31 +125,30 @@
 
 /* Badge Styling within Tables */
 .table .badge {
-  background-color: #e9ecef !important; /* Light grey background - Override */
-  color: var(--qm-text-dark) !important; /* Dark text - Override */
-  font-weight: 500; /* Slightly bolder */
-  padding: 0.35em 0.65em; /* Adjust padding if needed */
-  font-size: 0.8em; /* Adjust font size if needed */
+  background-color: #e9ecef !important;
+  color: var(--qm-text-dark) !important;
+  font-weight: 500;
+  padding: 0.35em 0.65em;
+  font-size: 0.8em;
 }
 
-/* Action Buttons in Tables/Lists (Re-added for outline buttons) */
+/* Action Buttons in Tables/Lists */
 .table .btn-sm,
 .list-group-item .btn-sm {
-  /* Target small buttons specifically */
-  padding: 0.25rem 0.6rem; /* Adjust padding for small buttons */
-  font-size: 1.2rem; /* Smaller font */
+  padding: 0.25rem 0.6rem;
+  font-size: 1.2rem;
   margin-left: 0.3rem;
   vertical-align: middle;
 }
 /* Style for icon-only buttons */
 .btn-icon.btn-sm {
-  padding: 0.4rem 0.7rem; /* Increased padding */
+  padding: 0.4rem 0.7rem;
   width: auto;
-  line-height: 1.2; /* Increased line height */
-  font-size: 1rem; /* Added larger font size */
+  line-height: 1.2;
+  font-size: 1rem;
 }
 .btn-icon.btn-sm i {
-  vertical-align: middle; /* Better icon alignment */
+  vertical-align: middle;
 }
 .table .btn-group > .btn-sm {
   margin-left: 0;
@@ -168,7 +162,6 @@
   background-color: var(--qm-text-dark);
   color: white;
 }
-/* Ensure primary outline uses correct variable */
 .btn-outline-primary {
   color: var(--qm-primary);
   border-color: var(--qm-primary);
@@ -178,7 +171,6 @@
   background-color: var(--qm-primary);
   color: white;
 }
-/* Keep warning outline orange */
 .btn-outline-warning {
   color: var(--qm-primary);
   border-color: var(--qm-primary);
@@ -212,7 +204,7 @@
   text-decoration: underline;
 }
 
-/* Form Styling (for admin forms etc.) */
+/* Form Styling */
 .form-container {
   background-color: var(--qm-bg-white);
   padding: 2rem;

@@ -29,11 +29,11 @@
     margin-top: 2rem;
     padding: 0.8rem 2rem;
     font-size: 1.1rem;
-    background-color: var(--qm-success); /* Green for start */
+    background-color: var(--qm-success);
     border-color: var(--qm-success);
 }
 .start-quiz-container .btn-start-quiz:hover {
-    background-color: #157347; /* Darker green */
+    background-color: #157347;
     border-color: #157347;
 }
 
@@ -67,12 +67,12 @@
   border: 1px solid var(--qm-border-color);
 }
 .timer-warning {
-  background-color: #fff3cd; /* Lighter warning */
+  background-color: #fff3cd;
   color: #664d03;
   border-color: var(--qm-warning);
 }
 .timer-danger {
-  background-color: #f8d7da; /* Lighter danger */
+  background-color: #f8d7da;
   color: #842029;
   border-color: var(--qm-danger);
 }
@@ -83,7 +83,7 @@
   border-radius: 10px;
   margin-bottom: 1.5rem;
   box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-  border-left: 4px solid var(--qm-primary); /* Blue accent */
+  border-left: 4px solid var(--qm-primary);
 }
 
 .question-number {
@@ -120,11 +120,10 @@
   background-color: #e9ecef;
   border-color: #adb5bd;
 }
-/* Style when radio inside is checked */
 .quiz-option input[type="radio"]:checked + label {
-   font-weight: 500; /* Make selected option slightly bolder */
+   font-weight: 500;
 }
-.quiz-option input[type="radio"]:checked + label::before { /* Style the custom radio */
+.quiz-option input[type="radio"]:checked + label::before {
     background-color: var(--qm-primary);
     border-color: var(--qm-primary);
     box-shadow: 0 0 0 2px var(--qm-bg-white) inset;
@@ -132,7 +131,7 @@
 
 
 .quiz-option input[type="radio"] {
-  opacity: 0; /* Hide the actual radio button */
+  opacity: 0;
   position: absolute;
   width: 1px;
   height: 1px;
@@ -142,9 +141,9 @@
   margin-bottom: 0;
   font-weight: 400;
   cursor: pointer;
-  display: block; /* Make label take full width */
+  display: block;
   position: relative;
-  padding-left: 30px; /* Space for custom radio */
+  padding-left: 30px;
 }
 
 /* Custom radio button appearance */
@@ -187,9 +186,9 @@
     background-color: var(--qm-bg-white);
     padding: 2rem;
     border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.07);
-    margin-bottom: 2rem;
-    text-align: center;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.07);
+  margin-bottom: 2rem;
+  text-align: center;
 }
 .result-summary-card h2 {
     margin-bottom: 1.5rem;
@@ -197,7 +196,7 @@
 .score-display {
     font-size: 2.5rem;
     font-weight: 700;
-    margin-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 .score-display.pass {
     color: var(--qm-success);
@@ -208,7 +207,7 @@
 .result-stats p {
     font-size: 1.1rem;
     color: var(--qm-muted);
-    margin-bottom: 0.3rem;
+  margin-bottom: 0.3rem;
 }
 .result-stats strong {
     color: var(--qm-text-dark);
@@ -226,7 +225,7 @@
     border-radius: 10px;
     margin-bottom: 1.5rem;
     box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-    border-left: 4px solid; /* Color set below */
+    border-left: 4px solid;
 }
 .review-question-card.correct { border-left-color: var(--qm-success); }
 .review-question-card.incorrect { border-left-color: var(--qm-danger); }
@@ -241,29 +240,23 @@
     padding: 0.8rem 1.2rem;
     border-radius: 6px;
     margin-bottom: 8px;
-    border: 1px solid var(--qm-border-color); /* Keep border */
+    border: 1px solid var(--qm-border-color);
     background-color: var(--qm-bg-light);
-    /* Remove flexbox alignment from list-group-item */
 }
-/* Ensure borders between items now that flush is removed */
 .review-options .list-group-item + .list-group-item {
     border-top-width: 1px;
 }
 
-/* Style the inner form-check */
 .review-options .list-group-item .form-check {
-    /* padding-left: 0; Remove this override, let Bootstrap handle padding */
-    margin-bottom: 0; /* Remove default form-check margin */
+    margin-bottom: 0;
 }
 
 .review-options .list-group-item .form-check-label {
-    opacity: 1 !important; /* Ensure label is always visible */
+    opacity: 1 !important;
     color: var(--qm-text-dark);
-    /* Let Bootstrap handle label styling */
 }
 .review-options .list-group-item .form-check-input {
-    opacity: 1 !important; /* Ensure checkbox/radio is visible */
-    /* Let Bootstrap handle input positioning/margins */
+    opacity: 1 !important;
 }
 .review-options .list-group-item .form-check-input:disabled {
     cursor: default;
@@ -281,15 +274,15 @@
     margin-left: 10px;
 }
 .review-options .list-group-item.user-selected {
-    border-color: var(--qm-primary); /* Highlight user's selection */
+    border-color: var(--qm-primary);
     background-color: #e0f2fe;
 }
 .review-options .list-group-item.correct-answer {
-    border-color: var(--qm-success); /* Highlight correct answer */
+    border-color: var(--qm-success);
     background-color: #d1e7dd;
 }
 .review-options .list-group-item.incorrect-selection {
-    border-color: var(--qm-danger); /* Highlight incorrect user selection */
+    border-color: var(--qm-danger);
     background-color: #f8d7da;
 }
 

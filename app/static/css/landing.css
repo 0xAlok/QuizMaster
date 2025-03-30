@@ -1,48 +1,42 @@
 /* Landing Page Specific Styles */
 
 .landing-container .row {
-  min-height: calc(
-    100vh - 70px
-  ); /* Adjust 70px based on actual navbar height */
-  /* Ensures the row takes at least the full viewport height minus navbar */
+  min-height: calc(100vh - 70px);
 }
 
 .landing-content {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  /* Vertically center content in the left column */
-  background-color: var(--qm-bg-white); /* White background for content area */
-  padding: 4rem !important; /* Generous padding */
+  background-color: var(--qm-bg-white);
+  padding: 4rem !important;
 }
 
 .landing-content h1 {
-  color: var(--qm-text-dark); /* Use dark text for heading */
-  font-weight: 700; /* Bold heading */
+  color: var(--qm-text-dark);
+  font-weight: 700;
   line-height: 1.3;
 }
 
 .landing-content h1 span {
-  /* If you add spans for color */
   color: var(--qm-primary);
 }
 
 .landing-content p.lead {
-  color: var(--qm-muted); /* Muted color for paragraph */
+  color: var(--qm-muted);
   font-size: 1.1rem;
-  margin-bottom: 2.5rem !important; /* More space below paragraph */
+  margin-bottom: 2.5rem !important;
 }
 
-/* Style buttons specifically for landing page if needed */
 .landing-content .btn-primary {
-  padding: 0.8rem 1.8rem; /* Larger padding for main CTA */
+  padding: 0.8rem 1.8rem;
   font-size: 1.1rem;
 }
 
 .landing-content .btn-outline-secondary {
   padding: 0.8rem 1.8rem;
   font-size: 1.1rem;
-  color: var(--qm-primary); /* Use primary color for outline */
+  color: var(--qm-primary);
   border-color: var(--qm-primary);
   font-weight: 500;
 }
@@ -53,46 +47,42 @@
 }
 
 .landing-image-container {
-  padding: 0 !important; /* Remove padding */
-  height: calc(100vh - 70px); /* Match row min-height */
-  overflow: hidden; /* Hide any overflow */
-  display: flex; /* Use flex to center image if needed */
+  padding: 0 !important;
+  height: calc(100vh - 70px);
+  overflow: hidden;
+  display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(
-    --qm-bg-light
-  ); /* Optional: background for image area */
+  background-color: var(--qm-bg-light);
 }
 
 .landing-image {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Cover the container, might crop */
-  /* object-fit: contain; */ /* Fit within container, might leave gaps */
+  object-fit: cover;
 }
 
 /* Responsive adjustments */
 @media (max-width: 991.98px) {
-  /* Below Large breakpoint (where columns stack) */
   .landing-container .row {
-    min-height: auto; /* Reset min-height */
+    min-height: auto;
   }
 
   .landing-content {
     padding: 3rem !important;
-    text-align: center; /* Center text on smaller screens */
+    text-align: center;
   }
 
   .landing-content .d-md-flex {
-    justify-content: center !important; /* Center buttons */
+    justify-content: center !important;
   }
 
   .landing-image-container {
-    height: auto; /* Auto height for image */
-    max-height: 50vh; /* Limit image height */
-    order: -1; /* Move image above content on small screens */
+    height: auto;
+    max-height: 50vh;
+    order: -1;
   }
   .landing-image {
-    object-fit: contain; /* Better fit on smaller screens */
+    object-fit: contain;
   }
 }

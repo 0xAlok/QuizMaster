@@ -10,7 +10,7 @@ auth_bp = Blueprint('auth', __name__)
 @auth_bp.route('/')
 def index():
     """Serves the main landing page."""
-    # If user is already logged in, maybe redirect to their dashboard?
+    # Redirect logged-in users to their respective dashboards
     if current_user.is_authenticated:
         dashboard_endpoint = 'admin.dashboard' if isinstance(current_user, Admin) else 'user.dashboard'
         return redirect(url_for(dashboard_endpoint))

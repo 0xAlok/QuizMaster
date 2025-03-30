@@ -2,7 +2,7 @@
 
 /* Main Dashboard Title */
 .dashboard-title {
-  font-size: 1.8rem; /* Adjust as needed */
+  font-size: 1.8rem;
   font-weight: 600;
   color: var(--qm-text-dark);
   margin-bottom: 2rem;
@@ -10,20 +10,16 @@
   border-bottom: 1px solid var(--qm-border-color);
 }
 
-/* REMOVED CSS Grid styles (.chart-grid, .full-width-chart, :nth-child) */
 
 /* General Card Styling Enhancements for Dashboards */
 .card {
   border: none;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
   border-radius: 10px;
-  margin-bottom: 2rem; /* Standard Bootstrap margin */
+  margin-bottom: 2rem;
   background-color: var(--qm-bg-white);
-  overflow: hidden; /* Crucial for containing content */
+  overflow: hidden;
 }
-
-/* Keep min-width: 0 on cards containing charts if needed, but remove grid context */
-/* .card { min-width: 0; } */ /* Consider if needed with Bootstrap cols */
 
 .card-header {
   background-color: var(--qm-bg-light);
@@ -34,9 +30,8 @@
   font-weight: 600;
 }
 
-/* Chart Card Specific Header Styling (Remove grid context if needed) */
-/* Consider if .chart-grid selector is still appropriate */
-.card .card-header { /* More general selector */
+/* Chart Card Specific Header Styling */
+.card .card-header {
   background-color: var(--qm-bg-white) !important;
   color: var(--qm-text-dark) !important;
   border-bottom: 1px solid var(--qm-border-color);
@@ -48,37 +43,34 @@
 
 .card-body {
   padding: 1.5rem;
-  position: relative; /* Keep for wrapper positioning */
+  position: relative;
 }
 
 /* Ensure chart canvas has space from header AND override Bootstrap flex */
-/* Consider if .chart-grid selector is still appropriate */
-.card .card-body { /* More general selector */
+.card .card-body {
     padding-top: 1rem;
-    display: block; /* Override Bootstrap's flex behavior */
-    flex: none; /* Remove flex properties */
-    box-sizing: border-box; /* Ensure padding included */
+    display: block;
+    flex: none;
+    box-sizing: border-box;
 }
 
 /* Chart Wrapper to contain canvas */
 .chart-wrapper {
   position: relative;
-  height: 300px; /* Restore fixed height for alignment */
-  width: 100%; /* Take full width of card-body */
-  overflow: hidden; /* Contain the canvas */
-  box-sizing: border-box; /* Ensure padding/border included in width/height */
-  display: flex; /* Use flexbox for centering */
-  justify-content: center; /* Center chart horizontally */
-  align-items: center; /* Center chart vertically */
+  height: 300px;
+  width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* Chart Containers (Canvas) */
 .card canvas {
   display: block;
-  /* Let wrapper control size, but ensure canvas doesn't exceed it */
   max-width: 100%;
   max-height: 100%;
-  /* Remove explicit width/height: 100% as flex wrapper handles it */
 }
 
 

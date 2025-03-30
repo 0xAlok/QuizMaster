@@ -38,8 +38,6 @@
                 
                 <div class="mb-3">
                     {{ form.time_duration.label(class="form-label") }}
-                    {# Note: The input type should ideally be 'number' for minutes, and conversion handled in backend/form #}
-                    {# Keeping text for now to match existing pattern, but consider changing type="number" min="1" #}
                     {{ form.time_duration(class="form-control", placeholder="Enter duration in minutes (e.g., 90)", required=true, type="number", min="1") }}
                     <small class="form-text text-muted">Enter total duration in minutes (e.g., 90 for 1 hour 30 minutes)</small>
                     {% if form.time_duration.errors %}

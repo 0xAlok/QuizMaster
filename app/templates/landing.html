@@ -9,7 +9,6 @@
 {% endblock %}
 
 {% block content %}
-{# Remove the default container padding for full-width sections if needed #}
 <div class="landing-container container-fluid px-0">
     <div class="row g-0 align-items-center">
         {# Left Column: Content #}
@@ -21,8 +20,6 @@
             <div class="d-grid gap-2 d-md-flex justify-content-md-start">
                 <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg px-4 me-md-2">Register Now</a>
                 <a href="{{ url_for('auth.login') }}" class="btn btn-outline-secondary btn-lg px-4">User Login</a>
-                {# Consider adding an 'Admin Login' button if needed, maybe styled differently #}
-                {# <a href="{{ url_for('auth.login') }}?role=admin" class="btn btn-outline-secondary btn-lg px-4">Admin Login</a> #}
             </div>
         </div>
 
@@ -32,10 +29,3 @@
         </div>
     </div>
 </div>
-
-{# Optional: Add other sections like Features, Testimonials etc. below #}
-
-{% endblock %}
-
-{# Override footer or keep the default from base.html #}
-{# {% block footer %}{% endblock %} #}
