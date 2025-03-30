@@ -165,65 +165,59 @@
 
 {# --- Charts Section --- #}
 <hr class="my-5" />
-<h2 class="dashboard-title">Summary Statistics</h2> {# Changed to h2 and added class #}
+<h2 class="dashboard-title">Summary Statistics</h2>
 
-{# Wrap all charts in the grid container #}
+{# Fix chart grid structure - remove extraneous closing div tags #}
 <div class="chart-grid"> 
-
   {# Chart Card 1: Quizzes per Subject #}
-  <div class="card h-100"> {# Removed col-md-6 mb-4, grid handles layout #}
-    <div class="card-header"> {# Removed bg-secondary text-white #}
+  <div class="card h-100">
+    <div class="card-header">
       <h5>Quizzes per Subject</h5>
     </div>
     <div class="card-body">
-        {% if subject_labels and quiz_counts_data %}
-        <div class="chart-wrapper"> {# Added wrapper #}
+      {% if subject_labels and quiz_counts_data %}
+        <div class="chart-wrapper">
           <canvas id="quizzesPerSubjectChart"></canvas>
         </div>
-        {% else %}
+      {% else %}
         <p class="text-muted">
           No subject or quiz data available to display chart.
         </p>
-        {% endif %}
-      </div>
+      {% endif %}
     </div>
   </div>
 
   {# Chart Card 2: User Registrations #}
-  <div class="card h-100"> {# Removed col-md-6 mb-4 #}
-    <div class="card-header"> {# Removed bg-primary text-white #}
+  <div class="card h-100">
+    <div class="card-header">
       <h5>User Registrations Over Time</h5>
     </div>
     <div class="card-body">
-        {% if registration_labels and registration_data %}
-        <div class="chart-wrapper"> {# Added wrapper #}
+      {% if registration_labels and registration_data %}
+        <div class="chart-wrapper">
           <canvas id="userRegistrationChart"></canvas>
         </div>
-        {% else %}
+      {% else %}
         <p class="text-muted">No user registration data available.</p>
-        {% endif %}
-      </div>
+      {% endif %}
     </div>
   </div>
 
   {# Chart Card 3: Average Score per Quiz #}
-  {# Add full-width-chart class to make it span grid columns #}
-  <div class="card h-100 full-width-chart"> {# Added full-width-chart class #}
-    <div class="card-header"> {# Removed bg-success text-white #}
+  <div class="card h-100 full-width-chart">
+    <div class="card-header">
       <h5>Average Score per Quiz</h5>
     </div>
     <div class="card-body">
-        {% if avg_quiz_labels and avg_quiz_data %}
-        <div class="chart-wrapper"> {# Added wrapper #}
+      {% if avg_quiz_labels and avg_quiz_data %}
+        <div class="chart-wrapper">
           <canvas id="avgScorePerQuizChart"></canvas>
         </div>
-        {% else %}
+      {% else %}
         <p class="text-muted">No quiz score data available.</p>
-        {% endif %}
-      </div>
+      {% endif %}
     </div>
   </div>
-
 </div> {# End of chart-grid #}
 
 
@@ -439,11 +433,15 @@
             backgroundColor: themeColors.primary, // Use theme primary color
             borderColor: themeColors.primary,
             borderWidth: 1,
-            hoverBackgroundColor: themeColors.primaryHover // Add hover color
+            hoverBackgroundColor: themeColors.primaryHover, // Add hover color
+            barPercentage: 0.6, // Make bars thinner
+            categoryPercentage: 0.7 // Add more space between bars
           },
         ],
       },
       { // Specific Options
+        maintainAspectRatio: true, // Change to true to maintain aspect ratio
+        responsive: true,
         scales: {
           y: {
             beginAtZero: true,
@@ -452,10 +450,17 @@
           },
           x: {
             title: { display: true, text: "Quiz ID" },
-            grid: { display: false } // Hide vertical grid lines
+            grid: { display: false }, // Hide vertical grid lines
+            ticks: {
+              autoSkip: true,
+              maxRotation: 45,
+              minRotation: 45
+            }
           },
         },
-        plugins: { legend: { display: false } }, // Hide legend
+        plugins: { 
+          legend: { display: false }, // Hide legend
+        },
       }
     );
   });
