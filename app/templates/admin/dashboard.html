@@ -1,132 +1,207 @@
-{% extends 'base.html' %} 
-{% block title %}Admin Dashboard - Quiz Master{% endblock %} 
-
-{# Add page-specific CSS link #}
-{% block head %}
-    {{ super() }} {# Includes CSS from base.html #}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
-    {# Also link management CSS as it contains modal styles used here #}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/management.css') }}"> 
-{% endblock %}
-
-{# Chart.js library will be loaded at the end of the content block #}
-
-{% block content %}
-<div class="page-header"> {# Use page-header from management.css #}
-    <h2>Admin Dashboard</h2>
-    <a href="{{ url_for('admin.add_subject') }}" class="btn btn-primary">
-      <i class="bi bi-plus-circle"></i> Add New Subject
-    </a>
+{% extends 'base.html' %} {% block title %}Admin Dashboard - Quiz Master{%
+endblock %} {# Add page-specific CSS link #} {% block head %} {{ super() }} {#
+Includes CSS from base.html #}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/dashboard.css') }}"
+/>
+{# Also link management CSS as it contains modal styles used here #}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/management.css') }}"
+/>
+{% endblock %} {# Chart.js library will be loaded at the end of the content
+block #} {% block content %}
+<div class="page-header">
+  {# Use page-header from management.css #}
+  <h2>Admin Dashboard</h2>
+  <a href="{{ url_for('admin.add_subject') }}" class="btn btn-primary">
+    <i class="bi bi-plus-circle"></i> Add New Subject
+  </a>
 </div>
 
 <div class="row">
-  {% if subjects %} {% for subject in subjects %}
-  {# Ensure proper grid column usage #}
-  <div class="col-lg-6 mb-4"> 
+  {% if subjects %} {% for subject in subjects %} {# Ensure proper grid column
+  usage #}
+  <div class="col-lg-6 mb-4">
     <div class="card h-100">
       {# Card Header for Subject Title and Actions #}
-      <div class="card-header d-flex justify-content-between align-items-center">
+      <div
+        class="card-header d-flex justify-content-between align-items-center"
+      >
         <h5 class="mb-0">{{ subject.name }}</h5>
         {# Changed to icon-only outline buttons with tooltips #}
-        <div> 
+        <div>
           <a
             href="{{ url_for('admin.edit_subject', id=subject.id) }}"
-            class="btn btn-sm btn-outline-primary btn-icon" {# Blue for Edit #}
+            class="btn btn-sm btn-outline-primary btn-icon"
+            {#
+            Blue
+            for
+            Edit
+            #}
             title="Edit Subject"
-            data-bs-toggle="tooltip" data-bs-placement="top" {# Tooltip attributes #}
-            aria-label="Edit Subject {{ subject.name }}" 
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
+            {#
+            Tooltip
+            attributes
+            #}
+            aria-label="Edit Subject {{ subject.name }}"
           >
             <i class="bi bi-pencil"></i>
           </a>
-          <button 
+          <button
             type="button"
-            class="btn btn-sm btn-outline-danger btn-icon" {# Red for Delete #}
+            class="btn btn-sm btn-outline-danger btn-icon"
+            {#
+            Red
+            for
+            Delete
+            #}
             data-bs-toggle="modal"
             data-bs-target="#deleteSubjectModal-{{ subject.id }}"
             title="Delete Subject"
-            data-bs-toggle="tooltip" data-bs-placement="top" {# Tooltip attributes #}
-            aria-label="Delete Subject {{ subject.name }}" 
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
+            {#
+            Tooltip
+            attributes
+            #}
+            aria-label="Delete Subject {{ subject.name }}"
           >
             <i class="bi bi-trash"></i>
           </button>
         </div>
       </div>
       <div class="card-body">
-        <p class="mb-3">{{ subject.description }}</p> 
-        {# Removed "Chapters:" label #}
-        {% if subject.chapters %}
-        <ul class="list-group list-group-flush mt-2"> 
-          {% for chapter in subject.chapters %} 
-            {% set total_questions = namespace(count=0) %} 
-            {% for quiz in chapter.quizzes %} 
-                {% set total_questions.count = total_questions.count + (quiz.questions | length) %} 
-            {% endfor %}
+        <p class="mb-3">{{ subject.description }}</p>
+        {# Removed "Chapters:" label #} {% if subject.chapters %}
+        <ul class="list-group list-group-flush mt-2">
+          {% for chapter in subject.chapters %} {% set total_questions =
+          namespace(count=0) %} {% for quiz in chapter.quizzes %} {% set
+          total_questions.count = total_questions.count + (quiz.questions |
+          length) %} {% endfor %}
 
-          <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2"> 
-            <a href="{{ url_for('admin.quizzes', chapter_id=chapter.id) }}" class="text-primary text-decoration-none fw-medium">{{ chapter.name }}</a>
+          <li
+            class="list-group-item d-flex justify-content-between align-items-center px-0 py-2"
+          >
+            <a
+              href="{{ url_for('admin.quizzes', chapter_id=chapter.id) }}"
+              class="text-primary text-decoration-none fw-medium"
+              >{{ chapter.name }}</a
+            >
 
             {# Chapter Actions and Counts Group #}
-            <div class="d-flex align-items-center chapter-actions"> 
+            <div class="d-flex align-items-center chapter-actions">
               {# Styled Counts using spans #}
-              <span class="count-display me-1">{{ chapter.quizzes | length }} Quizzes</span>
-              <span class="count-display me-2">{{ total_questions.count }} Qs</span> {# Kept Qs #}
-              {# Changed to icon-only outline buttons with tooltips #}
+              <span class="count-display me-1"
+                >{{ chapter.quizzes | length }} Quizzes</span
+              >
+              <span class="count-display me-2"
+                >{{ total_questions.count }} Qs</span
+              >
+              {# Kept Qs #} {# Changed to icon-only outline buttons with
+              tooltips #}
               <a
                 href="{{ url_for('admin.edit_chapter', id=chapter.id) }}"
-                class="btn btn-sm btn-outline-primary btn-icon me-1" {# Blue for Edit #}
+                class="btn btn-sm btn-outline-primary btn-icon me-1"
+                {#
+                Blue
+                for
+                Edit
+                #}
                 title="Edit Chapter"
-                data-bs-toggle="tooltip" data-bs-placement="top" {# Tooltip attributes #}
-                aria-label="Edit Chapter {{ chapter.name }}" 
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                {#
+                Tooltip
+                attributes
+                #}
+                aria-label="Edit Chapter {{ chapter.name }}"
               >
                 <i class="bi bi-pencil"></i>
               </a>
               <button
                 type="button"
-                class="btn btn-sm btn-outline-danger btn-icon" {# Red for Delete #}
+                class="btn btn-sm btn-outline-danger btn-icon"
+                {#
+                Red
+                for
+                Delete
+                #}
                 data-bs-toggle="modal"
                 data-bs-target="#deleteChapterModal-{{ chapter.id }}"
                 title="Delete Chapter"
-                data-bs-toggle="tooltip" data-bs-placement="top" {# Tooltip attributes #}
-                aria-label="Delete Chapter {{ chapter.name }}" 
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                {#
+                Tooltip
+                attributes
+                #}
+                aria-label="Delete Chapter {{ chapter.name }}"
               >
                 <i class="bi bi-trash"></i>
               </button>
             </div>
           </li>
-          {% endfor %} 
+          {% endfor %}
         </ul>
-        
-        {# Modals moved outside the UL #}
-        {% for chapter in subject.chapters %}
-          <!-- Delete Chapter Modal for {{ chapter.name }} -->
-          <div class="modal fade" id="deleteChapterModal-{{ chapter.id }}" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title">Confirm Delete Chapter</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                  Are you sure you want to delete chapter "{{ chapter.name }}"?
-                  This will delete all associated quizzes and questions.
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                  <form action="{{ url_for('admin.delete_chapter', id=chapter.id) }}" method="POST" class="d-inline">
-                    <button type="submit" class="btn btn-danger">Delete Chapter</button>
-                  </form>
-                </div>
+
+        {# Modals moved outside the UL #} {% for chapter in subject.chapters %}
+        <!-- Delete Chapter Modal for {{ chapter.name }} -->
+        <div
+          class="modal fade"
+          id="deleteChapterModal-{{ chapter.id }}"
+          tabindex="-1"
+          aria-hidden="true"
+        >
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Confirm Delete Chapter</h5>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div class="modal-body">
+                Are you sure you want to delete chapter "{{ chapter.name }}"?
+                This will delete all associated quizzes and questions.
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Cancel
+                </button>
+                <form
+                  action="{{ url_for('admin.delete_chapter', id=chapter.id) }}"
+                  method="POST"
+                  class="d-inline"
+                >
+                  <button type="submit" class="btn btn-danger">
+                    Delete Chapter
+                  </button>
+                </form>
               </div>
             </div>
           </div>
-        {% endfor %} 
-        {% else %}
+        </div>
+        {% endfor %} {% else %}
         <p class="text-muted">No chapters added yet.</p>
         {% endif %}
       </div>
       <div class="card-footer text-end">
         {# Changed Add Chapter button to primary blue #}
-        <a href="{{ url_for('admin.add_chapter', subject_id=subject.id) }}" class="btn btn-sm btn-primary">
+        <a
+          href="{{ url_for('admin.add_chapter', subject_id=subject.id) }}"
+          class="btn btn-sm btn-primary"
+        >
           <i class="bi bi-plus-lg"></i> Add Chapter
         </a>
       </div>
@@ -134,20 +209,40 @@
   </div>
 
   <!-- Delete Subject Modal -->
-  <div class="modal fade" id="deleteSubjectModal-{{ subject.id }}" tabindex="-1" aria-hidden="true">
+  <div
+    class="modal fade"
+    id="deleteSubjectModal-{{ subject.id }}"
+    tabindex="-1"
+    aria-hidden="true"
+  >
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Confirm Delete Subject</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
         </div>
         <div class="modal-body">
           Are you sure you want to delete subject "{{ subject.name }}"? This
           will delete all associated chapters, quizzes, and questions.
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <form action="{{ url_for('admin.delete_subject', id=subject.id) }}" method="POST" class="d-inline">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Cancel
+          </button>
+          <form
+            action="{{ url_for('admin.delete_subject', id=subject.id) }}"
+            method="POST"
+            class="d-inline"
+          >
             <button type="submit" class="btn btn-danger">Delete Subject</button>
           </form>
         </div>
@@ -168,7 +263,7 @@
 <h2 class="dashboard-title">Summary Statistics</h2>
 
 {# Fix chart grid structure - remove extraneous closing div tags #}
-<div class="chart-grid"> 
+<div class="chart-grid">
   {# Chart Card 1: Quizzes per Subject #}
   <div class="card h-100">
     <div class="card-header">
@@ -176,13 +271,13 @@
     </div>
     <div class="card-body">
       {% if subject_labels and quiz_counts_data %}
-        <div class="chart-wrapper">
-          <canvas id="quizzesPerSubjectChart"></canvas>
-        </div>
+      <div class="chart-wrapper">
+        <canvas id="quizzesPerSubjectChart"></canvas>
+      </div>
       {% else %}
-        <p class="text-muted">
-          No subject or quiz data available to display chart.
-        </p>
+      <p class="text-muted">
+        No subject or quiz data available to display chart.
+      </p>
       {% endif %}
     </div>
   </div>
@@ -194,11 +289,11 @@
     </div>
     <div class="card-body">
       {% if registration_labels and registration_data %}
-        <div class="chart-wrapper">
-          <canvas id="userRegistrationChart"></canvas>
-        </div>
+      <div class="chart-wrapper">
+        <canvas id="userRegistrationChart"></canvas>
+      </div>
       {% else %}
-        <p class="text-muted">No user registration data available.</p>
+      <p class="text-muted">No user registration data available.</p>
       {% endif %}
     </div>
   </div>
@@ -210,18 +305,16 @@
     </div>
     <div class="card-body">
       {% if avg_quiz_labels and avg_quiz_data %}
-        <div class="chart-wrapper">
-          <canvas id="avgScorePerQuizChart"></canvas>
-        </div>
+      <div class="chart-wrapper">
+        <canvas id="avgScorePerQuizChart"></canvas>
+      </div>
       {% else %}
-        <p class="text-muted">No quiz score data available.</p>
+      <p class="text-muted">No quiz score data available.</p>
       {% endif %}
     </div>
   </div>
-</div> {# End of chart-grid #}
-
-
-{# Embed data in a JSON script tag #}
+</div>
+{# End of chart-grid #} {# Embed data in a JSON script tag #}
 <script id="adminChartData" type="application/json">
   {{ {
       "subjectLabels": subject_labels,
@@ -234,79 +327,84 @@
 </script>
 
 {# Load Chart.js library *before* the initialization script #}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 {# Chart Initialization Script #}
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     // --- Initialize Bootstrap Tooltips ---
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipTriggerList = [].slice.call(
+      document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    );
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl)
-    })
+      return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
 
     // --- Define Theme Colors (from base.css variables) ---
     const themeColors = {
-        primary: '#0d6efd',
-        primaryHover: '#0b5ed7', // Darker blue for hover
-        textDark: '#343a40',
-        borderColor: '#dee2e6',
-        gridColor: '#e9ecef' // Lighter gray for gridlines
+      primary: "#0d6efd",
+      primaryHover: "#0b5ed7", // Darker blue for hover
+      textDark: "#343a40",
+      borderColor: "#dee2e6",
+      gridColor: "#e9ecef", // Lighter gray for gridlines
     };
 
     // --- Default Chart Options ---
     const defaultChartOptions = {
-        responsive: true,
-        maintainAspectRatio: false, // Allow chart height to adjust
-        plugins: {
-            legend: {
-                labels: {
-                    color: themeColors.textDark // Legend text color
-                }
-            },
-            tooltip: {
-                // Basic tooltip styling (can be customized further)
-                backgroundColor: themeColors.textDark,
-                titleColor: '#ffffff',
-                bodyColor: '#ffffff',
-                borderRadius: 6,
-                padding: 10
-            }
+      responsive: true,
+      maintainAspectRatio: false, // Allow chart height to adjust
+      plugins: {
+        legend: {
+          labels: {
+            color: themeColors.textDark, // Legend text color
+          },
         },
-        scales: {
-            y: {
-                ticks: { color: themeColors.textDark }, // Y-axis tick labels
-                grid: {
-                    color: themeColors.gridColor, // Y-axis grid lines
-                    drawBorder: false, // Hide the axis border line itself
-                },
-                title: { color: themeColors.textDark } // Y-axis title
-            },
-            x: {
-                ticks: { color: themeColors.textDark }, // X-axis tick labels
-                grid: {
-                    color: themeColors.gridColor, // X-axis grid lines
-                    display: false // Often hide vertical grid lines for bar/line
-                },
-                title: { color: themeColors.textDark } // X-axis title
-            }
-        }
+        tooltip: {
+          // Basic tooltip styling (can be customized further)
+          backgroundColor: themeColors.textDark,
+          titleColor: "#ffffff",
+          bodyColor: "#ffffff",
+          borderRadius: 6,
+          padding: 10,
+        },
+      },
+      scales: {
+        y: {
+          ticks: { color: themeColors.textDark }, // Y-axis tick labels
+          grid: {
+            color: themeColors.gridColor, // Y-axis grid lines
+            drawBorder: false, // Hide the axis border line itself
+          },
+          title: { color: themeColors.textDark }, // Y-axis title
+        },
+        x: {
+          ticks: { color: themeColors.textDark }, // X-axis tick labels
+          grid: {
+            color: themeColors.gridColor, // X-axis grid lines
+            display: false, // Often hide vertical grid lines for bar/line
+          },
+          title: { color: themeColors.textDark }, // X-axis title
+        },
+      },
     };
 
     // --- Function to deep merge options ---
     function mergeOptions(target, source) {
-        for (const key in source) {
-            if (source.hasOwnProperty(key)) {
-                if (source[key] instanceof Object && key in target && target[key] instanceof Object) {
-                    mergeOptions(target[key], source[key]);
-                } else {
-                    target[key] = source[key];
-                }
-            }
+      for (const key in source) {
+        if (source.hasOwnProperty(key)) {
+          if (
+            source[key] instanceof Object &&
+            key in target &&
+            target[key] instanceof Object
+          ) {
+            mergeOptions(target[key], source[key]);
+          } else {
+            target[key] = source[key];
+          }
         }
-        return target;
+      }
+      return target;
     }
-
 
     // --- Updated function to create charts ---
     function createChart(canvasId, chartType, chartData, specificOptions = {}) {
@@ -316,19 +414,30 @@
         return;
       }
       // checks if essential data arrays exist and are not empty
-      if (!chartData || !chartData.labels || chartData.labels.length === 0 || !chartData.datasets || chartData.datasets.length === 0 || !chartData.datasets[0].data || chartData.datasets[0].data.length === 0) {
+      if (
+        !chartData ||
+        !chartData.labels ||
+        chartData.labels.length === 0 ||
+        !chartData.datasets ||
+        chartData.datasets.length === 0 ||
+        !chartData.datasets[0].data ||
+        chartData.datasets[0].data.length === 0
+      ) {
         console.warn(`No valid data provided for chart '${canvasId}'.`);
-        return; 
+        return;
       }
 
       try {
-        if (typeof Chart === 'undefined') {
-            console.error('Chart.js library is not loaded or available.');
-            return;
+        if (typeof Chart === "undefined") {
+          console.error("Chart.js library is not loaded or available.");
+          return;
         }
         const ctx = canvas.getContext("2d");
         // Merge default options with specific options for this chart
-        const finalOptions = mergeOptions(JSON.parse(JSON.stringify(defaultChartOptions)), specificOptions);
+        const finalOptions = mergeOptions(
+          JSON.parse(JSON.stringify(defaultChartOptions)),
+          specificOptions
+        );
 
         new Chart(ctx, {
           type: chartType,
@@ -357,7 +466,8 @@
     createChart(
       "quizzesPerSubjectChart",
       "bar",
-      { // Data
+      {
+        // Data
         labels: adminChartData.subjectLabels,
         datasets: [
           {
@@ -366,25 +476,26 @@
             backgroundColor: themeColors.primary, // Use theme primary color
             borderColor: themeColors.primary,
             borderWidth: 1,
-            hoverBackgroundColor: themeColors.primaryHover // Add hover color
+            hoverBackgroundColor: themeColors.primaryHover, // Add hover color
           },
         ],
       },
-      { // Specific Options
+      {
+        // Specific Options
         plugins: {
-            legend: {
-                display: true, // Keep legend for this one
-                position: 'top', // Position legend
-                 labels: {
-                    color: themeColors.textDark, // Ensure legend text color
-                    // Use the same color box as the bars
-                    usePointStyle: false
-                }
-            }
+          legend: {
+            display: true, // Keep legend for this one
+            position: "top", // Position legend
+            labels: {
+              color: themeColors.textDark, // Ensure legend text color
+              // Use the same color box as the bars
+              usePointStyle: false,
+            },
+          },
         },
         scales: {
-            x: { grid: { display: false } } // Hide vertical grid lines
-        }
+          x: { grid: { display: false } }, // Hide vertical grid lines
+        },
       }
     );
 
@@ -392,7 +503,8 @@
     createChart(
       "userRegistrationChart",
       "line",
-      { // Data
+      {
+        // Data
         labels: adminChartData.registrationLabels,
         datasets: [
           {
@@ -405,7 +517,8 @@
           },
         ],
       },
-      { // Specific Options
+      {
+        // Specific Options
         scales: {
           y: {
             beginAtZero: true,
@@ -413,7 +526,7 @@
           },
           x: {
             title: { display: true, text: "Date" },
-            grid: { display: false } // Hide vertical grid lines
+            grid: { display: false }, // Hide vertical grid lines
           },
         },
         plugins: { legend: { display: false } }, // Hide legend
@@ -424,7 +537,8 @@
     createChart(
       "avgScorePerQuizChart",
       "bar",
-      { // Data
+      {
+        // Data
         labels: adminChartData.avgQuizLabels,
         datasets: [
           {
@@ -435,12 +549,13 @@
             borderWidth: 1,
             hoverBackgroundColor: themeColors.primaryHover, // Add hover color
             // Match spacing with first chart
-            barPercentage: 0.8, 
-            categoryPercentage: 0.9
+            barPercentage: 0.8,
+            categoryPercentage: 0.9,
           },
         ],
       },
-      { // Specific Options
+      {
+        // Specific Options
         // Match first chart options
         maintainAspectRatio: false,
         responsive: true,
@@ -456,23 +571,23 @@
             ticks: {
               autoSkip: true,
               maxRotation: 0, // Horizontal labels like first chart
-              minRotation: 0  // Horizontal labels like first chart
-            }
+              minRotation: 0, // Horizontal labels like first chart
+            },
           },
         },
-        plugins: { 
+        plugins: {
           legend: {
             display: true, // Show legend like first chart
-            position: 'top',
+            position: "top",
             labels: {
               color: themeColors.textDark,
-              usePointStyle: false
-            }
-          }
+              usePointStyle: false,
+            },
+          },
         },
       }
     );
   });
 </script>
 
-
+{% endblock %}

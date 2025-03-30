@@ -374,29 +374,20 @@ def add_quiz(chapter_id):
 
     if form.validate_on_submit():
         try:
-            time_parts = form.time_duration.data.split(":")
-            if len(time_parts) != 2:
-                raise ValueError("Invalid time format")
-            duration_minutes = int(time_parts[0]) * 60 + int(time_parts[1])
-            if duration_minutes <= 0:
-                raise ValueError("Duration must be positive")
+            # Directly use the integer value from the form
+            duration_minutes = form.time_duration.data
 
             new_quiz = Quiz(
                 chapter_id=chapter_id,
                 date_of_quiz=form.date_of_quiz.data,
-                time_duration=duration_minutes,
+                time_duration=duration_minutes, # Use integer directly
                 remarks=form.remarks.data,
             )
             db.session.add(new_quiz)
             db.session.commit()
             flash("Quiz added successfully.", "success")
             return redirect(url_for("admin.quizzes", chapter_id=chapter_id))
-        except (ValueError, IndexError, TypeError) as e:
-            flash(
-                f"Invalid time format or value. Please use HH:MM and ensure duration is positive. Error: {e}",
-                "danger",
-            )
-        except Exception as e:
+        except Exception as e: # Keep generic exception handler
             db.session.rollback()
             flash(f"Error adding quiz: {e}", "danger")
 
@@ -414,34 +405,26 @@ def edit_quiz(id):
 
     if form.validate_on_submit():
         try:
-            time_parts = form.time_duration.data.split(":")
-            if len(time_parts) != 2:
-                raise ValueError("Invalid time format")
-            duration_minutes = int(time_parts[0]) * 60 + int(time_parts[1])
-            if duration_minutes <= 0:
-                raise ValueError("Duration must be positive")
+            # Directly use the integer value from the form
+            duration_minutes = form.time_duration.data
 
             quiz.date_of_quiz = form.date_of_quiz.data
-            quiz.time_duration = duration_minutes
+            quiz.time_duration = duration_minutes # Use integer directly
             quiz.remarks = form.remarks.data
 
             db.session.commit()
             flash("Quiz updated successfully.", "success")
             return redirect(url_for("admin.quizzes", chapter_id=quiz.chapter_id))
-        except (ValueError, IndexError, TypeError) as e:
-            flash(
-                f"Invalid time format or value. Please use HH:MM and ensure duration is positive. Error: {e}",
-                "danger",
-            )
-        except Exception as e:
+        except Exception as e: # Keep generic exception handler
             db.session.rollback()
             flash(f"Error updating quiz: {e}", "danger")
 
+    # Populate form with existing data on GET or validation failure
     if request.method == "GET" or not form.validate():
         form.date_of_quiz.data = quiz.date_of_quiz
         form.remarks.data = quiz.remarks
-        hours, minutes = divmod(quiz.time_duration, 60)
-        form.time_duration.data = f"{hours:02d}:{minutes:02d}"
+        # Populate with the integer value
+        form.time_duration.data = quiz.time_duration
 
     return render_template(
         "admin/quiz_form.html", form=form, chapter=quiz.chapter, title="Edit Quiz"

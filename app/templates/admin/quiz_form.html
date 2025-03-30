@@ -37,9 +37,11 @@
                 </div>
                 
                 <div class="mb-3">
-                    {{ form.time_duration.label(class="form-label") }}
-                    {{ form.time_duration(class="form-control", placeholder="Enter duration in minutes (e.g., 90)", required=true, type="number", min="1") }}
-                    <small class="form-text text-muted">Enter total duration in minutes (e.g., 90 for 1 hour 30 minutes)</small>
+                    {# Updated Label #}
+                    {{ form.time_duration.label(class="form-label", text="Time Duration (Minutes)") }}
+                    {{ form.time_duration(class="form-control", placeholder="e.g., 5, 30, 90", required=true, type="number", min="1") }}
+                    {# Updated Help Text #}
+                    <small class="form-text text-muted">Enter the total quiz duration in minutes.</small>
                     {% if form.time_duration.errors %}
                         <div class="text-danger small mt-1">
                             {% for error in form.time_duration.errors %}

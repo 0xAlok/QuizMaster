@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, DateField
-from wtforms import TextAreaField, RadioField
+from wtforms import TextAreaField, RadioField, IntegerField # Import IntegerField
 from wtforms.validators import (
     DataRequired,
     Email,
@@ -8,6 +8,7 @@ from wtforms.validators import (
     Length,
     ValidationError,
     Regexp,
+    NumberRange # Import NumberRange
 )
 from app.models.user import User
 
@@ -81,16 +82,13 @@ class QuizForm(FlaskForm):
     date_of_quiz = DateField(
         "Quiz Date (YYYY-MM-DD)", format="%Y-%m-%d", validators=[DataRequired()]
     )
-    # Time duration is entered as HH:MM string and converted to minutes
-    time_duration = StringField(
-        "Time Duration (HH:MM)",
+    # Changed to IntegerField for total minutes
+    time_duration = IntegerField(
+        "Time Duration (Minutes)",
         validators=[
             DataRequired(),
-            Regexp(
-                "^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$",
-                message="Time must be in HH:MM format",
-            ),
-        ],
+            NumberRange(min=1, message="Duration must be at least 1 minute.")
+        ]
     )
     remarks = TextAreaField("Remarks")
     submit = SubmitField("Save Quiz")
