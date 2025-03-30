@@ -71,22 +71,23 @@
                 </div>
                 <p class="question-text">{{ question.question_text }}</p>
 
-                <div class="review-options list-group list-group-flush mt-3">
-                    {% for i in range(1, 5) %} 
-                        {% set option_text = question['option' ~ i] %} 
-                        {% set is_correct_opt = (i == correct_answer_num) %} 
+                <div class="review-options list-group mt-3"> {# Removed list-group-flush #}
+                    {% for i in range(1, 5) %}
+                        {% set option_text = question['option' ~ i] %}
+                        {% set is_correct_opt = (i == correct_answer_num) %}
                         {% set is_user_choice = (was_answered and i == user_answer) %}
 
-                        {# Add classes for user selection and correct answer #}
-                        <div class="list-group-item form-check 
+                        {# Add classes for user selection and correct answer to list-group-item #}
+                        <div class="list-group-item
                             {% if is_user_choice and not is_correct_opt %}incorrect-selection
                             {% elif is_user_choice and is_correct_opt %}correct-answer
-                            {% elif is_correct_opt %}correct-answer{% endif %}"> 
-                            
-                            <input class="form-check-input" type="radio" name="review_{{ question.id }}" id="review_{{ question.id }}_opt{{ i }}" value="{{ i }}" disabled {% if is_user_choice %}checked{% endif %}>
-                            <label class="form-check-label" for="review_{{ question.id }}_opt{{ i }}">
-                                <span class="option-prefix">{{ ['A', 'B', 'C', 'D'][i-1] }})</span> {{ option_text }}
-                                
+                            {% elif is_correct_opt %}correct-answer{% endif %}">
+                            {# Inner div for form-check layout #}
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="review_{{ question.id }}" id="review_{{ question.id }}_opt{{ i }}" value="{{ i }}" disabled {% if is_user_choice %}checked{% endif %}>
+                                <label class="form-check-label" for="review_{{ question.id }}_opt{{ i }}">
+                                    {{ option_text }}
+
                                 {# Indicators using classes from quiz.css #}
                                 {% if is_correct_opt %}
                                     <span class="correct-answer-indicator">(Correct Answer)</span>
@@ -94,8 +95,9 @@
                                 {% if is_user_choice and not is_correct_opt %}
                                     <span class="user-selected-indicator">(Your Answer)</span>
                                 {% endif %}
-                            </label>
-                        </div>
+                                </label>
+                            </div> {# End form-check #}
+                        </div> {# End list-group-item #}
                     {% endfor %}
                 </div>
             </div>

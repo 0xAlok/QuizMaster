@@ -10,41 +10,20 @@
   border-bottom: 1px solid var(--qm-border-color);
 }
 
-/* Grid for Chart Cards */
-.chart-grid {
-  display: grid;
-  /* Use 1fr units for flexible columns */
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem; /* Adjusted gap per prompt */
-  margin-bottom: 2rem;
-  /* Remove justify-content as grid spans container width */
-}
-
-/* Make the card with this class span both columns */
-.chart-grid .full-width-chart {
-  grid-column: 1 / -1;
-  max-width: 100%; /* Limit width to prevent overflow */
-  overflow: hidden; /* Hide any overflow content */
-  width: 100%; /* Explicitly set width */
-}
+/* REMOVED CSS Grid styles (.chart-grid, .full-width-chart, :nth-child) */
 
 /* General Card Styling Enhancements for Dashboards */
-/* Apply general card styles */
 .card {
   border: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06); /* Slightly softer shadow */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
   border-radius: 10px;
-  margin-bottom: 2rem; /* Consistent spacing outside grid */
+  margin-bottom: 2rem; /* Standard Bootstrap margin */
   background-color: var(--qm-bg-white);
-  overflow: hidden; /* Ensure content respects border-radius */
+  overflow: hidden; /* Crucial for containing content */
 }
 
-/* Specific adjustments for cards within the chart grid */
-.chart-grid .card {
-  margin-bottom: 0; /* Grid gap handles spacing */
-  min-width: 0; /* Allow card to shrink properly within the grid column */
-  width: 100%; /* Ensure full width within grid cell */
-}
+/* Keep min-width: 0 on cards containing charts if needed, but remove grid context */
+/* .card { min-width: 0; } */ /* Consider if needed with Bootstrap cols */
 
 .card-header {
   background-color: var(--qm-bg-light);
@@ -52,40 +31,63 @@
   border-bottom: 1px solid var(--qm-border-color);
   border-radius: 10px 10px 0 0;
   padding: 1rem 1.5rem;
-  font-weight: 600; /* Bolder header */
-  /* Default header style - will be overridden for charts */
+  font-weight: 600;
 }
 
-/* Chart Card Specific Header Styling (Option A) */
-.chart-grid .card .card-header {
-  background-color: var(--qm-bg-white) !important; /* White background */
-  color: var(--qm-text-dark) !important; /* Standard text color */
-  border-bottom: 1px solid var(--qm-border-color); /* Subtle border */
-  border-radius: 10px 10px 0 0; /* Keep radius */
-  padding: 1rem 1.5rem; /* Consistent padding */
-  font-size: 1.1rem; /* Consistent font size */
-  font-weight: 600; /* Consistent weight */
+/* Chart Card Specific Header Styling (Remove grid context if needed) */
+/* Consider if .chart-grid selector is still appropriate */
+.card .card-header { /* More general selector */
+  background-color: var(--qm-bg-white) !important;
+  color: var(--qm-text-dark) !important;
+  border-bottom: 1px solid var(--qm-border-color);
+  border-radius: 10px 10px 0 0;
+  padding: 1rem 1.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
 }
 
 .card-body {
   padding: 1.5rem;
-  /* Ensure charts have some space */
-  position: relative; /* Add positioning context */
+  position: relative; /* Keep for wrapper positioning */
 }
 
 /* Ensure chart canvas has space from header AND override Bootstrap flex */
-.chart-grid .card .card-body {
+/* Consider if .chart-grid selector is still appropriate */
+.card .card-body { /* More general selector */
     padding-top: 1rem;
-    display: block; /* Override Bootstrap's flex behavior for card-body */
-    flex: none; /* Explicitly remove flex properties */
-    width: 100%; /* Ensure full width */
-    box-sizing: border-box; /* Include padding in width calculation */
+    display: block; /* Override Bootstrap's flex behavior */
+    flex: none; /* Remove flex properties */
+    box-sizing: border-box; /* Ensure padding included */
 }
+
+/* Chart Wrapper to contain canvas */
+.chart-wrapper {
+  position: relative;
+  height: 300px; /* Restore fixed height for alignment */
+  width: 100%; /* Take full width of card-body */
+  overflow: hidden; /* Contain the canvas */
+  box-sizing: border-box; /* Ensure padding/border included in width/height */
+  display: flex; /* Use flexbox for centering */
+  justify-content: center; /* Center chart horizontally */
+  align-items: center; /* Center chart vertically */
+}
+
+/* Chart Containers (Canvas) */
+.card canvas {
+  display: block;
+  /* Let wrapper control size, but ensure canvas doesn't exceed it */
+  max-width: 100%;
+  max-height: 100%;
+  /* Remove explicit width/height: 100% as flex wrapper handles it */
+}
+
+
+/* --- Other Styles (Stat Boxes, Tables, etc.) --- */
 
 /* Welcome Alert */
 .alert-info {
-  background-color: #e0f2fe; /* Lighter blue */
-  color: #075985; /* Darker blue text */
+  background-color: #e0f2fe;
+  color: #075985;
   border-color: #bae6fd;
   border-left: 4px solid var(--qm-primary);
   border-radius: 8px;
@@ -93,14 +95,13 @@
 
 /* Stat Boxes inside Cards */
 .stat-box {
-  /* Use a dedicated class instead of relying on Bootstrap structure */
   background-color: var(--qm-bg-light);
   border: 1px solid var(--qm-border-color);
   border-radius: 8px;
   padding: 1.5rem 1rem;
   text-align: center;
   transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
-  margin-bottom: 1rem; /* Spacing between boxes */
+  margin-bottom: 1rem;
 }
 .stat-box:hover {
   background-color: #e9ecef;
@@ -110,7 +111,7 @@
   color: var(--qm-primary);
   margin-bottom: 0.3rem;
   font-weight: 700;
-  font-size: 2rem; /* Larger number */
+  font-size: 2rem;
 }
 .stat-box p {
   color: var(--qm-muted);
@@ -128,7 +129,7 @@
 .table thead th {
   background-color: var(--qm-bg-light);
   border-bottom: 2px solid var(--qm-border-color);
-  font-weight: 600; /* Bolder headers */
+  font-weight: 600;
   color: var(--qm-text-dark);
   vertical-align: middle;
   text-align: left;
@@ -143,24 +144,23 @@
   padding: 0.9rem 1rem;
   vertical-align: middle;
   text-align: left;
-  border-bottom: 1px solid var(--qm-border-color); /* Add subtle row lines */
+  border-bottom: 1px solid var(--qm-border-color);
 }
 .table tbody tr:last-child td {
-  border-bottom: none; /* Remove border on last row */
+  border-bottom: none;
 }
-
 .table-striped tbody tr:nth-of-type(odd) {
-  background-color: rgba(0, 0, 0, 0.02); /* Very subtle stripe */
+  background-color: rgba(0, 0, 0, 0.02);
 }
 .table-responsive {
   border-radius: 8px;
   overflow: hidden;
-  border: 1px solid var(--qm-border-color); /* Add border to container */
+  border: 1px solid var(--qm-border-color);
 }
 
 /* Buttons within tables/cards */
 .table .btn {
-  padding: 0.3rem 0.7rem; /* Smaller buttons in tables */
+  padding: 0.3rem 0.7rem;
   font-size: 0.85rem;
   margin-right: 0.3rem;
 }
@@ -177,34 +177,8 @@
   color: white;
 }
 .btn-success:hover {
-  background-color: #157347; /* Darker green */
+  background-color: #157347;
   color: white;
-}
-
-/* Chart Wrapper to contain canvas */
-.chart-wrapper {
-  position: relative; /* Needed for canvas responsiveness */
-  height: 300px; /* Define a height for the wrapper */
-  width: 100%; /* Take full width of card-body */
-  max-width: 100%; /* Prevent overflow */
-  overflow: hidden; /* Add overflow hidden here too */
-}
-
-/* Fixed version for the third chart */
-.full-width-chart .chart-wrapper {
-  max-width: 100%;
-  margin: 0 auto; /* Center the chart */
-}
-*/ /* Removing this user-added rule */
-
-/* Chart Containers */
-.card canvas {
-  /* Canvas should fill the wrapper (block display) */
-  display: block; /* Ensure it's treated as a block */
-  width: 100%; /* Remove !important */
-  height: 100%; /* Remove !important */
-  max-width: 100%; /* Prevent overflow */
-  /* Removed absolute positioning */
 }
 
 /* Text muted */
@@ -214,19 +188,18 @@
 
 /* Refined Badge Styling */
 .badge {
-  padding: 0.4em 0.7em; /* Adjust padding */
-  font-size: 1rem; /* Slightly smaller font */
+  padding: 0.4em 0.7em;
+  font-size: 1rem;
   font-weight: 500;
 }
 .badge.bg-light {
-  /* Specific style for light badges used in dashboard */
   border: 1px solid var(--qm-border-color);
 }
 
 /* Styling for count displays in dashboard chapter list */
 .count-display {
   display: inline-block;
-  padding: 0.35em 0.65em; /* Similar to badge padding */
+  padding: 0.35em 0.65em;
   font-size: 1em;
   font-weight: 500;
   line-height: 1;
@@ -234,7 +207,7 @@
   text-align: center;
   white-space: nowrap;
   vertical-align: baseline;
-  border-radius: 0.375rem; /* Match default badge radius */
+  border-radius: 0.375rem;
   border: 1px solid var(--qm-border-color);
   background-color: var(--qm-bg-light);
 }

@@ -241,17 +241,29 @@
     padding: 0.8rem 1.2rem;
     border-radius: 6px;
     margin-bottom: 8px;
-    border: 1px solid var(--qm-border-color);
+    border: 1px solid var(--qm-border-color); /* Keep border */
     background-color: var(--qm-bg-light);
+    /* Remove flexbox alignment from list-group-item */
+}
+/* Ensure borders between items now that flush is removed */
+.review-options .list-group-item + .list-group-item {
+    border-top-width: 1px;
+}
+
+/* Style the inner form-check */
+.review-options .list-group-item .form-check {
+    /* padding-left: 0; Remove this override, let Bootstrap handle padding */
+    margin-bottom: 0; /* Remove default form-check margin */
 }
 
 .review-options .list-group-item .form-check-label {
     opacity: 1 !important; /* Ensure label is always visible */
     color: var(--qm-text-dark);
+    /* Let Bootstrap handle label styling */
 }
 .review-options .list-group-item .form-check-input {
     opacity: 1 !important; /* Ensure checkbox/radio is visible */
-    margin-right: 10px;
+    /* Let Bootstrap handle input positioning/margins */
 }
 .review-options .list-group-item .form-check-input:disabled {
     cursor: default;

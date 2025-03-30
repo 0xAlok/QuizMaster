@@ -1,123 +1,154 @@
-{% extends 'base.html' %}
-
-{% block title %}Quiz in Progress - Quiz Master{% endblock %}
-
-{# Add page-specific CSS link #}
-{% block head %}
-    {{ super() }} {# Includes CSS from base.html #}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/quiz.css') }}">
-{% endblock %}
-
-{% block content %}
-{# Use new container class #}
+{% extends 'base.html' %} {% block title %}Quiz in Progress - Quiz Master{%
+endblock %} {# Add page-specific CSS link #} {% block head %} {{ super() }} {#
+Includes CSS from base.html #}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/quiz.css') }}"
+/>
+{% endblock %} {% block content %} {# Use new container class #}
 <div class="quiz-attempt-container">
-    {# Use new header class #}
-    <div class="quiz-header">
-        <h2>{{ quiz.chapter.subject.name }} - {{ quiz.chapter.name }}</h2>
-        {# Timer styling is now in quiz.css #}
-        <div id="quiz-timer">
-            Time Remaining: <span id="minutes">--</span>:<span id="seconds">--</span>
-        </div>
+  {# Use new header class #}
+  <div class="quiz-header">
+    <h2>{{ quiz.chapter.subject.name }} - {{ quiz.chapter.name }}</h2>
+    {# Timer styling is now in quiz.css #}
+    <div id="quiz-timer">
+      Time Remaining: <span id="minutes">--</span>:<span id="seconds">--</span>
     </div>
+  </div>
 
-    <form id="quiz-form" method="POST" action="{{ url_for('user.submit_quiz', quiz_id=quiz.id) }}">
-        {% for question in questions %}
-        {# Use new question card class - remove Bootstrap card structure #}
-        <div class="question-card" id="question-{{ question.id }}">
-            <span class="question-number">Question {{ loop.index }}</span>
-            <p class="question-text">{{ question.question_text }}</p>
+  <form
+    id="quiz-form"
+    method="POST"
+    action="{{ url_for('user.submit_quiz', quiz_id=quiz.id) }}"
+  >
+    {% for question in questions %} {# Use new question card class - remove
+    Bootstrap card structure #}
+    <div class="question-card" id="question-{{ question.id }}">
+      <span class="question-number">Question {{ loop.index }}</span>
+      <p class="question-text">{{ question.question_text }}</p>
 
-            <div class="quiz-options-container">
-                {# Option structure updated for custom radio button styling #}
-                <div class="quiz-option">
-                    <input type="radio" name="question_{{ question.id }}" id="question_{{ question.id }}_option1" value="1" required>
-                    <label for="question_{{ question.id }}_option1">
-                        <span class="option-prefix">A)</span> {{ question.option1 }}
-                    </label>
-                </div>
-
-                <div class="quiz-option">
-                    <input type="radio" name="question_{{ question.id }}" id="question_{{ question.id }}_option2" value="2" required>
-                    <label for="question_{{ question.id }}_option2">
-                        <span class="option-prefix">B)</span> {{ question.option2 }}
-                    </label>
-                </div>
-
-                <div class="quiz-option">
-                    <input type="radio" name="question_{{ question.id }}" id="question_{{ question.id }}_option3" value="3" required>
-                    <label for="question_{{ question.id }}_option3">
-                        <span class="option-prefix">C)</span> {{ question.option3 }}
-                    </label>
-                </div>
-
-                <div class="quiz-option">
-                    <input type="radio" name="question_{{ question.id }}" id="question_{{ question.id }}_option4" value="4" required>
-                    <label for="question_{{ question.id }}_option4">
-                        <span class="option-prefix">D)</span> {{ question.option4 }}
-                    </label>
-                </div>
-            </div>
+      <div class="quiz-options-container">
+        {# Option structure updated for custom radio button styling #}
+        <div class="quiz-option">
+          <input
+            type="radio"
+            name="question_{{ question.id }}"
+            id="question_{{ question.id }}_option1"
+            value="1"
+            required
+          />
+          <label for="question_{{ question.id }}_option1">
+            <span class="option-prefix"></span> {{ question.option1 }}
+          </label>
         </div>
-        {% endfor %}
 
-        {# Use quiz-navigation class for centering #}
-        <div class="quiz-navigation my-4">
-            <button type="submit" class="btn btn-primary btn-lg">Submit Quiz</button>
+        <div class="quiz-option">
+          <input
+            type="radio"
+            name="question_{{ question.id }}"
+            id="question_{{ question.id }}_option2"
+            value="2"
+            required
+          />
+          <label for="question_{{ question.id }}_option2">
+            <span class="option-prefix"></span> {{ question.option2 }}
+          </label>
         </div>
-    </form>
+
+        <div class="quiz-option">
+          <input
+            type="radio"
+            name="question_{{ question.id }}"
+            id="question_{{ question.id }}_option3"
+            value="3"
+            required
+          />
+          <label for="question_{{ question.id }}_option3">
+            <span class="option-prefix"></span> {{ question.option3 }}
+          </label>
+        </div>
+
+        <div class="quiz-option">
+          <input
+            type="radio"
+            name="question_{{ question.id }}"
+            id="question_{{ question.id }}_option4"
+            value="4"
+            required
+          />
+          <label for="question_{{ question.id }}_option4">
+            <span class="option-prefix"></span> {{ question.option4 }}
+          </label>
+        </div>
+      </div>
+    </div>
+    {% endfor %} {# Use quiz-navigation class for centering #}
+    <div class="quiz-navigation my-4">
+      <button type="submit" class="btn btn-primary btn-lg">Submit Quiz</button>
+    </div>
+  </form>
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener("DOMContentLoaded", function () {
     // Timer functionality (Keep this)
     function updateTimer() {
-        // Fetch remaining time from the server
-        fetch('{{ url_for("user.check_quiz_time") }}')
-            .then(response => response.json())
-            .then(data => {
-                // Check if the server indicates the time has expired
-                if (data.expired) {
-                    // Check if the form hasn't already been submitted by this timer logic
-                    if (!document.getElementById('quiz-form').dataset.submittedByTimer) {
-                        // Mark the form as submitted by the timer to prevent multiple submissions
-                        document.getElementById('quiz-form').dataset.submittedByTimer = 'true'; 
-                        alert('Time is up! Your quiz will be submitted automatically.');
-                        // Programmatically submit the form
-                        document.getElementById('quiz-form').submit(); 
-                    }
-                    return; // Stop further timer updates
-                }
+      // Fetch remaining time from the server
+      fetch('{{ url_for("user.check_quiz_time") }}')
+        .then((response) => response.json())
+        .then((data) => {
+          // Check if the server indicates the time has expired
+          if (data.expired) {
+            // Check if the form hasn't already been submitted by this timer logic
+            if (
+              !document.getElementById("quiz-form").dataset.submittedByTimer
+            ) {
+              // Mark the form as submitted by the timer to prevent multiple submissions
+              document.getElementById("quiz-form").dataset.submittedByTimer =
+                "true";
+              alert("Time is up! Your quiz will be submitted automatically.");
+              // Programmatically submit the form
+              document.getElementById("quiz-form").submit();
+            }
+            return; // Stop further timer updates
+          }
 
-                // Calculate minutes and seconds
-                const minutes = Math.floor(data.time_remaining / 60);
-                const seconds = data.time_remaining % 60;
+          // Calculate minutes and seconds
+          const minutes = Math.floor(data.time_remaining / 60);
+          const seconds = data.time_remaining % 60;
 
-                document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
-                document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+          document.getElementById("minutes").textContent = minutes
+            .toString()
+            .padStart(2, "0");
+          document.getElementById("seconds").textContent = seconds
+            .toString()
+            .padStart(2, "0");
 
-                const timerElement = document.getElementById('quiz-timer');
-                timerElement.classList.remove('timer-danger', 'timer-warning');
-                if (data.time_remaining < 60) {
-                    timerElement.classList.add('timer-danger');
-                } else if (data.time_remaining < 180) {
-                    timerElement.classList.add('timer-warning');
-                }
-            })
-            .catch(error => console.error('Error updating timer:', error));
+          const timerElement = document.getElementById("quiz-timer");
+          timerElement.classList.remove("timer-danger", "timer-warning");
+          if (data.time_remaining < 60) {
+            timerElement.classList.add("timer-danger");
+          } else if (data.time_remaining < 180) {
+            timerElement.classList.add("timer-warning");
+          }
+        })
+        .catch((error) => console.error("Error updating timer:", error));
     }
 
     // Initial call to display timer immediately
-    updateTimer(); 
+    updateTimer();
     // Set interval to update timer every second
     const timerInterval = setInterval(updateTimer, 1000);
 
     // Clear the interval timer if the user submits the form manually
-    document.getElementById('quiz-form').addEventListener('submit', function() {
-        console.log('Quiz submitted manually, clearing timer interval.');
+    document
+      .getElementById("quiz-form")
+      .addEventListener("submit", function () {
+        console.log("Quiz submitted manually, clearing timer interval.");
         clearInterval(timerInterval);
-    });
+      });
 
     // Note: No separate button click handlers needed as the form has a single submit button.
-});
+  });
 </script>
 {% endblock %}

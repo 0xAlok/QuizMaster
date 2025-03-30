@@ -144,15 +144,15 @@
 <hr class="my-5" />
 <h2 class="dashboard-title">Your Statistics</h2> {# Use consistent title style #}
 
-{# Wrap all charts in the grid container #}
-<div class="chart-grid">
+{# Use Bootstrap row/col layout instead of chart-grid #}
+<div class="row">
 
-    {# Chart Card 1: Score Trend Chart #}
-    {# Make this full width #}
-    <div class="card h-100 full-width-chart">
-        <div class="card-header"> {# Removed bg-info text-white #}
-            <h5>Your Score Trend</h5>
-        </div>
+    {# Chart Card 1: Score Trend Chart - Full Width #}
+    <div class="col-12 mb-4"> {# Use Bootstrap column and margin #}
+        <div class="card h-100"> {# Removed full-width-chart class #}
+            <div class="card-header">
+                <h5>Your Score Trend</h5>
+            </div>
         <div class="card-body">
             {% if score_labels and score_data %}
                 <div class="chart-wrapper"> {# Added wrapper #}
@@ -163,13 +163,14 @@
                 {% endif %}
             </div>
         </div>
-    </div> {# End of Chart Card 1 #}
+    </div> {# End of Chart Card 1 Col #}
 
-    {# Chart Card 2: Attempts per Subject Chart #}
-    <div class="card h-100">
-        <div class="card-header"> {# Removed bg-warning text-dark #}
-            <h5>Attempts per Subject</h5>
-        </div>
+    {# Chart Card 2: Attempts per Subject Chart - Half Width #}
+    <div class="col-lg-6 mb-4"> {# Use Bootstrap column and margin #}
+        <div class="card h-100">
+            <div class="card-header">
+                <h5>Attempts per Subject</h5>
+            </div>
         {# Removed d-flex align-items-center justify-content-center from card-body #}
         <div class="card-body">
             {% if attempt_subject_labels and attempt_subject_data %}
@@ -181,13 +182,14 @@
                 {% endif %}
             </div>
         </div>
-    </div> {# End of Chart Card 2 #}
+    </div> {# End of Chart Card 2 Col #}
 
-    {# Chart Card 3: Average Score per Subject Chart #}
-    <div class="card h-100">
-        <div class="card-header"> {# Removed bg-secondary text-white #}
-            <h5>Average Score per Subject</h5>
-        </div>
+    {# Chart Card 3: Average Score per Subject Chart - Half Width #}
+    <div class="col-lg-6 mb-4"> {# Use Bootstrap column and margin #}
+        <div class="card h-100">
+            <div class="card-header">
+                <h5>Average Score per Subject</h5>
+            </div>
         <div class="card-body">
              {% if avg_score_subject_labels and avg_score_subject_data %}
                 <div class="chart-wrapper"> {# Added wrapper #}
@@ -198,9 +200,9 @@
                 {% endif %}
             </div>
         </div>
-    </div> {# End of Chart Card 3 #}
+    </div> {# End of Chart Card 3 Col #}
 
-</div> {# End of chart-grid #}
+</div> {# End of row #}
 
 
 {# Embed data in a JSON script tag #}
@@ -245,7 +247,7 @@
     // --- Default Chart Options (Copied from admin) ---
     const defaultChartOptions = {
         responsive: true,
-        maintainAspectRatio: false,
+        // maintainAspectRatio: false, // REMOVE this line to let Chart.js manage aspect ratio (default is true)
         plugins: {
             legend: { labels: { color: themeColors.textDark } },
             tooltip: {
@@ -391,10 +393,10 @@
             data: userChartData.attemptData,
             backgroundColor: themeColors.pieColors, // Use defined colors
             hoverOffset: 4,
-          },
+          }, // <-- Missing comma was here
         ],
       },
-      { // Specific Options for Pie
+      { // Specific Options for Pie Chart (Corrected)
          plugins: {
             legend: { position: 'top' },
             tooltip: {
@@ -405,6 +407,38 @@
              y: { display: false },
              x: { display: false }
          }
+      }
+    );
+
+    // 3. Average Score per Subject Chart (Bar)
+    createChart(
+      "avgScorePerSubjectChart",
+      "bar",
+      { // Data
+        labels: userChartData.avgScoreLabels,
+        datasets: [
+          {
+            label: "Average Score (%)",
+            data: userChartData.avgScoreData,
+            backgroundColor: themeColors.primary,
+            borderColor: themeColors.primary,
+            borderWidth: 1,
+            hoverBackgroundColor: themeColors.primaryHover
+          },
+        ],
+      },
+      { // Specific Options for standard Bar Chart
+        scales: {
+          y: { // Y-axis is the value axis
+            beginAtZero: true, max: 100,
+            title: { display: true, text: "Average Score (%)" },
+          },
+          x: { // X-axis is the category axis
+            title: { display: true, text: "Subject" },
+            grid: { display: false }
+          },
+        },
+        plugins: { legend: { display: false } },
       }
     );
 
@@ -439,6 +473,12 @@
         plugins: { legend: { display: false } },
       }
     );
+
+    // Add a small delay and trigger resize to help charts adjust to container size
+    setTimeout(() => {
+        window.dispatchEvent(new Event('resize'));
+    }, 150); // 150ms delay, adjust if needed
+
   });
 </script>
 

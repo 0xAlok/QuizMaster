@@ -79,16 +79,16 @@
                                     
                                     <ul class="list-group list-group-flush mt-3 mb-3"> 
                                         <li class="list-group-item {% if question.correct_answer == 1 %}list-group-item-success{% endif %}">
-                                            A) {{ question.option1 }} {% if question.correct_answer == 1 %}<i class="bi bi-check-lg text-success ms-2"></i>{% endif %}
+                                            {{ question.option1 }} {% if question.correct_answer == 1 %}<i class="bi bi-check-lg text-success ms-2"></i>{% endif %}
                                         </li>
                                         <li class="list-group-item {% if question.correct_answer == 2 %}list-group-item-success{% endif %}">
-                                            B) {{ question.option2 }} {% if question.correct_answer == 2 %}<i class="bi bi-check-lg text-success ms-2"></i>{% endif %}
+                                            {{ question.option2 }} {% if question.correct_answer == 2 %}<i class="bi bi-check-lg text-success ms-2"></i>{% endif %}
                                         </li>
                                         <li class="list-group-item {% if question.correct_answer == 3 %}list-group-item-success{% endif %}">
-                                            C) {{ question.option3 }} {% if question.correct_answer == 3 %}<i class="bi bi-check-lg text-success ms-2"></i>{% endif %}
+                                            {{ question.option3 }} {% if question.correct_answer == 3 %}<i class="bi bi-check-lg text-success ms-2"></i>{% endif %}
                                         </li>
                                         <li class="list-group-item {% if question.correct_answer == 4 %}list-group-item-success{% endif %}">
-                                            D) {{ question.option4 }} {% if question.correct_answer == 4 %}<i class="bi bi-check-lg text-success ms-2"></i>{% endif %}
+                                            {{ question.option4 }} {% if question.correct_answer == 4 %}<i class="bi bi-check-lg text-success ms-2"></i>{% endif %}
                                         </li>
                                     </ul>
                                                                         
