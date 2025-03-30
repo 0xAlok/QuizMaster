@@ -12,7 +12,6 @@ class Quiz(db.Model):
     remarks = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
-    # Relationships
     questions = db.relationship('Question', backref='quiz', lazy=True, cascade="all, delete-orphan")
     scores = db.relationship('Score', backref='quiz', lazy=True, cascade="all, delete-orphan")
     

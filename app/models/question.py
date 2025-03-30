@@ -12,7 +12,7 @@ class Question(db.Model):
     option2 = db.Column(db.String(255), nullable=False)
     option3 = db.Column(db.String(255), nullable=False)
     option4 = db.Column(db.String(255), nullable=False)
-    correct_answer = db.Column(db.Integer, nullable=False)  # Stores the correct option number (1, 2, 3, or 4)
+    correct_answer = db.Column(db.Integer, nullable=False)  
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     def __repr__(self):

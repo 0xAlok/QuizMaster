@@ -10,7 +10,6 @@ class Subject(db.Model):
     description = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
-    # Relationship with chapters
     chapters = db.relationship('Chapter', backref='subject', lazy=True, cascade="all, delete-orphan")
     
     def __repr__(self):

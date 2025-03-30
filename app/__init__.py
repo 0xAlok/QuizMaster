@@ -22,16 +22,13 @@ def create_app(config_object=None):
 
     # --- Configuration ---
     app.config.from_mapping(
-        SECRET_KEY=os.urandom(24), # Default secret key (changes on restart)
+        SECRET_KEY=os.urandom(24), 
         SQLALCHEMY_DATABASE_URI='sqlite:///quiz_master.db', 
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
     )
 
     if config_object:
         app.config.from_object(config_object)
-    else:
-        # Load instance config if it exists (e.g., for production secrets)
-        app.config.from_pyfile('config.py', silent=True)
 
     # Ensure instance folder exists
     try:

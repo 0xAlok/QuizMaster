@@ -4,11 +4,11 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class User(db.Model, UserMixin):
-    """Represents a regular user who can take quizzes."""
+    """Represents a user who can take quizzes."""
     __tablename__ = 'users'
     
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100), unique=True, nullable=False)  # Stores user's email address
+    username = db.Column(db.String(100), unique=True, nullable=False)  
     password = db.Column(db.String(100), nullable=False) 
     full_name = db.Column(db.String(100), nullable=False)
     qualification = db.Column(db.String(100))
@@ -54,5 +54,5 @@ class Admin(db.Model, UserMixin):
         return f"admin_{self.id}"
     
     def __repr__(self):
-        """Provides a developer-friendly representation of the Admin object."""
+        """Provides a representation of the Admin object."""
         return f'<Admin {self.username}>'

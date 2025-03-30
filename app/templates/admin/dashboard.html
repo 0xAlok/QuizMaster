@@ -434,13 +434,15 @@
             borderColor: themeColors.primary,
             borderWidth: 1,
             hoverBackgroundColor: themeColors.primaryHover, // Add hover color
-            barPercentage: 0.6, // Make bars thinner
-            categoryPercentage: 0.7 // Add more space between bars
+            // Match spacing with first chart
+            barPercentage: 0.8, 
+            categoryPercentage: 0.9
           },
         ],
       },
       { // Specific Options
-        maintainAspectRatio: true, // Change to true to maintain aspect ratio
+        // Match first chart options
+        maintainAspectRatio: false,
         responsive: true,
         scales: {
           y: {
@@ -453,13 +455,20 @@
             grid: { display: false }, // Hide vertical grid lines
             ticks: {
               autoSkip: true,
-              maxRotation: 45,
-              minRotation: 45
+              maxRotation: 0, // Horizontal labels like first chart
+              minRotation: 0  // Horizontal labels like first chart
             }
           },
         },
         plugins: { 
-          legend: { display: false }, // Hide legend
+          legend: {
+            display: true, // Show legend like first chart
+            position: 'top',
+            labels: {
+              color: themeColors.textDark,
+              usePointStyle: false
+            }
+          }
         },
       }
     );
